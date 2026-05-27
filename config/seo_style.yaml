@@ -1,0 +1,19 @@
+paragraph_max_sentences: 2
+image_placeholder_count: 6
+tone:
+  speech_level: formal
+  allow_greeting: true
+required_elements:
+  - formal_speech
+  - section_breaks_with_images
+  - reader_closing_question
+  - hashtags_min: 3
+title:
+  max_length: 55
+  patterns:
+    - quote_shock
+    - bracket_solo
+    - question_why
+body:
+  min_chars: 1500
+  max_chars: 3500

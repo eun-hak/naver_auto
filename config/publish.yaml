@@ -1,0 +1,29 @@
+default_category: "연예·이슈"
+daily_limit: 8
+publish_mode: draft
+image_priority:
+  - user
+  - sns
+  - gemini
+  - card
+gemini_images_per_post: 2
+sns:
+  enabled: true
+  max_candidates: 24
+  per_query: 8
+  min_width: 400
+  min_height: 300
+  search_queries:
+    - "{keyword}"
+    - "{keyword} 맛집"
+    - "{keyword} site:instagram.com"
+    - "{keyword} site:pinterest.com"
+  prefer_sources:
+    - instagram
+    - pinterest
+    - naver_blog
+    - naver_post
+    - web
+require_disclaimer_if:
+  - defamation
+  - unverified_claim

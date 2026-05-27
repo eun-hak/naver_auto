@@ -1,0 +1,13 @@
+.env
+.env.local
+.venv/
+__pycache__/
+*.py[cod]
+.auth/
+data/publish/drafts/
+data/publish/inbox/
+*.egg-info/
+dist/
+build/
+.playwright-debug/
+debug/
