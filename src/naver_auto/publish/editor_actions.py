@@ -181,10 +181,109 @@ def wait_editor_ready(page: Page, root: EditorRoot | None = None) -> EditorRoot:
     return root
 
 
+FONT_SIZE_BTN = "button.se-font-size-code-toolbar-button"
+FONT_SIZE_OPTION = "button.se-toolbar-option-font-size-code-fs{size}-button"
+BOLD_BTN_SELECTORS = (
+    "button.se-bold-toolbar-button",
+    "button[data-name='bold']",
+    ".se-toolbar-item-bold button",
+)
+DEFAULT_BODY_FONT_SIZE = 15
+
+
 def _click_title(root: EditorRoot) -> None:
     loc = resolve_title_locator(root)
     loc.click(timeout=8000)
     time.sleep(0.4)
+
+
+def _toolbar_locator(root: EditorRoot, page: Page, selector: str):
+    for target in (root, page):
+        loc = target.locator(selector).first
+        if loc.count() > 0:
+            return loc
+    return root.locator(selector).first
+
+
+def _select_current_line(page: Page, root: EditorRoot) -> None:
+    kb = editor_keyboard(page, root)
+    kb.press("End")
+    time.sleep(0.05)
+    kb.press("Shift+Home")
+    time.sleep(0.25)
+
+
+def _apply_font_size(page: Page, root: EditorRoot, size: int) -> None:
+    btn = _toolbar_locator(root, page, FONT_SIZE_BTN)
+    btn.click(timeout=4000)
+    time.sleep(0.25)
+    option_sel = FONT_SIZE_OPTION.format(size=size)
+    option = _toolbar_locator(root, page, option_sel)
+    option.click(timeout=4000)
+    time.sleep(0.25)
+
+
+def _apply_bold(page: Page, root: EditorRoot) -> None:
+    for sel in BOLD_BTN_SELECTORS:
+        btn = _toolbar_locator(root, page, sel)
+        if btn.count() == 0:
+            continue
+        try:
+            btn.click(timeout=4000)
+            time.sleep(0.25)
+            return
+        except PlaywrightTimeout:
+            continue
+    log("굵게 버튼 없음 — 건너뜀")
+
+
+def _bold_is_active(page: Page, root: EditorRoot) -> bool:
+    for sel in BOLD_BTN_SELECTORS:
+        btn = _toolbar_locator(root, page, sel)
+        if btn.count() == 0:
+            continue
+        classes = btn.get_attribute("class") or ""
+        if "se-is-selected" in classes:
+            return True
+        if btn.get_attribute("aria-pressed") == "true":
+            return True
+    return False
+
+
+def _turn_off_bold(page: Page, root: EditorRoot) -> None:
+    if _bold_is_active(page, root):
+        _apply_bold(page, root)
+
+
+def _reset_typing_style(page: Page, root: EditorRoot) -> None:
+    """소제목 스타일이 다음 본문에 이어지지 않도록 기본값으로 복원."""
+    para = resolve_last_body_paragraph(root)
+    if para.count() > 0:
+        try:
+            para.click(timeout=2000)
+            time.sleep(0.1)
+        except PlaywrightTimeout:
+            pass
+    _apply_font_size(page, root, DEFAULT_BODY_FONT_SIZE)
+    _turn_off_bold(page, root)
+
+
+def _apply_subheading_style(page: Page, root: EditorRoot, *, level: int) -> None:
+    size = 24 if level <= 2 else 19
+    _apply_font_size(page, root, size)
+    _select_current_line(page, root)
+    _apply_bold(page, root)
+
+
+def _new_body_line(page: Page, root: EditorRoot) -> None:
+    _focus_at_end(page, root)
+    kb = editor_keyboard(page, root)
+    before = body_paragraph_locator(root).count()
+    kb.press("Enter")
+    time.sleep(0.3)
+    deadline = time.time() + 2.0
+    while time.time() < deadline and body_paragraph_locator(root).count() <= before:
+        time.sleep(0.1)
 
 
 def _focus_at_end(page: Page, root: EditorRoot) -> None:
@@ -237,19 +336,30 @@ def insert_text(page: Page, text: str, *, root: EditorRoot) -> None:
     if not plain.strip():
         return
     log(f"본문 블록 ({len(plain)}자)…")
-    _focus_at_end(page, root)
-    kb = editor_keyboard(page, root)
-    before = body_paragraph_locator(root).count()
-    kb.press("Enter")
-    time.sleep(0.3)
-
-    deadline = time.time() + 2.0
-    while time.time() < deadline and body_paragraph_locator(root).count() <= before:
-        time.sleep(0.1)
-
+    _new_body_line(page, root)
+    _reset_typing_style(page, root)
     _type_in_paragraph(page, root, plain)
-    kb.press("Enter")
+    editor_keyboard(page, root).press("Enter")
     time.sleep(0.35)
+
+
+def insert_subheading(page: Page, text: str, *, root: EditorRoot, level: int = 2) -> None:
+    """## / ### → 글자 24(또는 19) + 굵게."""
+    if not text.strip():
+        return
+    label = "소제목" if level <= 2 else "소소제목"
+    log(f"{label} ({len(text.strip())}자)…")
+    _new_body_line(page, root)
+    _reset_typing_style(page, root)
+    _type_in_paragraph(page, root, text.strip())
+    _select_current_line(page, root)
+    _apply_subheading_style(page, root, level=level)
+    kb = editor_keyboard(page, root)
+    kb.press("End")
+    time.sleep(0.1)
+    kb.press("Enter")
+    time.sleep(0.2)
+    _reset_typing_style(page, root)
 
 
 def fill_title(page: Page, title: str, *, root: EditorRoot) -> None:

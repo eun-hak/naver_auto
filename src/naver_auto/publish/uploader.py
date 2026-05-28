@@ -16,6 +16,7 @@ from naver_auto.image.resolver import resolve_draft_images
 from naver_auto.paths import DRAFTS_DIR, load_yaml
 from naver_auto.publish.editor_actions import (
     fill_title,
+    insert_subheading,
     insert_text,
     log as editor_log,
     publish_live,
@@ -49,6 +50,37 @@ def _strip_header(body: str) -> str:
     return "\n".join(lines)
 
 
+def _parse_text_segment(text: str) -> list[dict[str, Any]]:
+    """텍스트 덩어리를 본문/소제목 블록으로 분리."""
+    blocks: list[dict[str, Any]] = []
+    paragraph: list[str] = []
+
+    def flush_paragraph() -> None:
+        if not paragraph:
+            return
+        content = "\n".join(paragraph).strip()
+        if content:
+            blocks.append({"type": "text", "content": content})
+        paragraph.clear()
+
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("## "):
+            flush_paragraph()
+            blocks.append({"type": "heading2", "content": stripped[3:].strip()})
+        elif stripped.startswith("### "):
+            flush_paragraph()
+            blocks.append({"type": "heading3", "content": stripped[4:].strip()})
+        elif stripped.startswith("#"):
+            continue
+        elif not stripped:
+            flush_paragraph()
+        else:
+            paragraph.append(line)
+    flush_paragraph()
+    return blocks
+
+
 def _parse_blocks(body: str) -> tuple[str, list[dict[str, Any]]]:
     body = _strip_header(body)
     title = "제목 없음"
@@ -66,15 +98,15 @@ def _parse_blocks(body: str) -> tuple[str, list[dict[str, Any]]]:
     for match in IMAGE_MD_RE.finditer(content):
         text_part = content[pos : match.start()].strip()
         if text_part:
-            blocks.append({"type": "text", "content": text_part})
+            blocks.extend(_parse_text_segment(text_part))
         blocks.append({"type": "image", "index": int(match.group(2))})
         pos = match.end()
     tail = content[pos:].strip()
     if tail:
-        blocks.append({"type": "text", "content": tail})
+        blocks.extend(_parse_text_segment(tail))
 
     if not blocks and content.strip():
-        blocks.append({"type": "text", "content": content.strip()})
+        blocks.extend(_parse_text_segment(content.strip()))
 
     return title, blocks
 
@@ -107,6 +139,9 @@ def upload_draft_on_page(
     for i, block in enumerate(blocks, 1):
         if block["type"] == "text":
             insert_text(page, block["content"], root=root)
+        elif block["type"] in ("heading2", "heading3"):
+            level = 2 if block["type"] == "heading2" else 3
+            insert_subheading(page, block["content"], root=root, level=level)
         elif block["type"] == "image":
             img_path = images_dir / f"{block['index']:02d}.jpg"
             if img_path.exists():
