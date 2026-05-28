@@ -213,6 +213,21 @@ def _select_current_line(page: Page, root: EditorRoot) -> None:
     time.sleep(0.25)
 
 
+def _select_paragraph_text(page: Page, root: EditorRoot) -> None:
+    """문단 전체 선택 — 줄바꿈된 소제목도 포함 (Shift+Home은 마지막 줄만)."""
+    para = resolve_last_body_paragraph(root)
+    if para.count() > 0:
+        try:
+            para.click(timeout=3000)
+            time.sleep(0.1)
+            para.click(click_count=3, timeout=3000)
+            time.sleep(0.25)
+            return
+        except PlaywrightTimeout:
+            pass
+    _select_current_line(page, root)
+
+
 def _apply_font_size(page: Page, root: EditorRoot, size: int) -> None:
     btn = _toolbar_locator(root, page, FONT_SIZE_BTN)
     btn.click(timeout=4000)
@@ -270,9 +285,25 @@ def _reset_typing_style(page: Page, root: EditorRoot) -> None:
 
 def _apply_subheading_style(page: Page, root: EditorRoot, *, level: int) -> None:
     size = 24 if level <= 2 else 19
+    _select_paragraph_text(page, root)
     _apply_font_size(page, root, size)
-    _select_current_line(page, root)
-    _apply_bold(page, root)
+    if not _bold_is_active(page, root):
+        _apply_bold(page, root)
+
+
+def _enable_subheading_typing_style(page: Page, root: EditorRoot, *, level: int) -> None:
+    """입력 전 24pt+굵게 — 줄바꿈돼도 전체에 스타일 적용."""
+    para = resolve_last_body_paragraph(root)
+    if para.count() > 0:
+        try:
+            para.click(timeout=3000)
+            time.sleep(0.1)
+        except PlaywrightTimeout:
+            pass
+    size = 24 if level <= 2 else 19
+    _apply_font_size(page, root, size)
+    if not _bold_is_active(page, root):
+        _apply_bold(page, root)
 
 
 def _new_body_line(page: Page, root: EditorRoot) -> None:
@@ -348,13 +379,15 @@ def insert_subheading(page: Page, text: str, *, root: EditorRoot, level: int = 2
     if not text.strip():
         return
     label = "소제목" if level <= 2 else "소소제목"
-    log(f"{label} ({len(text.strip())}자)…")
+    plain = text.strip()
+    log(f"{label} ({len(plain)}자)…")
     _new_body_line(page, root)
     _reset_typing_style(page, root)
-    _type_in_paragraph(page, root, text.strip())
-    _select_current_line(page, root)
-    _apply_subheading_style(page, root, level=level)
+    _enable_subheading_typing_style(page, root, level=level)
     kb = editor_keyboard(page, root)
+    kb.type(plain, delay=random.randint(3, 8))
+    time.sleep(0.15)
+    _apply_subheading_style(page, root, level=level)
     kb.press("End")
     time.sleep(0.1)
     kb.press("Enter")
