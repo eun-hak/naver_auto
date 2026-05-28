@@ -194,5 +194,30 @@ def publish_cmd(
         typer.echo(f"  url={meta['naver_url']}")
 
 
+@app.command("ui")
+def ui_cmd(
+    port: int = typer.Option(8787, "--port", "-p", help="웹 UI 포트"),
+    dev: bool = typer.Option(False, "--dev", help="빌드 생략 (frontend npm run dev 와 병행)"),
+) -> None:
+    """웹 대시보드 — React + FastAPI (http://127.0.0.1:8787)."""
+    import subprocess
+    import uvicorn
+
+    from naver_auto.paths import PROJECT_ROOT
+    from naver_auto.web.app import app as web_app
+
+    static = PROJECT_ROOT / "web" / "static" / "index.html"
+    frontend = PROJECT_ROOT / "frontend"
+    if not dev and not static.exists():
+        typer.echo("React 빌드 중…")
+        subprocess.run(["npm", "install"], cwd=frontend, check=True)
+        subprocess.run(["npm", "run", "build"], cwd=frontend, check=True)
+
+    typer.echo(f"naver-auto UI → http://127.0.0.1:{port}")
+    if dev:
+        typer.echo("개발: cd frontend && npm run dev  (http://127.0.0.1:5173)")
+    uvicorn.run(web_app, host="127.0.0.1", port=port, log_level="info")
+
+
 if __name__ == "__main__":
     app()

@@ -6,7 +6,7 @@ import os
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator
+from typing import Callable, Iterator
 
 from playwright.sync_api import Browser, BrowserContext, Frame, Page, sync_playwright
 
@@ -50,6 +50,9 @@ def editor_ready(page: Page) -> bool:
 def wait_for_editor(page: Page, *, timeout_ms: int = 60000) -> Frame | Page:
     from naver_auto.publish.editor_actions import dismiss_popups
 
+    if "blog.naver.com" not in page.url and "nid.naver.com" not in page.url:
+        return resolve_editor_root(page, timeout_sec=min(max(timeout_ms // 1000, 15), 30))
+
     deadline = time.time() + timeout_ms / 1000
     while time.time() < deadline:
         found = find_editor_root(page)
@@ -62,7 +65,62 @@ def wait_for_editor(page: Page, *, timeout_ms: int = 60000) -> Frame | Page:
             "네이버 로그인 세션이 만료되었습니다. "
             "`python scripts/login_once.py`로 다시 로그인하세요."
         )
-    return resolve_editor_root(page, timeout_sec=min(max(timeout_ms // 1000, 15), 45))
+    return resolve_editor_root(page, timeout_sec=min(max(timeout_ms // 1000, 15), 30))
+
+
+def open_editor_page(
+    page: Page,
+    *,
+    allow_manual: bool = True,
+    log: Callable[[str], None] | None = None,
+) -> Frame | Page:
+    """글쓰기 에디터까지 이동 — login_once.py와 동일한 순서."""
+    import os
+
+    from naver_auto.publish.editor_actions import dismiss_popups
+    from naver_auto.publish.naver_login import LOGIN_URL, ensure_naver_login
+
+    def _log(msg: str) -> None:
+        if log:
+            log(msg)
+
+    naver_id = os.getenv("NAVER_ID", "").strip()
+    password = os.getenv("NAVER_PASSWORD", "").strip()
+
+    _log(f"글쓰기 URL 이동: {write_url()}")
+    page.goto(write_url(), wait_until="domcontentloaded")
+    for _ in range(8):
+        root = find_editor_root(page)
+        if root:
+            dismiss_popups(page, root=root)
+            _log("에디터 확인 (기존 세션)")
+            return root
+        time.sleep(0.4)
+
+    if not naver_id or not password:
+        raise RuntimeError(
+            "네이버 세션이 없습니다. `.env`에 NAVER_ID/PASSWORD 설정 후 "
+            "`python scripts/login_once.py`를 실행하세요."
+        )
+
+    _log("로그인 페이지 이동…")
+    page.goto(LOGIN_URL, wait_until="domcontentloaded")
+    result = ensure_naver_login(page, naver_id, password, allow_manual=allow_manual)
+    if not result.ok:
+        raise RuntimeError(f"네이버 로그인 실패: {result.message}")
+    _log(result.message)
+
+    _log(f"글쓰기 URL 재이동: {write_url()}")
+    page.goto(write_url(), wait_until="domcontentloaded")
+    root = find_editor_root(page)
+    if root:
+        dismiss_popups(page, root=root)
+        _log("에디터 확인")
+        return root
+    root = wait_for_editor(page, timeout_ms=30000)
+    dismiss_popups(page, root=root)
+    _log("에디터 확인 (wait)")
+    return root
 
 
 def session_exists() -> bool:

@@ -19,6 +19,8 @@ dependencies = [
   "pyperclip>=1.8",
   "tenacity>=8.2",
   "google-generativeai>=0.8",
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
 ]
 
 [project.optional-dependencies]
@@ -26,6 +28,7 @@ dev = ["ruff>=0.4"]
 
 [project.scripts]
 naver-auto = "naver_auto.cli:app"
+naver-auto-ui = "naver_auto.web.server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

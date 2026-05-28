@@ -27,13 +27,11 @@ from naver_auto.publish.editor_actions import (
     wait_editor_ready,
 )
 from naver_auto.publish.daily_limit import can_publish, record_publish
-from naver_auto.publish.naver_login import LOGIN_URL, ensure_naver_login
 from naver_auto.publish.playwright_client import (
     browser_context,
-    editor_ready,
+    open_editor_page,
     save_debug_screenshot,
     session_exists,
-    wait_for_editor,
     write_url,
 )
 
@@ -162,23 +160,8 @@ def upload_draft_on_page(
     return url
 
 
-def _ensure_editor_page(page) -> None:
-    if editor_ready(page):
-        try:
-            wait_for_editor(page, timeout_ms=15000)
-            return
-        except RuntimeError:
-            pass
-
-    naver_id = os.getenv("NAVER_ID", "").strip()
-    password = os.getenv("NAVER_PASSWORD", "").strip()
-    if "nid.naver.com" in page.url or not editor_ready(page):
-        page.goto(LOGIN_URL, wait_until="domcontentloaded")
-        result = ensure_naver_login(page, naver_id, password, allow_manual=True)
-        if not result.ok:
-            raise RuntimeError(f"네이버 로그인 실패: {result.message}")
-
-    wait_for_editor(page, timeout_ms=60000)
+def _ensure_editor_page(page, *, allow_manual: bool = True, log=None) -> None:
+    open_editor_page(page, allow_manual=allow_manual, log=log)
 
 
 @retry(stop=stop_after_attempt(2), wait=wait_fixed(3))
@@ -186,10 +169,12 @@ def _upload_to_naver(
     draft_dir: Path,
     *,
     live: bool = False,
+    allow_manual_login: bool = True,
+    log=None,
 ) -> str | None:
     with browser_context(headless=False) as (_, context):
         page = context.new_page()
-        _ensure_editor_page(page)
+        _ensure_editor_page(page, allow_manual=allow_manual_login, log=log)
         return upload_draft_on_page(page, draft_dir, live=live)
 
 
@@ -198,6 +183,8 @@ def publish_draft(
     *,
     live: bool = False,
     skip_limit: bool = False,
+    allow_manual_login: bool | None = None,
+    log=None,
 ) -> Path:
     if not session_exists() and not (os.getenv("NAVER_ID") and os.getenv("NAVER_PASSWORD")):
         raise RuntimeError(
@@ -220,7 +207,14 @@ def publish_draft(
     print("[publish] 이미지 확인…", flush=True)
     resolve_draft_images(draft_dir)
     print("[publish] 네이버 업로드…", flush=True)
-    url = _upload_to_naver(draft_dir, live=live)
+    if allow_manual_login is None:
+        allow_manual_login = os.isatty(0)
+    url = _upload_to_naver(
+        draft_dir,
+        live=live,
+        allow_manual_login=allow_manual_login,
+        log=log,
+    )
 
     meta_path = draft_dir / "meta.json"
     meta = json.loads(meta_path.read_text(encoding="utf-8"))

@@ -168,4 +168,8 @@ def create_draft_from_keyword(
     with (out_dir / "body.md").open("w", encoding="utf-8") as f:
         f.write(header + body + "\n")
 
+    from naver_auto.image.planner import ensure_image_plan
+
+    ensure_image_plan(out_dir, regen=True)
+
     return out_dir

@@ -1,24 +1,99 @@
-"""초안 이미지 해석 및 생성."""
+"""초안 이미지 해석 및 생성 — 슬롯별 AI 계획 + 검색."""
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-from naver_auto.image.cards import create_card_image, create_placeholder_set
-from naver_auto.image.gemini import gemini_configured, generate_or_fallback
-from naver_auto.image.sns_fetcher import fetch_images_for_slots
+from naver_auto.image.cards import create_card_image
+from naver_auto.image.gemini import gemini_configured, generate_gemini_image
+from naver_auto.image.planner import ensure_image_plan, plan_by_slot
+from naver_auto.image.sns_fetcher import fetch_one_image
 from naver_auto.paths import INBOX_DIR, load_yaml
 
 
-def _extract_image_slots(body: str) -> list[tuple[int, str]]:
+def _extract_image_slots(body: str) -> list[int]:
     import re
 
     pattern = re.compile(r"!\[이미지\s*(\d+)\]\(images/(\d+)\.jpg\)")
-    slots: list[tuple[int, str]] = []
+    nums: list[int] = []
     for match in pattern.finditer(body):
-        slots.append((int(match.group(1)), match.group(2)))
-    return slots
+        nums.append(int(match.group(2)))
+    return nums
+
+
+def _resolve_slot_image(
+    slot: int,
+    *,
+    out_path: Path,
+    keyword: str,
+    slot_plan: dict | None,
+    publish_cfg: dict,
+    sns_cfg: dict,
+    refs: list,
+    user_files: list[Path],
+    used_hashes: set[str],
+    gemini_used: int,
+    gemini_limit: int,
+) -> tuple[bool, dict, int]:
+    priority = publish_cfg.get("image_priority", ["user", "sns", "gemini", "card"])
+    section = (slot_plan or {}).get("section") or f"섹션 {slot}"
+    search_query = (slot_plan or {}).get("search_query") or section or keyword
+    gemini_prompt = (slot_plan or {}).get("gemini_prompt") or f"{section} food photo, no text"
+    subtitle = section[:40]
+
+    for source in priority:
+        if source == "user" and user_files:
+            src = user_files[(slot - 1) % len(user_files)]
+            out_path.write_bytes(src.read_bytes())
+            return True, {"source": "user", "page_url": str(src), "search_query": search_query}, gemini_used
+
+        if source == "sns" and sns_cfg.get("enabled", True):
+            ok, attr = fetch_one_image(
+                search_query,
+                out_path,
+                cfg=sns_cfg,
+                used_url_hashes=used_hashes,
+                references=refs if slot == 1 else None,
+            )
+            if ok and attr:
+                attr["source"] = attr.get("source") or "sns"
+                attr["slot"] = slot
+                return True, attr, gemini_used
+
+        if source == "gemini" and gemini_configured() and gemini_used < gemini_limit:
+            result = generate_gemini_image(
+                out_path,
+                prompt=gemini_prompt,
+                keyword=keyword,
+                index=slot - 1,
+            )
+            if result:
+                return (
+                    True,
+                    {
+                        "source": "gemini",
+                        "page_url": "",
+                        "search_query": search_query,
+                        "slot": slot,
+                    },
+                    gemini_used + 1,
+                )
+
+        if source == "card":
+            create_card_image(out_path, title=keyword, subtitle=subtitle, index=slot - 1)
+            return (
+                True,
+                {"source": "card", "page_url": "", "search_query": search_query, "slot": slot},
+                gemini_used,
+            )
+
+    create_card_image(out_path, title=keyword, subtitle=subtitle, index=slot - 1)
+    return (
+        True,
+        {"source": "card", "page_url": "", "search_query": search_query, "slot": slot},
+        gemini_used,
+    )
 
 
 def resolve_draft_images(draft_dir: Path, *, force: bool = False) -> list[Path]:
@@ -30,111 +105,63 @@ def resolve_draft_images(draft_dir: Path, *, force: bool = False) -> list[Path]:
     meta = json.loads(meta_path.read_text(encoding="utf-8"))
     body = body_path.read_text(encoding="utf-8")
     publish_cfg = load_yaml("publish.yaml")
-    priority = publish_cfg.get("image_priority", ["user", "sns", "news_og", "gemini", "card"])
-    gemini_limit = int(publish_cfg.get("gemini_images_per_post", 2))
     sns_cfg = publish_cfg.get("sns", {})
+    gemini_limit = int(publish_cfg.get("gemini_images_per_post", 2))
+    planning_cfg = publish_cfg.get("image_planning", {})
 
     keyword = meta.get("keyword", "블로그")
     images_dir = draft_dir / "images"
     images_dir.mkdir(exist_ok=True)
 
-    slots = _extract_image_slots(body)
-    slot_count = max(len(slots), 6)
+    slot_nums = _extract_image_slots(body)
+    slot_count = max(len(slot_nums), max(slot_nums) if slot_nums else 0, 6)
 
     if force:
         for old in images_dir.glob("*.jpg"):
             old.unlink()
+        if planning_cfg.get("enabled", True):
+            ensure_image_plan(draft_dir, regen=True)
+    elif planning_cfg.get("enabled", True):
+        ensure_image_plan(draft_dir, regen=False)
+
+    plan = plan_by_slot(meta.get("image_plan") or ensure_image_plan(draft_dir))
 
     inbox_dir = INBOX_DIR / keyword
     user_files = sorted(
         [p for p in inbox_dir.glob("*") if p.is_file()] if inbox_dir.exists() else []
     )
     refs = meta.get("references", [])
-    attributions: list[dict[str, str]] = list(meta.get("image_attributions", []))
+    attributions: list[dict] = []
+    used_hashes: set[str] = set()
+    gemini_used = 0
 
     created: list[Path] = []
-    gemini_used = 0
-    sns_used = False
-
     for i in range(1, slot_count + 1):
         out_path = images_dir / f"{i:02d}.jpg"
         if not force and out_path.exists() and out_path.stat().st_size > 0:
             created.append(out_path)
             continue
 
-        resolved = False
-        for source in priority:
-            if source == "user" and user_files:
-                src = user_files[(i - 1) % len(user_files)]
-                out_path.write_bytes(src.read_bytes())
-                created.append(out_path)
-                attributions.append({"source": "user", "page_url": str(src)})
-                resolved = True
-                break
-
-            if source == "sns" and sns_cfg.get("enabled", True) and not sns_used:
-                saved, attrs = fetch_images_for_slots(
-                    keyword,
-                    slot_count=slot_count,
-                    references=refs,
-                    cfg=sns_cfg,
-                    images_dir=images_dir,
-                )
-                if saved:
-                    sns_used = True
-                    attributions.extend(attrs)
-                    created = saved[:slot_count]
-                    while len(created) < slot_count:
-                        idx = len(created) + 1
-                        fallback = images_dir / f"{idx:02d}.jpg"
-                        create_card_image(
-                            fallback,
-                            title=keyword,
-                            subtitle=f"섹션 {idx}",
-                            index=idx - 1,
-                        )
-                        created.append(fallback)
-                    resolved = True
-                    break
-
-            if source == "gemini" and gemini_configured() and gemini_used < gemini_limit:
-                generate_or_fallback(
-                    out_path,
-                    keyword=keyword,
-                    section_hint=f"섹션 {i}",
-                    index=i - 1,
-                )
-                created.append(out_path)
-                attributions.append({"source": "gemini", "page_url": ""})
-                gemini_used += 1
-                resolved = True
-                break
-
-            if source == "card":
-                create_card_image(
-                    out_path,
-                    title=keyword,
-                    subtitle=f"섹션 {i}",
-                    index=i - 1,
-                )
-                created.append(out_path)
-                attributions.append({"source": "card", "page_url": ""})
-                resolved = True
-                break
-
-        if resolved and sns_used:
-            break
-
-        if not resolved:
-            create_card_image(
-                out_path,
-                title=keyword,
-                subtitle=f"섹션 {i}",
-                index=i - 1,
-            )
+        slot_plan = plan.get(i)
+        ok, attr, gemini_used = _resolve_slot_image(
+            i,
+            out_path=out_path,
+            keyword=keyword,
+            slot_plan=slot_plan,
+            publish_cfg=publish_cfg,
+            sns_cfg=sns_cfg,
+            refs=refs,
+            user_files=user_files,
+            used_hashes=used_hashes,
+            gemini_used=gemini_used,
+            gemini_limit=gemini_limit,
+        )
+        if ok:
             created.append(out_path)
+            attributions.append(attr)
 
     created = sorted(images_dir.glob("*.jpg"))[:slot_count]
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
     meta["images_resolved"] = True
     meta["image_count"] = len(created)
     meta["image_sources"] = [a.get("source", "") for a in attributions[: len(created)]]

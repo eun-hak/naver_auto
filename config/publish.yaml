@@ -9,6 +9,8 @@ image_priority:
   - gemini
   - card
 gemini_images_per_post: 2
+image_planning:
+  enabled: true
 sns:
   enabled: true
   max_candidates: 24

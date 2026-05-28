@@ -11,3 +11,6 @@ dist/
 build/
 .playwright-debug/
 debug/
+frontend/node_modules/
+web/static/assets/
+web/static/index.html

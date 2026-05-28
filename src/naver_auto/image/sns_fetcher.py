@@ -172,6 +172,8 @@ def collect_social_images(
 
     def add(items: list[SocialImage]) -> None:
         for item in items:
+            if is_junk_image(item):
+                continue
             key = item.image_url.split("?")[0]
             if key in seen_urls:
                 continue
@@ -245,6 +247,89 @@ def _fit_cover(img: Image.Image, width: int, height: int) -> Image.Image:
     return resized.crop((left, top, left + width, top + height))
 
 
+def fetch_one_image(
+    query: str,
+    output_path: Path,
+    *,
+    cfg: dict[str, Any] | None = None,
+    used_url_hashes: set[str] | None = None,
+    references: list[dict[str, Any]] | None = None,
+) -> tuple[bool, dict[str, str] | None]:
+    """단일 슬롯용 — 쿼리별 최적 이미지 1장."""
+    cfg = cfg or {}
+    used = used_url_hashes or set()
+    min_w = int(cfg.get("min_width", 400))
+    min_h = int(cfg.get("min_height", 300))
+    per_query = int(cfg.get("per_query", 8))
+
+    queries = [query.strip()]
+    if query.strip():
+        queries.extend(
+            q
+            for q in (
+                f"{query} 맛집",
+                f"{query} 음식",
+                f"{query} site:blog.naver.com",
+            )
+            if q not in queries
+        )
+
+    candidates: list[SocialImage] = []
+    seen: set[str] = set()
+    ref_urls = [str(r.get("link", "")) for r in (references or []) if r.get("link")]
+    for item in fetch_og_from_pages(ref_urls, limit=3):
+        key = item.image_url.split("?")[0]
+        if key not in seen:
+            seen.add(key)
+            candidates.append(item)
+
+    for q in queries:
+        if not q:
+            continue
+        for item in _search_naver_images(q, display=per_query):
+            key = item.image_url.split("?")[0]
+            if key in seen:
+                continue
+            seen.add(key)
+            candidates.append(item)
+
+    for candidate in candidates:
+        if is_junk_image(candidate):
+            continue
+        digest = hashlib.md5(candidate.image_url.encode()).hexdigest()[:8]
+        if digest in used:
+            continue
+        if download_as_jpeg(candidate, output_path, min_width=min_w, min_height=min_h):
+            used.add(digest)
+            attr = candidate.to_dict()
+            attr["search_query"] = query
+            return True, attr
+    return False, None
+
+
+JUNK_URL_PARTS = (
+    "123rf",
+    "shutterstock",
+    "gettyimages",
+    "dreamstime",
+    "istockphoto",
+    "depositphotos",
+    "vector",
+    "icon",
+    "illustration",
+    "clipart",
+    "install-symbol",
+    "flat-illustration",
+    "emoji",
+    "sticker",
+)
+
+
+def is_junk_image(image: SocialImage) -> bool:
+    blob = f"{image.image_url} {image.title} {image.page_url}".lower()
+    return any(part in blob for part in JUNK_URL_PARTS)
+
+
 def fetch_images_for_slots(
     keyword: str,
     *,
@@ -254,13 +339,15 @@ def fetch_images_for_slots(
     images_dir: Path,
 ) -> tuple[list[Path], list[dict[str, str]]]:
     candidates = collect_social_images(keyword, references=references, cfg=cfg)
-    saved: list[PathType] = []
+    saved: list[Path] = []
     attributions: list[dict[str, str]] = []
     used_hashes: set[str] = set()
 
     for candidate in candidates:
         if len(saved) >= slot_count:
             break
+        if is_junk_image(candidate):
+            continue
         digest = hashlib.md5(candidate.image_url.encode()).hexdigest()[:8]
         if digest in used_hashes:
             continue

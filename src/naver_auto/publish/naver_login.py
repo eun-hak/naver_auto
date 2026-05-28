@@ -59,7 +59,11 @@ def human_login(page: Page, naver_id: str, password: str) -> LoginResult:
 
     if "nid.naver.com" not in page.url:
         page.goto(LOGIN_URL, wait_until="domcontentloaded")
-        _pause(100, 200)
+        _pause(200, 400)
+
+    # 영구 프로필 등으로 이미 로그인된 경우 로그인 페이지에서 바로 이탈
+    if "nid.naver.com" not in page.url:
+        return LoginResult(True, message="이미 로그인됨")
 
     id_input = page.locator("#id").first
     pw_input = page.locator("#pw").first

@@ -217,3 +217,79 @@ def generate_meta_tags(seo_title: str, focus_keyword: str) -> dict[str, str]:
         "meta_description": str(data.get("meta_description", "")).strip(),
         "tags": tags_str,
     }
+
+
+def plan_image_slots(
+    keyword: str,
+    title: str,
+    slots: list[dict],
+    *,
+    body_excerpt: str = "",
+) -> list[dict]:
+    """슬롯별 네이버 이미지 검색어·alt·Gemini 프롬프트 (1회 호출)."""
+    slots_json = json.dumps(slots, ensure_ascii=False, indent=2)
+    prompt = f"""블로그 글의 이미지 슬롯별 검색 계획을 JSON으로 작성해.
+
+키워드: {keyword}
+제목: {title}
+
+슬롯 (소제목 기준):
+{slots_json}
+
+본문 발췌:
+{body_excerpt[:2000]}
+
+JSON 형식 (slots 배열만):
+{{
+  "slots": [
+    {{
+      "slot": 1,
+      "section": "소제목",
+      "search_query": "네이버 이미지 검색용 2~6단어",
+      "alt": "이미지 설명 10~30자",
+      "gemini_prompt": "English food photo prompt, no text overlay"
+    }}
+  ]
+}}
+
+규칙:
+- search_query: 구체적 음식명·지역명·메뉴명 (예: 강화도 순무탕수육, 깐풍기 중국요리)
+- 슬롯마다 search_query를 다르게
+- 아이콘·일러스트·앱 UI 검색어 금지
+- gemini_prompt: 실사 음식 사진 스타일
+"""
+    raw = _generate(
+        prompt,
+        system="한국어 블로그 이미지 기획자. JSON만 출력.",
+        temperature=0.4,
+    )
+    data = parse_json_object(raw)
+    items = data.get("slots", data if isinstance(data, list) else [])
+    if not isinstance(items, list):
+        raise ValueError("slots 배열이 없습니다.")
+
+    by_slot = {int(s["slot"]): s for s in slots if "slot" in s}
+    merged: list[dict] = []
+    for item in items:
+        if not isinstance(item, dict) or "slot" not in item:
+            continue
+        slot = int(item["slot"])
+        base = by_slot.get(slot, {})
+        merged.append(
+            {
+                "slot": slot,
+                "section": str(item.get("section") or base.get("section", "")),
+                "search_query": str(item.get("search_query") or base.get("section") or keyword)[
+                    :60
+                ],
+                "alt": str(item.get("alt") or base.get("alt") or base.get("section", ""))[:80],
+                "gemini_prompt": str(
+                    item.get("gemini_prompt")
+                    or f"{base.get('section', keyword)} food photo, no text"
+                )[:200],
+            }
+        )
+    merged.sort(key=lambda x: x["slot"])
+    if not merged:
+        raise ValueError("유효한 슬롯 계획 없음")
+    return merged

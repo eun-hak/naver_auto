@@ -106,6 +106,11 @@ def main() -> int:
         help="로그인 후 같은 브라우저에서 바로 임시저장",
     )
     parser.add_argument("--live", action="store_true", help="임시저장 대신 즉시 발행")
+    parser.add_argument(
+        "--refresh-images",
+        action="store_true",
+        help="이미지 계획 재생성 + 슬롯별 이미지 재수집",
+    )
     args = parser.parse_args()
     ensure_dirs()
 
@@ -156,7 +161,7 @@ def main() -> int:
             draft_dir = _find_draft(args.publish)
             print(f"임시저장: {draft_dir.name} …", flush=True)
             print("이미지 확인…", flush=True)
-            resolve_draft_images(draft_dir)
+            resolve_draft_images(draft_dir, force=args.refresh_images)
             print("에디터에 글 붙이는 중…", flush=True)
             url = upload_draft_on_page(
                 page, draft_dir, live=args.live, root=editor_root
