@@ -326,17 +326,67 @@ select {
   word-break: break-word;
 }
 
+.image-hint {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.image-hint strong {
+  color: var(--green);
+}
+
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 0.75rem;
 }
 
-.image-grid figure {
+.image-grid figure.image-card {
   background: var(--surface2);
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.image-grid figure.image-card.kept {
+  border-color: var(--green-dim);
+}
+
+.image-grid figure.image-card.refetch {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(77, 159, 255, 0.35);
+}
+
+.image-card-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.image-badge {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.image-badge.keep {
+  background: var(--green-dim);
+  color: #fff;
+}
+
+.image-badge.new {
+  background: var(--accent);
+  color: #fff;
 }
 
 .image-grid img {

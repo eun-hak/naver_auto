@@ -10,12 +10,20 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-import sys
+
+# 시스템 python으로 실행 시 프로젝트 .venv 사용
+_VENV_PY = ROOT / ".venv" / "Scripts" / "python.exe"
+if _VENV_PY.is_file() and Path(sys.executable).resolve() != _VENV_PY.resolve():
+    raise SystemExit(
+        subprocess.call([str(_VENV_PY), str(Path(__file__).resolve()), *sys.argv[1:]])
+    )
 
 sys.path.insert(0, str(ROOT / "src"))
 
@@ -23,7 +31,6 @@ from dotenv import load_dotenv
 
 load_dotenv(ROOT / ".env")
 
-from naver_auto.image.resolver import resolve_draft_images  # noqa: E402
 from naver_auto.paths import DRAFTS_DIR, ensure_dirs  # noqa: E402
 from naver_auto.publish.daily_limit import can_publish, record_publish  # noqa: E402
 from naver_auto.publish.naver_login import (  # noqa: E402
@@ -35,6 +42,7 @@ from naver_auto.publish.editor_actions import dismiss_popups  # noqa: E402
 from naver_auto.publish.playwright_client import (  # noqa: E402
     browser_context,
     editor_ready,
+    goto_write_page,
     save_storage_state,
     wait_for_editor,
     write_url,
@@ -53,7 +61,10 @@ def _find_draft(draft_id: str) -> Path:
 
 
 def _open_editor_or_login(page, naver_id: str, password: str, *, manual_only: bool):
-    page.goto(write_url(), wait_until="domcontentloaded")
+    try:
+        goto_write_page(page, log=print)
+    except RuntimeError:
+        pass
     for _ in range(8):
         root = find_editor_root(page)
         if root:
@@ -76,7 +87,7 @@ def _open_editor_or_login(page, naver_id: str, password: str, *, manual_only: bo
             return None
         print(result.message)
 
-    page.goto(write_url(), wait_until="domcontentloaded")
+    goto_write_page(page, log=print)
     root = find_editor_root(page)
     if root:
         dismiss_popups(page, root=root)
@@ -159,6 +170,8 @@ def main() -> int:
                 print(msg)
                 return 1
             draft_dir = _find_draft(args.publish)
+            from naver_auto.image.resolver import resolve_draft_images
+
             print(f"임시저장: {draft_dir.name} …", flush=True)
             print("이미지 확인…", flush=True)
             resolve_draft_images(draft_dir, force=args.refresh_images)

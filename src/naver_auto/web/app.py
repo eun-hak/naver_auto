@@ -38,6 +38,7 @@ class CreateBody(BaseModel):
 
 class FetchImagesBody(BaseModel):
     force: bool = True
+    keep_slots: list[int] | None = None
 
 
 class PublishBody(BaseModel):
@@ -79,7 +80,11 @@ def api_draft_image(draft_id: str, filename: str):
     path = draft_dir / "images" / filename
     if not path.exists():
         raise HTTPException(404, "image not found")
-    return FileResponse(path, media_type="image/jpeg")
+    return FileResponse(
+        path,
+        media_type="image/jpeg",
+        headers={"Cache-Control": "no-store, must-revalidate"},
+    )
 
 
 @app.post("/api/drafts/create")
@@ -108,7 +113,12 @@ def api_fetch_images(draft_id: str, body: FetchImagesBody):
         raise HTTPException(404, str(exc)) from exc
 
     def task(job):
-        return services.run_fetch_images(job, draft_id, force=body.force)
+        return services.run_fetch_images(
+            job,
+            draft_id,
+            force=body.force,
+            keep_slots=body.keep_slots,
+        )
 
     job = job_manager.submit("fetch-images", task, message="이미지 수집")
     return {"job_id": job.id}

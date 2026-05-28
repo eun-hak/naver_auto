@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import random
 import time
 from dataclasses import dataclass
@@ -52,31 +53,78 @@ def human_type(locator, text: str) -> None:
             _pause(120, 280)
 
 
-def human_login(page: Page, naver_id: str, password: str) -> LoginResult:
-    """로그인 페이지에서 아이디·비밀번호를 사람처럼 입력."""
+def _login_fast_enabled() -> bool:
+    return os.getenv("NAVER_LOGIN_FAST", "1").strip().lower() not in (
+        "0",
+        "false",
+        "no",
+        "off",
+    )
+
+
+def _fast_fill_login(page: Page, naver_id: str, password: str) -> LoginResult:
+    """fill()로 빠른 로그인 (세션 있을 때 권장)."""
+    id_input = page.locator("#id").first
+    pw_input = page.locator("#pw").first
+    id_input.wait_for(state="visible", timeout=5000)
+    id_input.fill(naver_id)
+    pw_input.fill(password)
+    page.locator("#log\\.login, button.btn_login").first.click()
+    try:
+        page.wait_for_function(
+            "() => !window.location.href.includes('nid.naver.com')",
+            timeout=8000,
+        )
+    except Exception:
+        time.sleep(1.2)
+    if captcha_visible(page):
+        return LoginResult(False, captcha=True, message="캡차 표시됨")
+    if "nid.naver.com" not in page.url:
+        return LoginResult(True, message="로그인 성공")
+    if login_error_visible(page):
+        return LoginResult(False, message="아이디·비밀번호 오류 또는 추가 인증 필요")
+    return LoginResult(False, message="로그인 페이지에 남아 있음")
+
+
+def human_login(
+    page: Page,
+    naver_id: str,
+    password: str,
+    *,
+    fast: bool | None = None,
+) -> LoginResult:
+    """로그인 페이지에서 아이디·비밀번호 입력."""
     if not naver_id or not password:
         return LoginResult(False, message="NAVER_ID / NAVER_PASSWORD 미설정")
 
     if "nid.naver.com" not in page.url:
-        page.goto(LOGIN_URL, wait_until="domcontentloaded")
-        _pause(200, 400)
+        page.goto(LOGIN_URL, wait_until="domcontentloaded", timeout=20000)
+        _pause(100, 200)
 
-    # 영구 프로필 등으로 이미 로그인된 경우 로그인 페이지에서 바로 이탈
     if "nid.naver.com" not in page.url:
         return LoginResult(True, message="이미 로그인됨")
 
+    use_fast = _login_fast_enabled() if fast is None else fast
+    if use_fast:
+        return _fast_fill_login(page, naver_id, password)
+
     id_input = page.locator("#id").first
     pw_input = page.locator("#pw").first
-    id_input.wait_for(state="visible", timeout=8000)
+    id_input.wait_for(state="visible", timeout=5000)
 
     human_type(id_input, naver_id)
-    _pause(150, 300)
+    _pause(80, 150)
     human_type(pw_input, password)
-    _pause(200, 400)
+    _pause(100, 200)
 
-    login_btn = page.locator("#log\\.login, button.btn_login").first
-    login_btn.click()
-    _pause(1000, 1800)
+    page.locator("#log\\.login, button.btn_login").first.click()
+    try:
+        page.wait_for_function(
+            "() => !window.location.href.includes('nid.naver.com')",
+            timeout=8000,
+        )
+    except Exception:
+        time.sleep(1.0)
 
     if captcha_visible(page):
         return LoginResult(False, captcha=True, message="캡차 표시됨")
@@ -103,9 +151,10 @@ def ensure_naver_login(
     password: str,
     *,
     allow_manual: bool = True,
+    fast: bool | None = None,
 ) -> LoginResult:
     """로그인 시도 → 캡차 시 수동 대기(선택)."""
-    result = human_login(page, naver_id, password)
+    result = human_login(page, naver_id, password, fast=fast)
     if result.ok:
         return result
 

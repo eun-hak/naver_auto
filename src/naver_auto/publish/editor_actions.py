@@ -23,6 +23,7 @@ from naver_auto.publish.editor_context import (
     resolve_title_locator,
     title_element_id,
 )
+from naver_auto.publish.markdown_format import TextSegment, segments_to_plain
 
 
 def log(msg: str) -> None:
@@ -188,7 +189,20 @@ BOLD_BTN_SELECTORS = (
     "button[data-name='bold']",
     ".se-toolbar-item-bold button",
 )
+LIST_BULLET_SELECTORS = (
+    "button.se-list-bullet-toolbar-button",
+    "button[data-name='list-bullet']",
+    "button.se-toolbar-option-list-bullet-button",
+    ".se-toolbar-item-list-bullet button",
+)
+LIST_NUMBER_SELECTORS = (
+    "button.se-list-decimal-toolbar-button",
+    "button[data-name='list-number']",
+    "button.se-toolbar-option-list-decimal-button",
+    ".se-toolbar-item-list-number button",
+)
 DEFAULT_BODY_FONT_SIZE = 15
+BOLD_LABEL_FONT_SIZE = 16
 
 
 def _click_title(root: EditorRoot) -> None:
@@ -333,12 +347,8 @@ def _focus_at_end(page: Page, root: EditorRoot) -> None:
     time.sleep(0.1)
 
 
-def _type_in_paragraph(page: Page, root: EditorRoot, plain: str) -> None:
-    """본문 문단에 텍스트 입력 — 클릭 실패 시 키보드 fallback."""
-    kb = editor_keyboard(page, root)
-    delay = random.randint(3, 8)
+def _focus_body_paragraph(page: Page, root: EditorRoot) -> None:
     para = resolve_last_body_paragraph(root)
-
     if para.count() > 0:
         for click_force in (False, True):
             try:
@@ -347,22 +357,75 @@ def _type_in_paragraph(page: Page, root: EditorRoot, plain: str) -> None:
                 else:
                     para.scroll_into_view_if_needed(timeout=2000)
                     para.click(timeout=3000)
-                para.press_sequentially(plain, delay=delay)
                 return
             except PlaywrightTimeout:
                 continue
         try:
             para.focus(timeout=2000)
-            para.press_sequentially(plain, delay=delay)
             return
         except PlaywrightTimeout:
             pass
+    resolve_body_focus_locator(root).click(timeout=5000)
 
-    log("문단 클릭 실패 — 키보드 직접 입력")
+
+def _type_in_paragraph(page: Page, root: EditorRoot, plain: str) -> None:
+    """본문 문단에 텍스트 입력 — 한 줄 단위 (중간 줄바꿈 방지)."""
+    if not plain:
+        return
+    kb = editor_keyboard(page, root)
+    delay = random.randint(2, 5)
+    _focus_body_paragraph(page, root)
     kb.type(plain, delay=delay)
 
 
+def _click_toolbar_button(page: Page, root: EditorRoot, selectors: tuple[str, ...]) -> bool:
+    for sel in selectors:
+        btn = _toolbar_locator(root, page, sel)
+        if btn.count() == 0:
+            continue
+        try:
+            btn.click(timeout=4000)
+            time.sleep(0.25)
+            return True
+        except PlaywrightTimeout:
+            continue
+    return False
+
+
+def _type_segments(page: Page, root: EditorRoot, segments: list[TextSegment]) -> None:
+    plain = segments_to_plain(segments)
+    if not plain:
+        return
+    if not any(s.bold for s in segments):
+        _type_in_paragraph(page, root, plain)
+        return
+    kb = editor_keyboard(page, root)
+    delay = random.randint(2, 5)
+    _focus_body_paragraph(page, root)
+    for seg in segments:
+        if not seg.text:
+            continue
+        if seg.bold:
+            if not _bold_is_active(page, root):
+                _apply_bold(page, root)
+            kb.type(seg.text, delay=delay)
+            if _bold_is_active(page, root):
+                _apply_bold(page, root)
+        else:
+            if _bold_is_active(page, root):
+                _apply_bold(page, root)
+            kb.type(seg.text, delay=delay)
+
+
 def insert_text(page: Page, text: str, *, root: EditorRoot) -> None:
+    """마크다운 텍스트 → 서식 블록 삽입."""
+    from naver_auto.publish.markdown_format import parse_text_to_blocks
+
+    blocks = parse_text_to_blocks(text)
+    if blocks:
+        for block in blocks:
+            insert_formatted_block(page, block, root=root)
+        return
     plain = markdown_to_plain(text)
     if not plain.strip():
         return
@@ -372,6 +435,128 @@ def insert_text(page: Page, text: str, *, root: EditorRoot) -> None:
     _type_in_paragraph(page, root, plain)
     editor_keyboard(page, root).press("Enter")
     time.sleep(0.35)
+
+
+def insert_bold_heading(page: Page, root: EditorRoot, segments: list[TextSegment]) -> None:
+    plain = segments_to_plain(segments)
+    if not plain.strip():
+        return
+    log(f"굵은 소제목 ({plain})…")
+    _new_body_line(page, root)
+    _reset_typing_style(page, root)
+    _apply_font_size(page, root, BOLD_LABEL_FONT_SIZE)
+    if not _bold_is_active(page, root):
+        _apply_bold(page, root)
+    _type_segments(page, root, segments)
+    _reset_typing_style(page, root)
+    editor_keyboard(page, root).press("Enter")
+    time.sleep(0.3)
+
+
+def insert_paragraph_segments(page: Page, root: EditorRoot, segments: list[TextSegment]) -> None:
+    plain = segments_to_plain(segments)
+    if not plain.strip():
+        return
+    _new_body_line(page, root)
+    _reset_typing_style(page, root)
+    _type_segments(page, root, segments)
+    editor_keyboard(page, root).press("Enter")
+    time.sleep(0.25)
+
+
+def _insert_list_items(
+    page: Page,
+    root: EditorRoot,
+    items: list[list[TextSegment]],
+    *,
+    ordered: bool,
+    start_number: int = 1,
+    indent: str = "",
+) -> None:
+    """에디터 목록 버튼 대신 • / 1. 접두어로 안정 삽입."""
+    if not items:
+        return
+    label = "번호" if ordered else "글머리"
+    log(f"{label} 목록 {len(items)}항목…")
+    kb = editor_keyboard(page, root)
+
+    for idx, segments in enumerate(items):
+        _new_body_line(page, root)
+        _reset_typing_style(page, root)
+        prefix = f"{indent}{start_number + idx}. " if ordered else f"{indent}• "
+        _focus_body_paragraph(page, root)
+        kb.type(prefix, delay=random.randint(2, 4))
+        _type_segments(page, root, segments)
+        kb.press("Enter")
+        time.sleep(0.2)
+
+    _reset_typing_style(page, root)
+
+
+def insert_numbered_section(
+    page: Page,
+    root: EditorRoot,
+    *,
+    number: int,
+    title: list[TextSegment],
+    bullets: list[list[TextSegment]],
+) -> None:
+    log(f"단계 {number}: {segments_to_plain(title)[:40]}…")
+    _new_body_line(page, root)
+    _reset_typing_style(page, root)
+    kb = editor_keyboard(page, root)
+    _focus_body_paragraph(page, root)
+    kb.type(f"{number}. ", delay=random.randint(2, 4))
+    _type_segments(page, root, title)
+    kb.press("Enter")
+    time.sleep(0.2)
+
+    if bullets:
+        _insert_list_items(
+            page, root, bullets, ordered=False, indent="   "
+        )
+
+
+def insert_qa_line(page: Page, root: EditorRoot, segments: list[TextSegment]) -> None:
+    """FAQ Q/A 한 줄 전체 입력."""
+    plain = segments_to_plain(segments)
+    if not plain.strip():
+        return
+    _new_body_line(page, root)
+    _reset_typing_style(page, root)
+    _type_segments(page, root, segments)
+    editor_keyboard(page, root).press("Enter")
+    time.sleep(0.25)
+
+
+def insert_formatted_block(page: Page, block: dict, *, root: EditorRoot) -> None:
+    """마크다운 서식 블록(목록·굵은 제목·문단) 삽입."""
+    btype = block.get("type")
+    if btype == "bold_heading":
+        insert_bold_heading(page, root, block.get("segments", []))
+    elif btype == "bullet_list":
+        _insert_list_items(page, root, block.get("items", []), ordered=False)
+    elif btype == "numbered_section":
+        insert_numbered_section(
+            page,
+            root,
+            number=int(block.get("number", 1)),
+            title=block.get("title", []),
+            bullets=block.get("bullets", []),
+        )
+    elif btype == "numbered_list":
+        _insert_list_items(
+            page,
+            root,
+            block.get("items", []),
+            ordered=True,
+            start_number=1,
+        )
+    elif btype in ("qa_question", "qa_answer"):
+        insert_qa_line(page, root, block.get("segments", []))
+    elif btype == "paragraph_group":
+        for line in block.get("lines", []):
+            insert_paragraph_segments(page, root, line.segments)
 
 
 def insert_subheading(page: Page, text: str, *, root: EditorRoot, level: int = 2) -> None:

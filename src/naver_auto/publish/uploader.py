@@ -13,11 +13,11 @@ from typing import Any
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from naver_auto.image.resolver import resolve_draft_images
-from naver_auto.paths import DRAFTS_DIR, load_yaml
+from naver_auto.paths import DRAFTS_DIR, load_yaml, reload_project_env
 from naver_auto.publish.editor_actions import (
     fill_title,
+    insert_formatted_block,
     insert_subheading,
-    insert_text,
     log as editor_log,
     publish_live,
     save_draft,
@@ -26,6 +26,7 @@ from naver_auto.publish.editor_actions import (
     upload_image,
     wait_editor_ready,
 )
+from naver_auto.publish.markdown_format import parse_text_to_blocks
 from naver_auto.publish.daily_limit import can_publish, record_publish
 from naver_auto.publish.playwright_client import (
     browser_context,
@@ -49,33 +50,33 @@ def _strip_header(body: str) -> str:
 
 
 def _parse_text_segment(text: str) -> list[dict[str, Any]]:
-    """텍스트 덩어리를 본문/소제목 블록으로 분리."""
+    """텍스트 덩어리를 소제목·서식 블록으로 분리."""
     blocks: list[dict[str, Any]] = []
-    paragraph: list[str] = []
+    chunk_lines: list[str] = []
 
-    def flush_paragraph() -> None:
-        if not paragraph:
+    def flush_chunk() -> None:
+        if not chunk_lines:
             return
-        content = "\n".join(paragraph).strip()
+        content = "\n".join(chunk_lines).strip()
         if content:
-            blocks.append({"type": "text", "content": content})
-        paragraph.clear()
+            blocks.extend(parse_text_to_blocks(content))
+        chunk_lines.clear()
 
     for line in text.splitlines():
         stripped = line.strip()
         if stripped.startswith("## "):
-            flush_paragraph()
+            flush_chunk()
             blocks.append({"type": "heading2", "content": stripped[3:].strip()})
         elif stripped.startswith("### "):
-            flush_paragraph()
+            flush_chunk()
             blocks.append({"type": "heading3", "content": stripped[4:].strip()})
         elif stripped.startswith("#"):
             continue
         elif not stripped:
-            flush_paragraph()
+            flush_chunk()
         else:
-            paragraph.append(line)
-    flush_paragraph()
+            chunk_lines.append(line)
+    flush_chunk()
     return blocks
 
 
@@ -135,8 +136,13 @@ def upload_draft_on_page(
 
     editor_log(f"블록 {len(blocks)}개 업로드…")
     for i, block in enumerate(blocks, 1):
-        if block["type"] == "text":
-            insert_text(page, block["content"], root=root)
+        if block["type"] in (
+            "bullet_list",
+            "numbered_list",
+            "bold_heading",
+            "paragraph_group",
+        ):
+            insert_formatted_block(page, block, root=root)
         elif block["type"] in ("heading2", "heading3"):
             level = 2 if block["type"] == "heading2" else 3
             insert_subheading(page, block["content"], root=root, level=level)
@@ -206,6 +212,7 @@ def publish_draft(
 
     print("[publish] 이미지 확인…", flush=True)
     resolve_draft_images(draft_dir)
+    reload_project_env()
     print("[publish] 네이버 업로드…", flush=True)
     if allow_manual_login is None:
         allow_manual_login = os.isatty(0)

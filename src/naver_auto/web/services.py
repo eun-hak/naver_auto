@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -91,39 +92,85 @@ def draft_detail(draft_id: str) -> dict[str, Any]:
     body = (draft_dir / "body.md").read_text(encoding="utf-8")
     images: list[dict[str, str]] = []
     images_dir = draft_dir / "images"
+    img_version = int(meta.get("images_version") or 0)
     if images_dir.exists():
         for p in sorted(images_dir.glob("*.jpg")):
-            images.append({"name": p.name, "slot": p.stem})
+            images.append(
+                {
+                    "name": p.name,
+                    "slot": p.stem,
+                    "mtime": int(p.stat().st_mtime),
+                }
+            )
     return {
         "draft_id": meta.get("draft_id", draft_dir.name),
         "meta": meta,
         "body": body,
         "images": images,
         "image_plan": meta.get("image_plan", []),
+        "images_version": img_version,
     }
 
 
 def run_create(job: Job, *, keyword: str, category: str | None, skip_polish: bool) -> dict[str, Any]:
     job.message = f"초안 생성 중: {keyword}"
     job.logs.append(f"[create] 키워드: {keyword}")
-    out_dir = create_draft_from_keyword(keyword, category=category, skip_polish=skip_polish)
-    job.logs.append(f"본문 저장: {out_dir.name}")
-    job.logs.append("이미지 수집 중…")
-    resolve_draft_images(out_dir)
+
+    def on_progress(msg: str) -> None:
+        job.message = msg
+        job.logs.append(msg)
+
+    out_dir = create_draft_from_keyword(
+        keyword,
+        category=category,
+        skip_polish=skip_polish,
+        progress=on_progress,
+    )
     meta = load_meta(out_dir)
-    job.logs.append(f"완료 — {meta.get('char_count', 0)}자, 이미지 {meta.get('image_count', 0)}장")
+    job.logs.append(f"본문 저장: {out_dir.name} — {meta.get('char_count', 0)}자")
+
+    fetch_on_create = os.getenv("NAVER_CREATE_FETCH_IMAGES", "1").strip().lower() not in (
+        "0",
+        "false",
+        "no",
+    )
+    if fetch_on_create:
+        on_progress("이미지 수집 중… (SNS·검색, 1~3분)")
+        job.logs.append("이미지 수집 시작")
+        paths = resolve_draft_images(out_dir)
+        meta = load_meta(out_dir)
+        job.logs.append(f"이미지 {len(paths)}장 — {', '.join(meta.get('image_sources', [])[:6])}")
+
+    job.message = "초안 생성 완료"
     return {"draft_id": meta.get("draft_id", out_dir.name), "status": meta.get("status")}
 
 
-def run_fetch_images(job: Job, draft_id: str, *, force: bool) -> dict[str, Any]:
+def run_fetch_images(
+    job: Job,
+    draft_id: str,
+    *,
+    force: bool,
+    keep_slots: list[int] | None = None,
+) -> dict[str, Any]:
     draft_dir = find_draft_dir(draft_id)
-    job.message = f"이미지 {'재' if force else ''}수집 중"
+    keep = {int(s) for s in keep_slots} if keep_slots is not None else None
+    job.message = "이미지 재수집 중"
     job.logs.append(f"[fetch-images] {draft_dir.name}")
-    paths = resolve_draft_images(draft_dir, force=force)
+    if keep is not None:
+        job.logs.append(f"유지 슬롯: {sorted(keep)}")
+    paths = resolve_draft_images(draft_dir, force=force, keep_slots=keep)
     meta = load_meta(draft_dir)
+    refetched = meta.get("image_refetch_slots", [])
     sources = meta.get("image_sources", [])
-    job.logs.append(f"→ {len(paths)}장 ({', '.join(sources[:6])})")
-    return {"draft_id": draft_id, "image_count": len(paths), "sources": sources}
+    job.logs.append(
+        f"재수집: {refetched or '전체'} → {len(paths)}장 ({', '.join(sources[:6])})"
+    )
+    return {
+        "draft_id": draft_id,
+        "image_count": len(paths),
+        "sources": sources,
+        "refetched_slots": refetched,
+    }
 
 
 def run_publish(job: Job, draft_id: str, *, live: bool, refresh_images: bool) -> dict[str, Any]:

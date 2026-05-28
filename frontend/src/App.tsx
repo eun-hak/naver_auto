@@ -88,9 +88,12 @@ export default function App() {
     startJob(job_id);
   };
 
-  const handleFetchImages = async () => {
+  const handleFetchImages = async (keepSlots: number[]) => {
     if (!selectedId) return;
-    const { job_id } = await api.fetchImages(selectedId, true);
+    const { job_id } = await api.fetchImages(selectedId, {
+      force: true,
+      keep_slots: keepSlots,
+    });
     startJob(job_id);
   };
 

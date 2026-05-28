@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import hashlib
+import random
 import re
+import time
 from dataclasses import dataclass, asdict
 from io import BytesIO
 from pathlib import Path
@@ -58,14 +60,20 @@ def _detect_source(url: str) -> str:
     return "web"
 
 
-def _search_naver_images(query: str, *, display: int = 10) -> list[SocialImage]:
+def _search_naver_images(
+    query: str,
+    *,
+    display: int = 10,
+    start: int = 1,
+    sort: str = "sim",
+) -> list[SocialImage]:
     if not naver_api_configured():
         return []
 
     from naver_auto.keyword.analyzer import search_naver
 
     try:
-        data = search_naver(query, "image", display=display, sort="sim")
+        data = search_naver(query, "image", display=display, sort=sort, start=start)
     except Exception:
         return []
 
@@ -247,6 +255,36 @@ def _fit_cover(img: Image.Image, width: int, height: int) -> Image.Image:
     return resized.crop((left, top, left + width, top + height))
 
 
+def _url_hash(url: str) -> str:
+    return hashlib.md5(url.split("?")[0].encode()).hexdigest()[:12]
+
+
+def _refetch_query_variants(query: str, slot: int) -> list[str]:
+    base = query.strip()
+    if not base:
+        return []
+    extra = [
+        base,
+        f"{base} 레시피",
+        f"{base} 만드는법",
+        f"{base} 음식",
+        f"{base} 요리 사진",
+        f"{base} 집밥",
+        f"{base} site:blog.naver.com",
+        f"{base} site:tistory.com",
+    ]
+    seen: list[str] = []
+    for q in extra:
+        q = q.strip()
+        if q and q not in seen:
+            seen.append(q)
+    # 슬롯마다 검색어 순서를 달리해 같은 1순위 결과 고착 방지
+    if len(seen) > 1:
+        shift = (slot - 1) % len(seen)
+        seen = seen[shift:] + seen[:shift]
+    return seen
+
+
 def fetch_one_image(
     query: str,
     output_path: Path,
@@ -254,49 +292,69 @@ def fetch_one_image(
     cfg: dict[str, Any] | None = None,
     used_url_hashes: set[str] | None = None,
     references: list[dict[str, Any]] | None = None,
+    refetch: bool = False,
+    slot: int = 0,
 ) -> tuple[bool, dict[str, str] | None]:
     """단일 슬롯용 — 쿼리별 최적 이미지 1장."""
     cfg = cfg or {}
-    used = used_url_hashes or set()
+    used = set(used_url_hashes or set())
     min_w = int(cfg.get("min_width", 400))
     min_h = int(cfg.get("min_height", 300))
     per_query = int(cfg.get("per_query", 8))
+    if refetch:
+        per_query = max(per_query, 25)
 
-    queries = [query.strip()]
-    if query.strip():
-        queries.extend(
-            q
-            for q in (
-                f"{query} 맛집",
-                f"{query} 음식",
-                f"{query} site:blog.naver.com",
+    if refetch:
+        queries = _refetch_query_variants(query, slot or 1)
+    else:
+        queries = [query.strip()]
+        if query.strip():
+            queries.extend(
+                q
+                for q in (
+                    f"{query} 맛집",
+                    f"{query} 음식",
+                    f"{query} site:blog.naver.com",
+                )
+                if q not in queries
             )
-            if q not in queries
-        )
 
     candidates: list[SocialImage] = []
     seen: set[str] = set()
-    ref_urls = [str(r.get("link", "")) for r in (references or []) if r.get("link")]
-    for item in fetch_og_from_pages(ref_urls, limit=3):
-        key = item.image_url.split("?")[0]
-        if key not in seen:
-            seen.add(key)
-            candidates.append(item)
+
+    if not refetch:
+        ref_urls = [str(r.get("link", "")) for r in (references or []) if r.get("link")]
+        for item in fetch_og_from_pages(ref_urls, limit=3):
+            key = item.image_url.split("?")[0]
+            if key not in seen:
+                seen.add(key)
+                candidates.append(item)
+
+    search_starts = (1, 11, 21) if refetch else (1,)
+    search_sorts = ("date", "sim") if refetch else ("sim",)
 
     for q in queries:
         if not q:
             continue
-        for item in _search_naver_images(q, display=per_query):
-            key = item.image_url.split("?")[0]
-            if key in seen:
-                continue
-            seen.add(key)
-            candidates.append(item)
+        for sort in search_sorts:
+            for start in search_starts:
+                for item in _search_naver_images(
+                    q, display=per_query, start=start, sort=sort
+                ):
+                    key = item.image_url.split("?")[0]
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    candidates.append(item)
+
+    if refetch and len(candidates) > 1:
+        rng = random.Random(slot * 997 + int(time.time()) % 100_000)
+        rng.shuffle(candidates)
 
     for candidate in candidates:
         if is_junk_image(candidate):
             continue
-        digest = hashlib.md5(candidate.image_url.encode()).hexdigest()[:8]
+        digest = _url_hash(candidate.image_url)
         if digest in used:
             continue
         if download_as_jpeg(candidate, output_path, min_width=min_w, min_height=min_h):

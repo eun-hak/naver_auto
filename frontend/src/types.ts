@@ -36,12 +36,19 @@ export interface ImagePlanItem {
   gemini_prompt?: string;
 }
 
+export interface DraftImage {
+  name: string;
+  slot: string;
+  mtime?: number;
+}
+
 export interface DraftDetail {
   draft_id: string;
   meta: Record<string, unknown>;
   body: string;
-  images: { name: string; slot: string }[];
+  images: DraftImage[];
   image_plan: ImagePlanItem[];
+  images_version?: number;
 }
 
 export interface Job {

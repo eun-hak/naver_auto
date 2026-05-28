@@ -236,7 +236,9 @@ def analyze_keyword(keyword: str) -> dict[str, Any]:
         try:
             gemini = research_keyword(keyword, naver_data=result, references=refs)
             result["gemini_research"] = gemini
-            result["research_model"] = "gemini-2.5-flash-lite"
+            from naver_auto.content.gemini_client import fast_model_name
+
+            result["research_model"] = fast_model_name()
             extra = gemini.get("related_keywords", [])
             for item in extra:
                 key = str(item).strip()

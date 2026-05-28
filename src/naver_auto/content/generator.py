@@ -5,10 +5,13 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 
 from naver_auto.content.gemini_client import (
+    body_model_name,
+    fast_model_name,
     gemini_configured,
     generate_blog_body as gemini_body,
     generate_meta_tags as gemini_meta,
@@ -47,7 +50,11 @@ def create_draft_from_keyword(
     *,
     category: str | None = None,
     skip_polish: bool = False,
+    progress: Callable[[str], None] | None = None,
 ) -> Path:
+    def _progress(msg: str) -> None:
+        if progress:
+            progress(msg)
     ensure_dirs()
     keyword = keyword.strip()
     if not keyword:
@@ -62,8 +69,10 @@ def create_draft_from_keyword(
     publish_cfg = load_yaml("publish.yaml")
     category = category or publish_cfg.get("default_category", "일반")
 
+    _progress("키워드·네이버 데이터 수집 중…")
     research = analyze_keyword(keyword)
     gemini_research = research.get("gemini_research", {})
+    _progress("참고 블로그·제목 후보 생성 중…")
     refs = fetch_blog_references(keyword)
     ref_summary = summarize_references(refs)
     ref_titles = reference_titles(refs)
@@ -91,6 +100,11 @@ def create_draft_from_keyword(
     body = ""
     errors: list[str] = []
     for attempt in range(2):
+        _progress(
+            f"본문 생성 중… ({attempt + 1}/2)"
+            if attempt
+            else "본문 생성 중… (Gemini, 1~2분 걸릴 수 있음)"
+        )
         if use_gemini:
             body = gemini_body(
                 seo_title,
@@ -115,6 +129,7 @@ def create_draft_from_keyword(
         if not body.startswith("# "):
             body = f"# {seo_title}\n\n{body}"
         if not skip_polish:
+            _progress("도입부 다듬는 중…")
             body = gemini_polish(seo_title, keyword, body) if use_gemini else groq_polish(
                 seo_title, keyword, body
             )
@@ -127,6 +142,7 @@ def create_draft_from_keyword(
         if attempt == 0:
             seo_title = titles[1] if len(titles) > 1 else seo_title
 
+    _progress("메타·태그 생성 중…")
     meta_tags = gemini_meta(seo_title, keyword) if use_gemini else groq_meta(seo_title, keyword)
     title = extract_title(body)
     draft_id = _draft_id(keyword)
@@ -158,7 +174,9 @@ def create_draft_from_keyword(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "published_at": None,
         "naver_url": None,
-        "content_model": "gemini-2.5-flash-lite" if use_gemini else "groq",
+        "content_model": (
+            f"{body_model_name()}+{fast_model_name()}" if use_gemini else "groq"
+        ),
     }
 
     with (out_dir / "meta.json").open("w", encoding="utf-8") as f:
@@ -168,8 +186,10 @@ def create_draft_from_keyword(
     with (out_dir / "body.md").open("w", encoding="utf-8") as f:
         f.write(header + body + "\n")
 
+    _progress("이미지 슬롯 계획 중…")
     from naver_auto.image.planner import ensure_image_plan
 
     ensure_image_plan(out_dir, regen=True)
+    _progress("초안 저장 완료")
 
     return out_dir

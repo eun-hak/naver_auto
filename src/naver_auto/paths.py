@@ -11,8 +11,13 @@ from dotenv import load_dotenv
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = Path(__file__).resolve().parents[1]
 
-load_dotenv(PROJECT_ROOT / ".env")
-load_dotenv(PROJECT_ROOT / ".env.local")
+def reload_project_env() -> None:
+    """서버 재시작 없이 .env 변경 반영."""
+    load_dotenv(PROJECT_ROOT / ".env", override=True)
+    load_dotenv(PROJECT_ROOT / ".env.local", override=True)
+
+
+reload_project_env()
 
 CONFIG_DIR = PROJECT_ROOT / "config"
 DATA_DIR = PROJECT_ROOT / "data"

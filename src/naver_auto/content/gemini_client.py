@@ -5,14 +5,39 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 
 import google.generativeai as genai
+from google.api_core import exceptions as google_exceptions
 
-DEFAULT_MODEL = "gemini-2.5-flash-lite"
+DEFAULT_FAST_MODEL = "gemini-3.1-flash-lite"
+DEFAULT_BODY_MODEL = "gemini-2.5-flash-lite"
+# 하위 호환
+DEFAULT_MODEL = DEFAULT_FAST_MODEL
+
+# 무료 티어 RPM 기준 최소 호출 간격(초). 60/RPM + 여유
+DEFAULT_BODY_RPM = 20
+DEFAULT_FAST_RPM = 20
+BODY_INTERVAL_BUFFER_SEC = 1.0
+FAST_INTERVAL_BUFFER_SEC = 0.5
+
+_LAST_CALL_MONO: dict[str, float] = {"fast": 0.0, "body": 0.0}
 
 
-def _model_name() -> str:
-    return os.getenv("GEMINI_MODEL", DEFAULT_MODEL)
+def fast_model_name() -> str:
+    return (
+        os.getenv("GEMINI_MODEL_FAST")
+        or os.getenv("GEMINI_MODEL")
+        or DEFAULT_FAST_MODEL
+    )
+
+
+def body_model_name() -> str:
+    return (
+        os.getenv("GEMINI_MODEL_BODY")
+        or os.getenv("GEMINI_MODEL")
+        or DEFAULT_BODY_MODEL
+    )
 
 
 def _configure() -> None:
@@ -26,17 +51,106 @@ def gemini_configured() -> bool:
     return bool(os.getenv("GEMINI_API_KEY"))
 
 
-def _generate(prompt: str, *, system: str = "", temperature: float = 0.7) -> str:
+def _rpm_for_tier(tier: str) -> int:
+    if tier == "body":
+        raw = os.getenv("GEMINI_BODY_RPM", str(DEFAULT_BODY_RPM))
+    else:
+        raw = os.getenv("GEMINI_FAST_RPM", str(DEFAULT_FAST_RPM))
+    try:
+        return max(1, int(raw))
+    except ValueError:
+        return DEFAULT_BODY_RPM if tier == "body" else DEFAULT_FAST_RPM
+
+
+def min_interval_sec(tier: str) -> float:
+    """tier별 최소 호출 간격(초). GEMINI_*_MIN_INTERVAL_SEC가 있으면 우선."""
+    if tier == "body":
+        override = os.getenv("GEMINI_BODY_MIN_INTERVAL_SEC")
+        default_rpm = DEFAULT_BODY_RPM
+        buffer = BODY_INTERVAL_BUFFER_SEC
+    else:
+        override = os.getenv("GEMINI_FAST_MIN_INTERVAL_SEC")
+        default_rpm = DEFAULT_FAST_RPM
+        buffer = FAST_INTERVAL_BUFFER_SEC
+    if override is not None and override.strip() != "":
+        return max(0.0, float(override))
+    rpm = _rpm_for_tier(tier)
+    return (60.0 / rpm) + buffer
+
+
+def _is_quota_error(exc: BaseException) -> bool:
+    if isinstance(exc, google_exceptions.ResourceExhausted):
+        return True
+    msg = str(exc).lower()
+    return (
+        "resource_exhausted" in msg
+        or "quota" in msg
+        or "429" in msg
+        or ("exceeded" in msg and "limit" in msg)
+    )
+
+
+def _retry_seconds_from_error(exc: BaseException, *, tier: str) -> float:
+    match = re.search(r"retry in (\d+(?:\.\d+)?)\s*s", str(exc), re.I)
+    if match:
+        return float(match.group(1)) + 1.0
+    match = re.search(r"retry_delay[^}]*seconds:\s*(\d+)", str(exc), re.I)
+    if match:
+        return float(match.group(1)) + 1.0
+    return min_interval_sec(tier)
+
+
+def _throttle_before_call(tier: str) -> None:
+    gap = min_interval_sec(tier)
+    if gap <= 0:
+        return
+    elapsed = time.monotonic() - _LAST_CALL_MONO.get(tier, 0.0)
+    if elapsed < gap:
+        time.sleep(gap - elapsed)
+    _LAST_CALL_MONO[tier] = time.monotonic()
+
+
+def _max_retries() -> int:
+    return max(1, int(os.getenv("GEMINI_MAX_RETRIES", "4")))
+
+
+def _request_timeout_sec() -> int:
+    return max(30, int(os.getenv("GEMINI_REQUEST_TIMEOUT_SEC", "180")))
+
+
+def _generate(
+    prompt: str,
+    *,
+    system: str = "",
+    temperature: float = 0.7,
+    tier: str = "fast",
+) -> str:
     _configure()
+    name = body_model_name() if tier == "body" else fast_model_name()
     model = genai.GenerativeModel(
-        _model_name(),
+        name,
         system_instruction=system or "너는 한국어 SEO 블로그 전문가야.",
     )
-    response = model.generate_content(
-        prompt,
-        generation_config=genai.GenerationConfig(temperature=temperature),
-    )
-    return (response.text or "").strip()
+    last_err: BaseException | None = None
+    for attempt in range(_max_retries()):
+        _throttle_before_call(tier)
+        try:
+            response = model.generate_content(
+                prompt,
+                generation_config=genai.GenerationConfig(temperature=temperature),
+                request_options={"timeout": _request_timeout_sec()},
+            )
+            return (response.text or "").strip()
+        except Exception as exc:
+            last_err = exc
+            if _is_quota_error(exc) and attempt < _max_retries() - 1:
+                wait = max(_retry_seconds_from_error(exc, tier=tier), min_interval_sec(tier))
+                time.sleep(wait)
+                continue
+            raise
+    if last_err:
+        raise last_err
+    raise RuntimeError("Gemini 호출 실패")
 
 
 def parse_json_object(text: str) -> dict:
@@ -169,6 +283,7 @@ def generate_blog_body(
         prompt,
         system="한국어 SEO 블로그 작가. 자연스러운 존댓말. 최종 글만.",
         temperature=0.6,
+        tier="body",
     )
 
 
@@ -191,7 +306,9 @@ def polish_intro(seo_title: str, focus_keyword: str, body: str) -> str:
 [현재 도입부]
 {intro}
 """
-    polished = _generate(prompt, system="블로그 편집자.", temperature=0.45)
+    polished = _generate(
+        prompt, system="블로그 편집자.", temperature=0.45, tier="body"
+    )
     if polished.startswith("```"):
         polished = re.sub(r"^```(?:markdown)?\s*", "", polished)
         polished = re.sub(r"\s*```$", "", polished).strip()

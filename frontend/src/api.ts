@@ -21,8 +21,10 @@ export const api = {
     ),
   draftDetail: (id: string) =>
     request<DraftDetail>(`/drafts/${encodeURIComponent(id)}`),
-  imageUrl: (draftId: string, filename: string) =>
-    `/api/drafts/${encodeURIComponent(draftId)}/images/${filename}`,
+  imageUrl: (draftId: string, filename: string, version?: number) => {
+    const base = `/api/drafts/${encodeURIComponent(draftId)}/images/${encodeURIComponent(filename)}`;
+    return version ? `${base}?v=${version}` : base;
+  },
   createDraft: (body: {
     keyword: string;
     category: string | null;
@@ -32,10 +34,19 @@ export const api = {
       method: "POST",
       body: JSON.stringify(body),
     }),
-  fetchImages: (draftId: string, force = true) =>
+  fetchImages: (
+    draftId: string,
+    opts: { force?: boolean; keep_slots?: number[] } = {},
+  ) =>
     request<{ job_id: string }>(
       `/drafts/${encodeURIComponent(draftId)}/fetch-images`,
-      { method: "POST", body: JSON.stringify({ force }) },
+      {
+        method: "POST",
+        body: JSON.stringify({
+          force: opts.force ?? true,
+          keep_slots: opts.keep_slots ?? null,
+        }),
+      },
     ),
   publish: (
     draftId: string,
@@ -68,7 +79,7 @@ export function pollJob(
     } catch {
       /* retry */
     }
-    if (!stopped) setTimeout(tick, 800);
+    if (!stopped) setTimeout(tick, 1500);
   };
   tick();
   return () => {
