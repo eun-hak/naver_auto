@@ -3,22 +3,36 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import pyperclip
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from naver_auto.image.resolver import resolve_draft_images
 from naver_auto.paths import DRAFTS_DIR, load_yaml
+from naver_auto.publish.editor_actions import (
+    fill_title,
+    insert_text,
+    log as editor_log,
+    publish_live,
+    save_draft,
+    set_tags,
+    switch_to_mobile_preview,
+    upload_image,
+    wait_editor_ready,
+)
 from naver_auto.publish.daily_limit import can_publish, record_publish
+from naver_auto.publish.naver_login import LOGIN_URL, ensure_naver_login
 from naver_auto.publish.playwright_client import (
     browser_context,
+    editor_ready,
     save_debug_screenshot,
     session_exists,
+    wait_for_editor,
     write_url,
 )
 
@@ -65,159 +79,71 @@ def _parse_blocks(body: str) -> tuple[str, list[dict[str, Any]]]:
     return title, blocks
 
 
-def _paste_text(page, text: str) -> None:
-    pyperclip.copy(text)
-    page.keyboard.press("Meta+V") if _is_mac() else page.keyboard.press("Control+V")
-    time.sleep(0.3)
+def upload_draft_on_page(
+    page,
+    draft_dir: Path,
+    *,
+    live: bool = False,
+    root=None,
+) -> str | None:
+    """이미 열린 에디터 페이지에서 초안 업로드."""
+    meta = json.loads((draft_dir / "meta.json").read_text(encoding="utf-8"))
+    body = (draft_dir / "body.md").read_text(encoding="utf-8")
+    title, blocks = _parse_blocks(body)
+    title = meta.get("title") or title
+    images_dir = draft_dir / "images"
+
+    editor_log("에디터 준비 확인…")
+    root = wait_editor_ready(page, root=root)
+
+    publish_cfg = load_yaml("publish.yaml")
+    if publish_cfg.get("mobile_preview", True):
+        switch_to_mobile_preview(page, root)
+
+    fill_title(page, title, root=root)
+    time.sleep(0.5)
+
+    editor_log(f"블록 {len(blocks)}개 업로드…")
+    for i, block in enumerate(blocks, 1):
+        if block["type"] == "text":
+            insert_text(page, block["content"], root=root)
+        elif block["type"] == "image":
+            img_path = images_dir / f"{block['index']:02d}.jpg"
+            if img_path.exists():
+                editor_log(f"블록 {i}/{len(blocks)}")
+                upload_image(page, img_path, root=root)
+
+    set_tags(page, meta.get("tags", ""), root=root)
+
+    mode = "live" if live else publish_cfg.get("publish_mode", "draft")
+    if mode == "live" or live:
+        publish_live(page, root=root)
+    else:
+        save_draft(page, root=root)
+
+    url = page.url
+    save_debug_screenshot(page, f"upload_{meta.get('draft_id', 'draft')}")
+    editor_log("완료")
+    return url
 
 
-def _is_mac() -> bool:
-    import sys
-
-    return sys.platform == "darwin"
-
-
-def _wait_editor(page) -> None:
-    page.wait_for_load_state("networkidle", timeout=30000)
-    time.sleep(2)
-    for selector in (
-        ".se-documentTitle",
-        ".se-title-text",
-        "span.se-placeholder",
-        ".se-component-content",
-    ):
+def _ensure_editor_page(page) -> None:
+    if editor_ready(page):
         try:
-            page.wait_for_selector(selector, timeout=8000)
+            wait_for_editor(page, timeout_ms=15000)
             return
-        except Exception:
-            continue
-    raise RuntimeError("에디터 로딩 실패 — storage_state 재로그인 필요")
+        except RuntimeError:
+            pass
 
+    naver_id = os.getenv("NAVER_ID", "").strip()
+    password = os.getenv("NAVER_PASSWORD", "").strip()
+    if "nid.naver.com" in page.url or not editor_ready(page):
+        page.goto(LOGIN_URL, wait_until="domcontentloaded")
+        result = ensure_naver_login(page, naver_id, password, allow_manual=True)
+        if not result.ok:
+            raise RuntimeError(f"네이버 로그인 실패: {result.message}")
 
-def _fill_title(page, title: str) -> None:
-    selectors = (
-        ".se-documentTitle",
-        ".se-title-text",
-        "div[contenteditable='true'].se-text-paragraph",
-    )
-    for sel in selectors:
-        loc = page.locator(sel).first
-        if loc.count() == 0:
-            continue
-        loc.click()
-        _paste_text(page, title)
-        return
-    raise RuntimeError("제목 입력 영역을 찾지 못했습니다.")
-
-
-def _focus_body(page) -> None:
-    selectors = (
-        ".se-component-content .se-text-paragraph",
-        ".se-main-container",
-        ".se-section-text",
-    )
-    for sel in selectors:
-        loc = page.locator(sel).first
-        if loc.count() == 0:
-            continue
-        loc.click()
-        return
-    page.locator("body").click()
-
-
-def _insert_text_block(page, text: str) -> None:
-    plain = _markdown_to_plain(text)
-    if not plain.strip():
-        return
-    _focus_body(page)
-    _paste_text(page, plain)
-    page.keyboard.press("Enter")
-    page.keyboard.press("Enter")
-
-
-def _markdown_to_plain(text: str) -> str:
-    lines: list[str] = []
-    for line in text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("## "):
-            lines.append(stripped[3:].strip())
-            lines.append("")
-        elif stripped.startswith("> "):
-            lines.append(stripped[2:].strip())
-        elif stripped.startswith("- "):
-            lines.append(f"• {stripped[2:].strip()}")
-        elif stripped.startswith("#"):
-            continue
-        else:
-            lines.append(line)
-    return "\n".join(lines).strip()
-
-
-def _upload_image(page, image_path: Path) -> None:
-    with page.expect_file_chooser(timeout=10000) as fc_info:
-        for sel in (
-            "button.se-image-toolbar-button",
-            "button[data-name='image']",
-            ".se-toolbar-item-image",
-        ):
-            btn = page.locator(sel).first
-            if btn.count() > 0:
-                btn.click()
-                break
-        else:
-            page.locator(".se-toolbar").get_by_text("사진").first.click()
-
-    chooser = fc_info.value
-    chooser.set_files(str(image_path.resolve()))
-    time.sleep(2)
-
-
-def _set_tags(page, tags: str) -> None:
-    if not tags.strip():
-        return
-    tag_list = [t.strip() for t in re.split(r"[,\s#]+", tags) if t.strip()]
-    for sel in ("input#tagInput", "input[name='tag']", ".tag_input__"):
-        loc = page.locator(sel).first
-        if loc.count() == 0:
-            continue
-        for tag in tag_list[:10]:
-            loc.fill(tag)
-            page.keyboard.press("Enter")
-            time.sleep(0.2)
-        return
-
-
-def _click_save_draft(page) -> None:
-    for sel in (
-        "button.save_btn__",
-        "button[data-click-area='tpb.save']",
-        ".save_btn_area__ button",
-    ):
-        btn = page.locator(sel).first
-        if btn.count() > 0:
-            btn.click()
-            time.sleep(2)
-            return
-    page.get_by_role("button", name="임시저장").first.click()
-    time.sleep(2)
-
-
-def _click_publish(page) -> None:
-    for sel in (
-        "button.publish_btn__",
-        "button[data-click-area='tpb.publish']",
-    ):
-        btn = page.locator(sel).first
-        if btn.count() > 0:
-            btn.click()
-            time.sleep(1)
-            confirm = page.get_by_role("button", name="발행").last
-            if confirm.count() > 0:
-                confirm.click()
-            time.sleep(3)
-            return
-    page.get_by_role("button", name="발행").first.click()
-    time.sleep(3)
+    wait_for_editor(page, timeout_ms=60000)
 
 
 @retry(stop=stop_after_attempt(2), wait=wait_fixed(3))
@@ -226,41 +152,10 @@ def _upload_to_naver(
     *,
     live: bool = False,
 ) -> str | None:
-    meta = json.loads((draft_dir / "meta.json").read_text(encoding="utf-8"))
-    body = (draft_dir / "body.md").read_text(encoding="utf-8")
-    title, blocks = _parse_blocks(body)
-    title = meta.get("title") or title
-    images_dir = draft_dir / "images"
-
     with browser_context(headless=False) as (_, context):
         page = context.new_page()
-        page.goto(write_url(), wait_until="domcontentloaded", timeout=60000)
-        _wait_editor(page)
-
-        _fill_title(page, title)
-        time.sleep(0.5)
-        _focus_body(page)
-
-        for block in blocks:
-            if block["type"] == "text":
-                _insert_text_block(page, block["content"])
-            elif block["type"] == "image":
-                img_path = images_dir / f"{block['index']:02d}.jpg"
-                if img_path.exists():
-                    _upload_image(page, img_path)
-
-        _set_tags(page, meta.get("tags", ""))
-
-        publish_cfg = load_yaml("publish.yaml")
-        mode = "live" if live else publish_cfg.get("publish_mode", "draft")
-        if mode == "live" or live:
-            _click_publish(page)
-        else:
-            _click_save_draft(page)
-
-        url = page.url
-        save_debug_screenshot(page, f"upload_{meta.get('draft_id', 'draft')}")
-        return url
+        _ensure_editor_page(page)
+        return upload_draft_on_page(page, draft_dir, live=live)
 
 
 def publish_draft(
@@ -269,9 +164,10 @@ def publish_draft(
     live: bool = False,
     skip_limit: bool = False,
 ) -> Path:
-    if not session_exists():
+    if not session_exists() and not (os.getenv("NAVER_ID") and os.getenv("NAVER_PASSWORD")):
         raise RuntimeError(
-            "네이버 세션이 없습니다. `python scripts/login_once.py`로 먼저 로그인하세요."
+            "네이버 세션이 없습니다. `.env`에 NAVER_ID/PASSWORD 설정 후 "
+            "`python scripts/login_once.py` 또는 `naver-auto publish`를 실행하세요."
         )
 
     draft_dir = DRAFTS_DIR / draft_id
@@ -286,7 +182,9 @@ def publish_draft(
         if not ok:
             raise RuntimeError(msg)
 
+    print("[publish] 이미지 확인…", flush=True)
     resolve_draft_images(draft_dir)
+    print("[publish] 네이버 업로드…", flush=True)
     url = _upload_to_naver(draft_dir, live=live)
 
     meta_path = draft_dir / "meta.json"

@@ -1,6 +1,8 @@
 default_category: "연예·이슈"
 daily_limit: 8
 publish_mode: draft
+# 글 작성 전 Smart Editor 모바일 미리보기 모드로 전환
+mobile_preview: true
 image_priority:
   - user
   - sns

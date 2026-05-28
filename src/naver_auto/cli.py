@@ -156,7 +156,7 @@ def publish_cmd(
             if not path.is_dir() or not (path / "meta.json").exists():
                 continue
             meta = json.loads((path / "meta.json").read_text(encoding="utf-8"))
-            if meta.get("status") in ("draft_ready", "review"):
+            if meta.get("status") in ("draft_ready", "review", "ready_to_publish"):
                 targets.append(path)
         if limit:
             targets = targets[:limit]
