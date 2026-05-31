@@ -81,7 +81,6 @@ export default function App() {
   const handleCreate = async (payload: {
     keyword: string;
     category: string | null;
-    skip_polish: boolean;
   }) => {
     setShowCreate(false);
     const { job_id } = await api.createDraft(payload);

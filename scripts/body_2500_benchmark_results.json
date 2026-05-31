@@ -1,0 +1,444 @@
+{
+  "generated_at": "2026-05-31T11:11:11.234849+00:00",
+  "target_chars": "2000~3000",
+  "keyword": "제주도 맛집",
+  "seo_title": "제주도 맛집 추천 | 현지인이 알려주는 BEST 10",
+  "models": [
+    {
+      "id": "llama-3.1-8b-instant",
+      "provider": "groq",
+      "label": "Llama 3.1 8B Instant",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 11.06,
+        "finish": "stop",
+        "completion_tokens": 1212,
+        "content_len": 2155,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.846,
+        "h2_count": 3,
+        "in_target_len": true,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n\n제주도는 한국의 대표적인 여행지 중 하나로, 아름다운 자연경관과 다양한 문화유산을 자랑하고 있습니다. 하지만 여행의 즐거움은 음식을 먹는 것에서 시작되는데, 제주도에도 다양한 맛집들이 많습니다. 현지인이 알려주는 제주도 맛집을 소개해 드리겠습니다.\n\n제주도 맛집 추천을 하는데 가장 중요한 것은 현지인들의 추천입니다. 현지인들은 여행객들을 위해 다양한 맛집을 추천해 주는데요. 이 글에서는",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 39.3
+      }
+    },
+    {
+      "id": "qwen/qwen3-32b",
+      "provider": "groq",
+      "label": "Qwen3 32B",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 8.3,
+        "finish": "stop",
+        "completion_tokens": 1613,
+        "content_len": 1919,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.853,
+        "h2_count": 3,
+        "in_target_len": false,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n\n제주도는 자연 경관과 더불어 다양한 먹거리를 즐길 수 있는 여행지로 유명합니다. 특히 현지인들이 자주 찾는 숨은 맛집은 여행의 완성도를 높이는 핵심입니다. 이 글에서는 제주도의 대표 음식부터 주변 관광지 근처까지, 현지인이 추천하는 베스트 10곳을 소개드립니다. 제주도 여행 계획 중이시라면 이 리스트를 참고해 보세요!\n\n제주도의 맛집은 단순한 맛을 넘어 지역의 정체성을 느낄 수 있는 공",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 32.4
+      }
+    },
+    {
+      "id": "llama-3.3-70b-versatile",
+      "provider": "groq",
+      "label": "Llama 3.3 70B Versatile",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 3.57,
+        "finish": "stop",
+        "completion_tokens": 701,
+        "content_len": 1182,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.842,
+        "h2_count": 3,
+        "in_target_len": false,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n제주도는 아름다운 자연 경관과 다양한 문화를 경험할 수 있는 인기 관광지입니다. 또한 제주도는 독특한 음식 문화를 가지고 있어서 많은 사람들이 제주도 맛집을 찾고 있습니다. 제주도에서 맛볼 수 있는 대표적인 음식으로는 흑돼지, 黑豚, 오름 막걸리, 그리고 새우 등을 꼽을 수 있습니다.\n\n제주도 맛집을 찾는 방법으로는 현지인들의 추천을 듣는 것이 가장 좋은 방법입니다. 현지인들은 제주도에서",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 27.8
+      }
+    },
+    {
+      "id": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "provider": "groq",
+      "label": "Llama 4 Scout 17B",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 2.69,
+        "finish": "stop",
+        "completion_tokens": 663,
+        "content_len": 1403,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.815,
+        "h2_count": 3,
+        "in_target_len": false,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n\n제주도는 아름다운 자연 경관과 독특한 문화로 많은 관광객들이 찾는 곳입니다. 제주도 여행에서 가장 중요한 것 중 하나는 역시 맛있는 음식을 즐기는 것입니다. 제주도에는 다양한 맛집들이 있지만, 현지인이 아니면 어디에서 어떤 음식을 먹어야 할지 모르는 경우가 많습니다.\n\n이번 글에서는 현지인이 직접 추천하는 제주도 맛집 BEST 10을 소개해 드리겠습니다. 제주도의 다양한 지역과 특산물을",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 27.6
+      }
+    },
+    {
+      "id": "gemini-2.5-flash-lite",
+      "provider": "gemini",
+      "label": "Gemini 2.5 Flash Lite",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 16.0,
+        "finish": "stop",
+        "completion_tokens": null,
+        "content_len": 3787,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.882,
+        "h2_count": 3,
+        "in_target_len": false,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n\n제주도 여행을 계획 중이신가요? 어디를 가든 맛있는 음식이 기다리는 제주도에서 무엇을 먹어야 할지 고민이라면, 이 글이 정답이 될 것입니다. 단순한 유명 맛집 나열이 아닌, 제주 현지인들이 즐겨 찾는 숨은 보석 같은 곳부터 꼭 가봐야 할 명소까지, 엄선된 10곳의 맛집을 소개합니다. 제주의 신선한 식재료로 만든 다채로운 음식들을 맛보며 잊지 못할 미식 여행을 경험해 보세요.\n\n이번 글에",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 29.9
+      }
+    },
+    {
+      "id": "gemini-3.1-flash-lite",
+      "provider": "gemini",
+      "label": "Gemini 3.1 Flash Lite",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 7.41,
+        "finish": "stop",
+        "completion_tokens": null,
+        "content_len": 2380,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.859,
+        "h2_count": 4,
+        "in_target_len": true,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n\n제주도 여행을 계획할 때 가장 설레면서도 고민되는 순간은 바로 '무엇을 먹을까'를 결정하는 일입니다. 에메랄드빛 바다와 푸른 오름을 만끽한 후 즐기는 한 끼 식사는 여행의 만족도를 결정짓는 가장 중요한 요소이기 때문입니다. 하지만 수많은 식당 중 진짜 맛집을 찾기란 생각보다 쉽지 않습니다.\n\n오늘은 광고성 후기에 지친 여행객분들을 위해, 현지인들이 실제로 발걸음을 옮기는 제주도 맛집들을",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 39.5
+      }
+    },
+    {
+      "id": "gemma-4-26b-a4b-it",
+      "provider": "gemini",
+      "label": "Gemma 4 26B",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 69.07,
+        "finish": "stop",
+        "completion_tokens": null,
+        "content_len": 6899,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.533,
+        "h2_count": 5,
+        "in_target_len": false,
+        "preview": "Jeju Island Restaurant Recommendations | Local's BEST 10 (제주도 맛집 추천 | 현지인이 알려주는 BEST 10)\nJeju Island Restaurant (제주도 맛집)\n2000-3000 characters (including spaces)\nH1 -> Natural intro (2-3 paragraphs) -> ## Sections (2-3 topics) -> Checklist -> FAQ -> C",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 19.8
+      }
+    },
+    {
+      "id": "gemma-4-31b-it",
+      "provider": "gemini",
+      "label": "Gemma 4 31B",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 86.03,
+        "finish": "stop",
+        "completion_tokens": null,
+        "content_len": 6412,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.577,
+        "h2_count": 5,
+        "in_target_len": false,
+        "preview": "Jeju Island Restaurant Recommendations | Local's Best 10 (제주도 맛집 추천 | 현지인이 알려주는 BEST 10).\n제주도 맛집 (Jeju Island Restaurant).\n2,000 to 3,000 characters (including spaces).\n\n        *   H1 Title.\n        *   Natural intro (2-3 paragraphs) immediately fol",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 19.9
+      }
+    },
+    {
+      "id": "meta/llama-4-maverick-17b-128e-instruct",
+      "provider": "nvidia",
+      "label": "Llama 4 Maverick 17B",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 10.98,
+        "finish": "stop",
+        "completion_tokens": 789,
+        "content_len": 1573,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.894,
+        "h2_count": 4,
+        "in_target_len": false,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n제주도는 아름다운 자연 경관뿐만 아니라, 다양한 맛집으로도 유명합니다. 특히 신선한 해산물과 흑돼지 등 제주도만의 특색 있는 식재료를 활용한 요리가 많아 관광객들의 발길을 잡고 있습니다. 이번 글에서는 현지인이 추천하는 제주도 맛집 BEST 10을 소개하겠습니다.\n\n제주도의 맛집은 크게 해산물 요리 전문점, 흑돼지 구이집, 그리고 제주도 전통 음식 전문점으로 나눌 수 있습니다. 해산물 요",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 30.3
+      }
+    },
+    {
+      "id": "meta/llama-3.1-8b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.1 8B Instruct",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 9.3,
+        "finish": "stop",
+        "completion_tokens": 1231,
+        "content_len": 2155,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.912,
+        "h2_count": 3,
+        "in_target_len": true,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n\n제주도는 세계적으로 유명한 휴양지 중 하나로, 아름다운 자연 경관과 풍부한 문화 유산이 있습니다. 또한 제주도는 한국의 대표적인 음식도 풍부합니다. 다양한 음식과 음료를 즐길 수 있는 제주도 여행의 즐거움을 더해줄 제주도 맛집을 소개해 드리겠습니다.\n\n제주도의 맛집은 대중적으로 인지도가 높은 곳이 많습니다. 하지만 현지인들이 추천하는 맛집은 일반적으로 알려지지 않은 곳이 많습니다. 이에",
+        "ttft_ms": 36.038963,
+        "total_ms": 8370.996224,
+        "score": 39.4
+      }
+    },
+    {
+      "id": "meta/llama-3.3-70b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.3 70B Instruct",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 27.27,
+        "finish": "stop",
+        "completion_tokens": 904,
+        "content_len": 1398,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.846,
+        "h2_count": 3,
+        "in_target_len": false,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n제주도는 아름다운 자연 경관과 함께 다양한 맛집들이 있습니다. 제주도 맛집을 찾는 사람들은 주로 현지인들의 추천을 받고 싶어합니다. 제주도 맛집을 추천해 드릴게요. \n제주도에는 해산물, 한정식, 블랙펭귄 등 다양한 종류의 음식점이 있습니다. 각 음식점은 독특한 맛과 멋진 풍경을 제공합니다. 제주도 맛집을 방문하시면 감동적인 경험을 하실 수 있습니다. \n제주도 맛집을 추천해 드리기 전에, ",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 24.2
+      }
+    },
+    {
+      "id": "google/gemma-4-31b-it",
+      "provider": "nvidia",
+      "label": "Gemma 4 31B (NIM)",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 63.77,
+        "finish": "stop",
+        "completion_tokens": 1753,
+        "content_len": 3055,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.881,
+        "h2_count": 4,
+        "in_target_len": false,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n\n푸른 바다와 웅장한 한라산이 어우러진 제주도는 언제 방문해도 설레는 여행지입니다. 하지만 여행의 완성은 결국 '음식'이라고 해도 과언이 아니죠. 수많은 관광객이 찾는 유명 식당들도 많지만, 정작 제주도민들이 조용히 찾아가는 숨은 맛집을 발견했을 때의 쾌감은 이루 말할 수 없습니다.\n\n최근에는 SNS를 통해 알려진 화려한 식당들이 많아졌지만, 정작 방문했을 때 기대보다 평범한 맛에 실망하",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 30.7
+      }
+    },
+    {
+      "id": "qwen/qwen3-next-80b-a3b-instruct",
+      "provider": "nvidia",
+      "label": "Qwen3 Next 80B",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 31.44,
+        "finish": "stop",
+        "completion_tokens": 1491,
+        "content_len": 2079,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.887,
+        "h2_count": 3,
+        "in_target_len": true,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n\n제주도를 찾는 여행자라면 단순히 자연 경관만 감상하기보다, 그 땅의 정취를 담은 음식을 경험하는 것이 진정한 여행의 미학입니다. 제주도는 바다와 화산 지형이 만들어낸 독특한 재료들, 그리고 오랜 세월 동안 쌓아온 식문화로 유명한 곳입니다. 현지인들이 일상에서 찾는 맛집, 관광객들이 놓치기 쉬운 숨은 명소, 그리고 오랜 시간 사랑받아 온 전통 음식점까지, 이 글에서는 현지인들이 진심으로 ",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 37.9
+      }
+    },
+    {
+      "id": "meta/llama-3.1-70b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.1 70B Instruct",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 41.28,
+        "finish": "stop",
+        "completion_tokens": 1122,
+        "content_len": 1713,
+        "reasoning_len": 0,
+        "reasoning_only": false,
+        "korean_ratio": 0.694,
+        "h2_count": 3,
+        "in_target_len": false,
+        "preview": "# 제주도 맛집 추천 | 현지인이 알려주는 BEST 10\n제주도는 자연의 아름다움과 다양한 문화를 경험할 수 있는 곳입니다. 또한, 제주도의 음식은 한국의 전통 요리를 기반으로 하면서도 독특한 맛과 재료를 사용하여 많은 사람들에게 사랑받고 있습니다. 본 글에서는 제주도 현지인이 추천하는 BEST 10 맛집을 소개하겠습니다.\n\n제주도는 다양한 음식과 음식점이 있습니다. 특히, 해산물은 제주도의 대표적인 음식 재료 중 하나입니다. 해산물을 이용한 ",
+        "ttft_ms": null,
+        "total_ms": null,
+        "score": 26.6
+      }
+    }
+  ],
+  "ranking": [
+    {
+      "rank": 1,
+      "provider": "gemini",
+      "label": "Gemini 3.1 Flash Lite",
+      "id": "gemini-3.1-flash-lite",
+      "score": 39.5,
+      "content_len": 2380,
+      "elapsed_sec": 7.41,
+      "in_target_len": true
+    },
+    {
+      "rank": 2,
+      "provider": "nvidia",
+      "label": "Llama 3.1 8B Instruct",
+      "id": "meta/llama-3.1-8b-instruct",
+      "score": 39.4,
+      "content_len": 2155,
+      "elapsed_sec": 9.3,
+      "in_target_len": true
+    },
+    {
+      "rank": 3,
+      "provider": "groq",
+      "label": "Llama 3.1 8B Instant",
+      "id": "llama-3.1-8b-instant",
+      "score": 39.3,
+      "content_len": 2155,
+      "elapsed_sec": 11.06,
+      "in_target_len": true
+    },
+    {
+      "rank": 4,
+      "provider": "nvidia",
+      "label": "Qwen3 Next 80B",
+      "id": "qwen/qwen3-next-80b-a3b-instruct",
+      "score": 37.9,
+      "content_len": 2079,
+      "elapsed_sec": 31.44,
+      "in_target_len": true
+    },
+    {
+      "rank": 5,
+      "provider": "groq",
+      "label": "Qwen3 32B",
+      "id": "qwen/qwen3-32b",
+      "score": 32.4,
+      "content_len": 1919,
+      "elapsed_sec": 8.3,
+      "in_target_len": false
+    },
+    {
+      "rank": 6,
+      "provider": "nvidia",
+      "label": "Gemma 4 31B (NIM)",
+      "id": "google/gemma-4-31b-it",
+      "score": 30.7,
+      "content_len": 3055,
+      "elapsed_sec": 63.77,
+      "in_target_len": false
+    },
+    {
+      "rank": 7,
+      "provider": "nvidia",
+      "label": "Llama 4 Maverick 17B",
+      "id": "meta/llama-4-maverick-17b-128e-instruct",
+      "score": 30.3,
+      "content_len": 1573,
+      "elapsed_sec": 10.98,
+      "in_target_len": false
+    },
+    {
+      "rank": 8,
+      "provider": "gemini",
+      "label": "Gemini 2.5 Flash Lite",
+      "id": "gemini-2.5-flash-lite",
+      "score": 29.9,
+      "content_len": 3787,
+      "elapsed_sec": 16.0,
+      "in_target_len": false
+    },
+    {
+      "rank": 9,
+      "provider": "groq",
+      "label": "Llama 3.3 70B Versatile",
+      "id": "llama-3.3-70b-versatile",
+      "score": 27.8,
+      "content_len": 1182,
+      "elapsed_sec": 3.57,
+      "in_target_len": false
+    },
+    {
+      "rank": 10,
+      "provider": "groq",
+      "label": "Llama 4 Scout 17B",
+      "id": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "score": 27.6,
+      "content_len": 1403,
+      "elapsed_sec": 2.69,
+      "in_target_len": false
+    },
+    {
+      "rank": 11,
+      "provider": "nvidia",
+      "label": "Llama 3.1 70B Instruct",
+      "id": "meta/llama-3.1-70b-instruct",
+      "score": 26.6,
+      "content_len": 1713,
+      "elapsed_sec": 41.28,
+      "in_target_len": false
+    },
+    {
+      "rank": 12,
+      "provider": "nvidia",
+      "label": "Llama 3.3 70B Instruct",
+      "id": "meta/llama-3.3-70b-instruct",
+      "score": 24.2,
+      "content_len": 1398,
+      "elapsed_sec": 27.27,
+      "in_target_len": false
+    },
+    {
+      "rank": 13,
+      "provider": "gemini",
+      "label": "Gemma 4 31B",
+      "id": "gemma-4-31b-it",
+      "score": 19.9,
+      "content_len": 6412,
+      "elapsed_sec": 86.03,
+      "in_target_len": false
+    },
+    {
+      "rank": 14,
+      "provider": "gemini",
+      "label": "Gemma 4 26B",
+      "id": "gemma-4-26b-a4b-it",
+      "score": 19.8,
+      "content_len": 6899,
+      "elapsed_sec": 69.07,
+      "in_target_len": false
+    }
+  ]
+}

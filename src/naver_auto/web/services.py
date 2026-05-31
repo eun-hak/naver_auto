@@ -112,7 +112,7 @@ def draft_detail(draft_id: str) -> dict[str, Any]:
     }
 
 
-def run_create(job: Job, *, keyword: str, category: str | None, skip_polish: bool) -> dict[str, Any]:
+def run_create(job: Job, *, keyword: str, category: str | None) -> dict[str, Any]:
     job.message = f"초안 생성 중: {keyword}"
     job.logs.append(f"[create] 키워드: {keyword}")
 
@@ -123,7 +123,6 @@ def run_create(job: Job, *, keyword: str, category: str | None, skip_polish: boo
     out_dir = create_draft_from_keyword(
         keyword,
         category=category,
-        skip_polish=skip_polish,
         progress=on_progress,
     )
     meta = load_meta(out_dir)

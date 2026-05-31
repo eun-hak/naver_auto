@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-05-31T11:25:28.955827+00:00",
+  "target": "4000~5000",
+  "models": [
+    {
+      "id": "gemini-3.1-flash-lite",
+      "provider": "gemini",
+      "label": "Gemini 3.1 Flash Lite",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 17.31,
+        "finish": "stop",
+        "completion_tokens": null,
+        "content_len": 3252,
+        "in_target_len": false,
+        "h2_count": 3
+      }
+    },
+    {
+      "id": "meta/llama-3.1-8b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.1 8B Instruct",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 12.82,
+        "finish": "stop",
+        "completion_tokens": 1586,
+        "content_len": 2659,
+        "in_target_len": false,
+        "h2_count": 3
+      }
+    },
+    {
+      "id": "llama-3.1-8b-instant",
+      "provider": "groq",
+      "label": "Llama 3.1 8B Instant",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 8.89,
+        "finish": "stop",
+        "content_len": 2282,
+        "in_target_len": false,
+        "h2_count": 3,
+        "note": "max_tokens=8192 시 Groq TPM 413. 4096으로 재시도."
+      }
+    },
+    {
+      "id": "qwen/qwen3-next-80b-a3b-instruct",
+      "provider": "nvidia",
+      "label": "Qwen3 Next 80B",
+      "result": {
+        "ok": true,
+        "elapsed_sec": 81.48,
+        "finish": "stop",
+        "completion_tokens": 3531,
+        "content_len": 4971,
+        "in_target_len": true,
+        "h2_count": 4
+      }
+    }
+  ]
+}

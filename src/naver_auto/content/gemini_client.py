@@ -11,7 +11,7 @@ import google.generativeai as genai
 from google.api_core import exceptions as google_exceptions
 
 DEFAULT_FAST_MODEL = "gemini-3.1-flash-lite"
-DEFAULT_BODY_MODEL = "gemini-2.5-flash-lite"
+DEFAULT_BODY_MODEL = "gemma-4-26b-a4b-it"
 # 하위 호환
 DEFAULT_MODEL = DEFAULT_FAST_MODEL
 
@@ -285,36 +285,6 @@ def generate_blog_body(
         temperature=0.6,
         tier="body",
     )
-
-
-def polish_intro(seo_title: str, focus_keyword: str, body: str) -> str:
-    lines = body.strip().splitlines()
-    rest_idx = len(lines)
-    for i, line in enumerate(lines):
-        if line.strip().startswith("##"):
-            rest_idx = i
-            break
-    intro = "\n".join(lines[:rest_idx]).strip()
-    rest = "\n".join(lines[rest_idx:]).strip()
-    if len(intro) < 80:
-        return body
-
-    prompt = f"""도입부만 다듬어. H1(#) 포함, ## 섹션 제목 없이 2~3문단.
-제목: {seo_title}, 키워드: {focus_keyword}
-존댓말 유지.
-
-[현재 도입부]
-{intro}
-"""
-    polished = _generate(
-        prompt, system="블로그 편집자.", temperature=0.45, tier="body"
-    )
-    if polished.startswith("```"):
-        polished = re.sub(r"^```(?:markdown)?\s*", "", polished)
-        polished = re.sub(r"\s*```$", "", polished).strip()
-    if not polished:
-        return body
-    return f"{polished}\n\n{rest}" if rest else polished
 
 
 def generate_meta_tags(seo_title: str, focus_keyword: str) -> dict[str, str]:

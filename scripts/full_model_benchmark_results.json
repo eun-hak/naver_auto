@@ -1,0 +1,1105 @@
+{
+  "generated_at": "2026-05-31T07:30:01.529157+00:00",
+  "prompts": {
+    "basic": "한국어로 \"안녕하세요\"라고만 답해주세요....",
+    "blog_title": "키워드 \"제주도 맛집\"으로 네이버 블로그 SEO 제목 3개를 JSON 배열만 출력하세요. 예: [\"제목1\", \"제목2\", \"제목3\"]...",
+    "blog_body_300": "키워드 \"제주도 맛집\"으로 네이버 블로그 본문 300자 분량을 작성하세요. 자연스러운 한국어, SEO 친화적. 마크다운 없이 본문만....",
+    "blog_body_1500": "키워드 \"제주도 맛집\"으로 네이버 블로그 본문을 작성하세요.\n- 분량: 1500~2000자 (공백 포함)\n- 톤: 존댓말 (~습니다)\n- H1 ..."
+  },
+  "models": [
+    {
+      "id": "llama-3.1-8b-instant",
+      "provider": "groq",
+      "label": "Llama 3.1 8B Instant",
+      "role": "fast",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 3.35,
+          "finish": "stop",
+          "completion_tokens": 4,
+          "prompt_tokens": 48,
+          "content_len": 6,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요.",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 0.78,
+          "finish": "stop",
+          "completion_tokens": 66,
+          "prompt_tokens": 78,
+          "content_len": 111,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 맛집 10선! 여행 가기 전에 추천해 드리는 맛집\", \n\"제주도 여행 가서 꼭 먹어야 할 맛집! 맛집 순위 TOP10\", \n\"제주도 맛집 가이드! 여행 가기 전에 확인해야 할 맛집 정보\"]",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 1.82,
+          "finish": "stop",
+          "completion_tokens": 429,
+          "prompt_tokens": 80,
+          "content_len": 808,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도 여행을 계획하고 계신다면, 맛있는 음식을 찾아 떠나야 하는 이유가 많습니다. 제주도의 맛집은 제주 특산물과 다양한 음식 조합으로 만들어진 독특한 맛을 자랑합니다. 여기 몇 가지 제주도 맛집을 소개해 드리겠습니다.\n\n**1. 한우 한상**\n\n제주도의 한우 한상은 한우의 고소한 맛을 즐길 수 있는 곳입니다. 한상에서는 한우를 다양한 방법으로 요리하여 맛",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 2.53,
+          "finish": "stop",
+          "completion_tokens": 450,
+          "prompt_tokens": 113,
+          "content_len": 707,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집 여행 가이드\n\n제주도는 우리나라에서 가장 큰 섬으로 유명한 휴양지입니다. 자연의 아름다움과 아름다운 비치, 그리고 맛있는 음식을 즐길 수 있는 곳입니다. 제주도 맛집을 소개해 드리겠습니다.\n\n## 제주도 맛집 1: 삼다수\n\n삼다수는 제주도에서 유명한 음식점 중 하나입니다. 해산물을 사용해 만든 음식이 특징이며, 특히 자장면이 유명합니다. 자",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 12.2,
+          "blog_body_300": 14.8,
+          "blog_body_1500": 15.7
+        },
+        "total": 52.8,
+        "avg": 13.2
+      }
+    },
+    {
+      "id": "qwen/qwen3-32b",
+      "provider": "groq",
+      "label": "Qwen3 32B",
+      "role": "draft",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 0.7,
+          "finish": "length",
+          "completion_tokens": 64,
+          "prompt_tokens": 23,
+          "content_len": 0,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 4.18,
+          "finish": "length",
+          "completion_tokens": 400,
+          "prompt_tokens": 58,
+          "content_len": 0,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 1.65,
+          "finish": "stop",
+          "completion_tokens": 368,
+          "prompt_tokens": 64,
+          "content_len": 249,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도 맛집으로 유명한 ‘해녀식당’은 여행자들의 발길이 끊이지 않는 숨은 명소입니다. 신선한 해산물과 제주 특별한 돼지국수, 흑돼지 토마호크까지! 전통 레시피로 담백하고 깔끔한 맛을 자랑해 제주 여행객들의 마음을 사로잡습니다. 특히 현지인 추천 메뉴인 ‘가물치 밥상’은 제주 음식의 정취를 한 번에 느낄 수 있어요. 제주도 맛집 탐방은 블로그에서도 꾸준히 소",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 5.36,
+          "finish": "stop",
+          "completion_tokens": 1197,
+          "prompt_tokens": 101,
+          "content_len": 1096,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 여행의 진정한 맛, 제주도 맛집 3선  \n\n## 전통의 맛, 제주 고유의 맛집  \n\n제주도는 자연의 아름다움 못지않게 독특한 음식 문화로도 유명합니다. 특히 제주 고유의 재료를 사용한 전통 음식은 여행자들에게 잊지 못할 경험을 선사합니다. 그중에서도 ‘해녀식당’은 제주도를 대표하는 맛집으로 꼽힙니다. 이곳은 해녀들이 잡은 신선한 해산물을 활용한 ",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 0.0,
+          "blog_title": 0.4,
+          "blog_body_300": 22.8,
+          "blog_body_1500": 18.5
+        },
+        "total": 41.7,
+        "avg": 10.4
+      }
+    },
+    {
+      "id": "llama-3.3-70b-versatile",
+      "provider": "groq",
+      "label": "Llama 3.3 70B Versatile",
+      "role": "quality",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 0.7,
+          "finish": "stop",
+          "completion_tokens": 3,
+          "prompt_tokens": 48,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 0.96,
+          "finish": "stop",
+          "completion_tokens": 28,
+          "prompt_tokens": 78,
+          "content_len": 46,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 맛집 추천\", \"제주도 여행 맛집 지도\", \"제주도 바다 맛집 리스트\"]",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 2.41,
+          "finish": "stop",
+          "completion_tokens": 332,
+          "prompt_tokens": 80,
+          "content_len": 535,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도 맛집을 찾고 있다면 다양한 선택지가 있습니다. 제주도는 신선한 해산물과 독특한 음식 문화로 유명하여 먹거리天堂으로 불리기도 합니다. 특히 제주도는 검은 돼지 삼겹살로 유명하며, 이곳의 삼겹살은 고소한 맛과 담백한 식감으로 많은 사람들이 찾게 됩니다. 또한 제주도는 흑돼지국밥, 검은돼지국밥 등 다양한 국밥류 음식도 있습니다.\n\n제주도에 방문한다면 반드",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 2.47,
+          "finish": "stop",
+          "completion_tokens": 382,
+          "prompt_tokens": 113,
+          "content_len": 652,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집을 찾아서\n제주도는 우리나라의 남쪽에 위치한 아름다운 섬입니다. 자연의 경치와 함께 다양한 음식을 즐길 수 있는 곳으로 많은 사람들이 여행을 오고 있습니다. 이 글에서는 제주도에서 맛볼 수 있는 대표적인 음식들을 소개하겠습니다.\n\n## 제주도 대표 음식\n제주도에서 가장 유명한 음식은 흑돼지입니다. 제주도에서만 키우는 특산물로, 고소하고 담백한",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 12.0,
+          "blog_body_300": 18.8,
+          "blog_body_1500": 15.8
+        },
+        "total": 56.6,
+        "avg": 14.1
+      }
+    },
+    {
+      "id": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "provider": "groq",
+      "label": "Llama 4 Scout 17B",
+      "role": "scout",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 0.6,
+          "finish": "stop",
+          "completion_tokens": 3,
+          "prompt_tokens": 20,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 0.69,
+          "finish": "stop",
+          "completion_tokens": 26,
+          "prompt_tokens": 49,
+          "content_len": 57,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 맛집 BEST 5\", \"제주도 현지인이 추천하는 맛집\", \"제주도 여행 필수 맛집 리스트\"]",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 1.22,
+          "finish": "stop",
+          "completion_tokens": 238,
+          "prompt_tokens": 48,
+          "content_len": 485,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도는 아름다운 자연 경관과 풍부한 먹거리로 유명한 여행지입니다. 특히, 제주도 맛집은 다양한 해산물과 흑돼지, 한라산 고기 등 다양한 먹거리를 제공합니다. 제주도에서 유명한 맛집 중 하나는 '한라산 고기'입니다. 이 곳은 제주도 흑돼지를 사용한 다양한 요리를 제공하며, 특히 흑돼지 구이는 제주도에서만 맛볼 수 있는 특별한 맛입니다.\n\n또한, 제주도에는 ",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 1.85,
+          "finish": "stop",
+          "completion_tokens": 542,
+          "prompt_tokens": 81,
+          "content_len": 1167,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집 BEST 5, 현지인이 추천하는 숨은 맛집!\n제주도는 아름다운 자연 경관과 독특한 문화로 유명한 관광지입니다. 특히, 제주도의 맛집은 다양한 해산물과 흑돼지, 그리고 전통 제주 요리 등으로 유명합니다. 이번에는 제주도 현지인이 추천하는 숨은 맛집 BEST 5를 소개해 드리겠습니다.\n\n## 제주도 맛집 BEST 5\n제주도에 가면 꼭 먹어봐야 ",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 12.3,
+          "blog_body_300": 22.9,
+          "blog_body_1500": 18.6
+        },
+        "total": 63.8,
+        "avg": 15.9
+      }
+    },
+    {
+      "id": "gemini-2.5-flash-lite",
+      "provider": "gemini",
+      "label": "Gemini 2.5 Flash Lite",
+      "role": "fast_alt",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 2.71,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 1.61,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 136,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "```json\n[\n  \"인생 제주도 맛집 BEST 5, 현지인 추천 숨은 맛집 공개!\",\n  \"제주도 맛집 완벽 분석! 실패 없는 식당 리스트 (꼭 가봐야 할 곳)\",\n  \"제주도 맛집 탐방: 꼭 먹어봐야 할 향토음식 & 핫플레이스\"\n]\n```",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 3.14,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 579,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "**제주도 맛집 탐방, 놓치면 후회할 최고의 선택!**\n\n제주도 여행의 꽃은 역시 맛있는 음식이겠죠! 싱싱한 해산물부터 흑돼지, 향토 음식까지 제주도는 미식가들을 위한 천국입니다. 수많은 제주도 맛집 중에서 실패 없는 곳을 찾기란 쉽지 않은데요. 오늘은 제가 직접 경험하고 엄선한, 꼭 가봐야 할 제주도 맛집 몇 곳을 소개해 드릴게요.\n\n먼저, 제주 동쪽 해",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 13.61,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 3851,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도의 숨겨진 보석, 현지인이 추천하는 진짜 맛집 탐방\n\n제주도는 아름다운 자연경관뿐만 아니라 다채로운 먹거리로도 유명한 곳입니다. 푸른 바다와 싱그러운 바람을 느끼며 맛있는 음식을 즐기는 것은 제주 여행의 빼놓을 수 없는 즐거움이지요. 하지만 수많은 맛집 정보 속에서 어떤 곳을 선택해야 할지 고민되신다면, 오늘 제가 소개해 드릴 제주도 맛집 리스트에",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 11.4,
+          "blog_body_300": 18.7,
+          "blog_body_1500": 14.6
+        },
+        "total": 54.7,
+        "avg": 13.7
+      }
+    },
+    {
+      "id": "gemini-3.1-flash-lite",
+      "provider": "gemini",
+      "label": "Gemini 3.1 Flash Lite",
+      "role": "fast",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 1.39,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 1.2,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 80,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 맛집 베스트 10 현지인 추천 리스트\", \"실패 없는 제주도 맛집 여행 코스 완벽 정리\", \"제주도 맛집 내돈내산 솔직 후기 모음\"]",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 5.39,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 304,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "이번 제주도 여행에서 가장 기억에 남는 제주도 맛집을 발견했습니다. 현지인들 사이에서도 입소문이 자자한 곳이라 기대감을 안고 방문했는데, 기대 이상으로 훌륭한 맛과 정갈한 상차림에 감탄했습니다.\n\n신선한 제철 재료를 사용하여 깊은 풍미를 느낄 수 있었고, 사장님의 친절한 서비스 덕분에 기분 좋은 식사를 즐길 수 있었습니다. 특히 제주도 특유의 감성이 느껴지",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 5.11,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 1623,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 여행의 완성, 실패 없는 제주도 맛집 탐방기\n\n제주도는 언제 방문해도 가슴 설레는 여행지입니다. 푸른 바다와 상쾌한 바람, 그리고 무엇보다 우리의 오감을 만족하게 하는 맛있는 음식들이 기다리고 있기 때문입니다. 수많은 식당 중에서 어디를 가야 할지 고민하는 분들을 위해, 오늘은 현지인과 여행객 모두에게 사랑받는 **제주도 맛집**들을 엄선하여 소",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 11.8,
+          "blog_body_300": 22.5,
+          "blog_body_1500": 22.5
+        },
+        "total": 66.8,
+        "avg": 16.7
+      }
+    },
+    {
+      "id": "gemma-4-26b-a4b-it",
+      "provider": "gemini",
+      "label": "Gemma 4 26B",
+      "role": "body",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 2.38,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 209,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "*   Input: \"한국어로 '안녕하세요'라고만 답해주세요.\" (Please answer only with \"안녕하세요\" in Korean.)\n    *   Constraint: Answer *only* with \"안녕하세요\".\n\n    *   The user wants a specific single-word/phrase response.\n    *  ",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 9.49,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 1264,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "\"제주도 맛집\" (Jeju Island Restaurants)\nNaver Blog SEO Titles (optimized for search).\n3 titles.\nJSON array only (e.g., `[\"title1\", \"title2\", \"title3\"]`).\n\n    *   *High-volume keywords:* 제주도 맛집 (Jeju Islan",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 17.93,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 1966,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "*   Keyword: \"제주도 맛집\" (Jeju Island Restaurants/Good places to eat).\n*   Platform: Naver Blog.\n*   Length: Approximately 300 characters (Korean characters).\n*   Style: Natural Korean, SEO-friendly.\n*  ",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 49.16,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 5276,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "\"제주도 맛집\" (Jeju Island Restaurants)\nNaver Blog post body.\n1500~2000 characters (including spaces).\nPolite/Formal (~습니다).\n\n        *   1 x H1 Title\n        *   2 x ## Sections\n        *   Closing/Conclu",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 4.0,
+          "blog_body_300": 3.6,
+          "blog_body_1500": 3.6
+        },
+        "total": 21.2,
+        "avg": 5.3
+      }
+    },
+    {
+      "id": "gemma-4-31b-it",
+      "provider": "gemini",
+      "label": "Gemma 4 31B",
+      "role": "body_alt",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 5.28,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 213,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "*   Input: \"한국어로 '안녕하세요'라고만 답해주세요.\" (Please answer only \"안녕하세요\" in Korean.)\n    *   Constraint: Answer *only* with \"안녕하세요\".\n\n    *   The user wants a specific phrase: \"안녕하세요\".\n    *   The user explici",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 12.52,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 1282,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "*   Keyword: \"제주도 맛집\" (Jeju Island Restaurants/Good places to eat).\n    *   Goal: 3 Naver Blog SEO-optimized titles.\n    *   Output Format: JSON array only.\n    *   Example Format: `[\"Title 1\", \"Title",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 27.79,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 1899,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "\"제주도 맛집\" (Jeju Island Restaurants/Good eats).\nNaver Blog body text.\nApproximately 300 characters.\nNatural Korean, SEO-friendly.\nNo Markdown, body text only.\n\n    *   *Target Audience:* People planning",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 56.69,
+          "finish": "stop",
+          "completion_tokens": null,
+          "prompt_tokens": null,
+          "content_len": 4280,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "\"제주도 맛집\" (Jeju Island Restaurants/Good Places to Eat)\nNaver Blog post.\n1,500 - 2,000 characters (including spaces).\nPolite/Formal (~습니다).\n\n        *   1 H1 title.\n        *   2 ## sections.\n        * ",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 0.0,
+          "blog_body_300": 2.6,
+          "blog_body_1500": 3.6
+        },
+        "total": 16.2,
+        "avg": 4.1
+      }
+    },
+    {
+      "id": "meta/llama-4-maverick-17b-128e-instruct",
+      "provider": "nvidia",
+      "label": "Llama 4 Maverick 17B",
+      "role": "fast",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 0.64,
+          "finish": "stop",
+          "completion_tokens": 3,
+          "prompt_tokens": 20,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 1.53,
+          "finish": "stop",
+          "completion_tokens": 47,
+          "prompt_tokens": 49,
+          "content_len": 85,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 여행 필수! 제주도 맛집 리스트 총정리\", \"맛집 탐방: 제주도 흑돼지 구이와 한상차림\", \"제주도 먹거리: 인기 있는 제주도 해산물 맛집\"]",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 2.85,
+          "finish": "stop",
+          "completion_tokens": 124,
+          "prompt_tokens": 48,
+          "content_len": 243,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도는 신선한 재료와 독특한 향토 음식으로 유명한 맛집 천국입니다. 특히 흑돼지 구이와 한치 회, 그리고 다양한 해산물 요리가 인기 있습니다. 제주도의 올레길을 따라 걷다 보면 곳곳에 숨겨진 맛집들을 발견할 수 있습니다. 대표적으로 중문 관광단지 주변의 흑돼지 전문 구이집과 함덕 해수욕장 근처의 신선한 해산물 요리 전문 식당들이 관광객들의 발길을 잡습니다",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 7.0,
+          "finish": "stop",
+          "completion_tokens": 340,
+          "prompt_tokens": 81,
+          "content_len": 652,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집 탐방\n제주도는 다양한 먹거리로 유명한 관광지입니다. 이번 글에서는 제주도에서 꼭 가봐야 할 맛집을 소개하겠습니다.\n\n## 흑돼지 맛집\n제주도의 대표적인 먹거리 중 하나는 흑돼지입니다. 제주도에는 흑돼지를 전문으로 하는 식당들이 많습니다. 그 중에서도 특히 유명한 흑돼지 맛집은 용담해안도로에 위치한 '흑돼지마을'입니다. 이곳에서는 신선한 흑돼",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 11.5,
+          "blog_body_300": 22.7,
+          "blog_body_1500": 15.3
+        },
+        "total": 59.5,
+        "avg": 14.9
+      }
+    },
+    {
+      "id": "meta/llama-3.1-8b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.1 8B Instruct",
+      "role": "fast_alt",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 0.57,
+          "finish": "stop",
+          "completion_tokens": 4,
+          "prompt_tokens": 48,
+          "content_len": 6,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요.",
+          "ttft_ms": 19.404142,
+          "total_ms": 41.506664
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 0.85,
+          "finish": "stop",
+          "completion_tokens": 40,
+          "prompt_tokens": 78,
+          "content_len": 66,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 맛집 top10\", \"제주도 여행 떠나기 전에 꼭 아는 맛집\", \"제주도 여행 가서 꼭 먹어야 하는 맛집\"]",
+          "ttft_ms": 30.590733,
+          "total_ms": 307.065362
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 3.69,
+          "finish": "stop",
+          "completion_tokens": 399,
+          "prompt_tokens": 80,
+          "content_len": 670,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도는 한국의 대표적인 여행지 중 하나로, 아름다운 자연 경관과 다양한 음식이 인기가 많은 곳입니다. 그중에서도 제주도 맛집은 특히 인기가 많습니다. \n\n제주도 맛집은 주로 해산물이 포함된 메뉴가 많습니다. 특히 연어와 고기가 맛있는 곳으로 유명합니다. 제주도에서 연어를 먹는 것은 절대 놓치지 말아야 할 경험이라고 할 수 있습니다. 연어를 해물鍋에서 먹거",
+          "ttft_ms": 24.082971,
+          "total_ms": 3165.823665
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 3.66,
+          "finish": "stop",
+          "completion_tokens": 614,
+          "prompt_tokens": 113,
+          "content_len": 1091,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집\n\n제주도는 한국의 대표적인 여행지 중 하나입니다. 아름다운 자연경관, 다양한 문화유산, 그리고 맛있는 음식 등이 많은 여행객들의 사랑을 받는 곳입니다. 특히 제주도에 가면 다양한 맛집을 찾을 수 있습니다. 제주도 맛집을 소개해 드리겠습니다.\n\n## 제주도 대표 맛집\n\n제주도에는 다양한 종류의 맛집이 있습니다. 여기서 소개할 맛집은 제주도 대",
+          "ttft_ms": 18.121298,
+          "total_ms": 3134.750462
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 12.2,
+          "blog_body_300": 18.6,
+          "blog_body_1500": 18.6
+        },
+        "total": 59.4,
+        "avg": 14.9
+      }
+    },
+    {
+      "id": "meta/llama-3.3-70b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.3 70B Instruct",
+      "role": "quality",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 10.44,
+          "finish": "stop",
+          "completion_tokens": 3,
+          "prompt_tokens": 48,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 1.5,
+          "finish": "stop",
+          "completion_tokens": 28,
+          "prompt_tokens": 78,
+          "content_len": 45,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 맛집 추천\", \"제주도 먹거리 베스트\", \"제주도 관광 맛집 가이드\"]",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 12.25,
+          "finish": "stop",
+          "completion_tokens": 236,
+          "prompt_tokens": 80,
+          "content_len": 372,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도는 아름다운 자연風景과 다양한 먹거리가 있는 곳으로 많은 사람들에게 사랑받고 있습니다. 특히 제주도 맛집들은 지역 특산물들을 이용해 독특한 맛과 멋진 풍경을 제공해 주고 있어 많은 관광객들이 찾는 곳입니다. 블랙팽이, 제주 흑돼지, 黑豚 등 제주도에서만 맛볼 수 있는 음식들이 있습니다. \n\n또한 해물이 풍부한 제주도에서는 신선한 해산물로 만든 음식들도",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 18.27,
+          "finish": "stop",
+          "completion_tokens": 426,
+          "prompt_tokens": 112,
+          "content_len": 731,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집 추천\n제주도는 한국의 대표적인 관광지 중 하나로, 아름다운 자연 경관과 다양한 문화를 경험할 수 있는 곳입니다. 또한 제주도는 맛있는 음식을 즐길 수 있는 곳으로, 많은 사람들이 제주도 맛집을 찾고 있습니다. 이 글에서는 제주도에서 꼭 먹어야 할 음식과 맛집을 소개합니다.\n\n## 제주도에서 먹어야 할 음식\n제주도는 해산물이 풍부한 곳으로, ",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 11.5,
+          "blog_body_300": 21.8,
+          "blog_body_1500": 14.2
+        },
+        "total": 57.4,
+        "avg": 14.4
+      }
+    },
+    {
+      "id": "google/gemma-4-31b-it",
+      "provider": "nvidia",
+      "label": "Gemma 4 31B (NIM)",
+      "role": "body",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 75.89,
+          "finish": "stop",
+          "completion_tokens": 2,
+          "prompt_tokens": 23,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 24.83,
+          "finish": "stop",
+          "completion_tokens": 75,
+          "prompt_tokens": 53,
+          "content_len": 127,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "```json\n[\"제주도 맛집 추천 BEST 10, 현지인이 인정한 찐 맛집 리스트\", \"제주도 맛집 지도! 동서남북 지역별 실패 없는 필수 코스\", \"제주도 맛집 내돈내산 후기, 분위기와 맛 다 잡은 숨은 맛집 공유\"]\n```",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 29.99,
+          "finish": "stop",
+          "completion_tokens": 176,
+          "prompt_tokens": 58,
+          "content_len": 308,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도 여행의 완성은 역시 먹거리죠! 이번 여행에서 정말 만족스러웠던 제주도 맛집을 소개해 드릴게요. 현지인들이 추천하는 숨은 명소부터 SNS 핫플레이스까지 꼼꼼하게 찾아봤는데요.\n\n신선한 흑돼지 구이의 육즙과 바다 향 가득한 전복 요리는 정말 일품이었습니다. 특히 창밖으로 펼쳐지는 푸른 제주 바다를 보며 식사하니 힐링이 따로 없더라고요. 재료 본연의 맛을",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 56.98,
+          "finish": "stop",
+          "completion_tokens": 1132,
+          "prompt_tokens": 94,
+          "content_len": 1999,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집 정복! 현지인 추천부터 뷰 맛집까지 제주도 맛집 완벽 가이드\n\n안녕하세요! 오늘은 여행의 꽃이라고 할 수 있는 '먹거리' 이야기를 해보려고 합니다. 제주도 여행을 계획하시는 분들이라면 가장 고민하시는 것이 바로 \"어디서 무엇을 먹을까?\"일 텐데요. 인터넷에 검색하면 수많은 식당이 나오지만, 정작 가보면 광고성 글에 실망하신 적 많으시죠? 그",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 8.0,
+          "blog_body_300": 20.0,
+          "blog_body_1500": 20.0
+        },
+        "total": 58.0,
+        "avg": 14.5
+      }
+    },
+    {
+      "id": "qwen/qwen3-next-80b-a3b-instruct",
+      "provider": "nvidia",
+      "label": "Qwen3 Next 80B",
+      "role": "draft",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 3.46,
+          "finish": "stop",
+          "completion_tokens": 4,
+          "prompt_tokens": 23,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 3.29,
+          "finish": "stop",
+          "completion_tokens": 97,
+          "prompt_tokens": 58,
+          "content_len": 122,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 맛집 추천 2025: 현지인이 가리는 최고의 음식점 10곳\", \"제주도 맛집 필수 가이드! 숨은 명소부터 유명 브랜드까지 총정리\", \"제주도 맛집 순위 TOP 15 - 한라산 아래서 맛보는 진짜 제주 음식\"]",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 7.01,
+          "finish": "stop",
+          "completion_tokens": 188,
+          "prompt_tokens": 64,
+          "content_len": 242,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도 맛집 찾으신다면 꼭 방문해야 할 곳! 제주 현지인들이 애정하는 이 곳은 신선한 제주흑돼지 갈비와 쫄깃한 우삼겹이 일품입니다. 저녁 무렵이면 줄서는 인기 맛집이지만, 기다릴 만한 가치가 충분해요. 특히 육수에 담긴 제주 국물은 진하고 감칠맛이 일품이며, 쌈채소와 함께 먹으면 완전한 맛의 조화! 제주도 여행 중간에 꼭 들러보세요. 맛집 정보는 네이버 블",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 21.68,
+          "finish": "stop",
+          "completion_tokens": 976,
+          "prompt_tokens": 100,
+          "content_len": 1363,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집, 현지인도 인정하는 진짜 맛을 찾아서\n\n제주도는 자연의 선물이 가득한 섬이지만, 그만큼 음식 문화도 빼어납니다. 관광객들이 가장 먼저 찾는 키워드 중 하나가 바로 “제주도 맛집”입니다. 하지만 단순히 유명한 곳만 찾는다면 진정한 제주의 맛을 놓치기 십상입니다. 이번에는 현지인들이 일상에서 찾는 진짜 제주도 맛집을 중심으로, 꼭 들러야 할 두",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 9.7,
+          "blog_body_300": 22.3,
+          "blog_body_1500": 20.8
+        },
+        "total": 62.8,
+        "avg": 15.7
+      }
+    },
+    {
+      "id": "meta/llama-3.1-70b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.1 70B Instruct",
+      "role": "quality_alt",
+      "tests": {
+        "basic": {
+          "ok": true,
+          "elapsed_sec": 0.98,
+          "finish": "stop",
+          "completion_tokens": 3,
+          "prompt_tokens": 48,
+          "content_len": 5,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "안녕하세요",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_title": {
+          "ok": true,
+          "elapsed_sec": 2.4,
+          "finish": "stop",
+          "completion_tokens": 48,
+          "prompt_tokens": 78,
+          "content_len": 78,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "[\"제주도 맛집 추천 BEST 10\", \"제주도 맛집 가이드 - 제주도에서 먹어야 할 음식\", \"제주도 음식 맛집 - 제주도 여행 가이드\"]",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_300": {
+          "ok": true,
+          "elapsed_sec": 58.34,
+          "finish": "stop",
+          "completion_tokens": 327,
+          "prompt_tokens": 80,
+          "content_len": 542,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "제주도는 대한민국의 남해에 위치한 아름다운 섬으로, 자연의 경관과 풍부한 문화유산으로 유명합니다. 또한 제주도는 다양한 맛집들이 모여있는 음식의 천국으로도 알려져 있습니다. 이 곳에서는 신선한 해산물과 다양한 지역 특산품으로 만든 다양한 요리가 맛볼 수 있습니다.\n\n제주도 맛집 중 하나는 바로 '흑돼지집'입니다. 제주도는 흑돼지로 유명하며, 이 곳에서는 고",
+          "ttft_ms": null,
+          "total_ms": null
+        },
+        "blog_body_1500": {
+          "ok": true,
+          "elapsed_sec": 120.76,
+          "finish": "stop",
+          "completion_tokens": 563,
+          "prompt_tokens": 112,
+          "content_len": 950,
+          "reasoning_len": 0,
+          "reasoning_only": false,
+          "preview": "# 제주도 맛집 여행: 자연의 아름다움과 함께 즐기는 맛있는 식사\n\n제주도는 한국의 대표적인 관광지로, 아름다운 자연 경관과 다양한 문화 유산을 자랑합니다. 제주도에서 맛있는 식사를 즐기면서 여행의 즐거움을 더할 수 있는 맛집을 소개해 드리겠습니다.\n\n## 제주도 대표 맛집\n\n제주도에는 다양한 맛집이 있습니다. 여기서는 대표적인 맛집을 몇 가지 소개해 드리",
+          "ttft_ms": null,
+          "total_ms": null
+        }
+      },
+      "score": {
+        "by_test": {
+          "basic": 10.0,
+          "blog_title": 10.6,
+          "blog_body_300": 16.0,
+          "blog_body_1500": 16.0
+        },
+        "total": 52.6,
+        "avg": 13.2
+      }
+    }
+  ],
+  "ranking": [
+    {
+      "rank": 1,
+      "id": "gemini-3.1-flash-lite",
+      "provider": "gemini",
+      "label": "Gemini 3.1 Flash Lite",
+      "total_score": 66.8,
+      "avg_score": 16.7
+    },
+    {
+      "rank": 2,
+      "id": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "provider": "groq",
+      "label": "Llama 4 Scout 17B",
+      "total_score": 63.8,
+      "avg_score": 15.9
+    },
+    {
+      "rank": 3,
+      "id": "qwen/qwen3-next-80b-a3b-instruct",
+      "provider": "nvidia",
+      "label": "Qwen3 Next 80B",
+      "total_score": 62.8,
+      "avg_score": 15.7
+    },
+    {
+      "rank": 4,
+      "id": "meta/llama-4-maverick-17b-128e-instruct",
+      "provider": "nvidia",
+      "label": "Llama 4 Maverick 17B",
+      "total_score": 59.5,
+      "avg_score": 14.9
+    },
+    {
+      "rank": 5,
+      "id": "meta/llama-3.1-8b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.1 8B Instruct",
+      "total_score": 59.4,
+      "avg_score": 14.9
+    },
+    {
+      "rank": 6,
+      "id": "google/gemma-4-31b-it",
+      "provider": "nvidia",
+      "label": "Gemma 4 31B (NIM)",
+      "total_score": 58.0,
+      "avg_score": 14.5
+    },
+    {
+      "rank": 7,
+      "id": "meta/llama-3.3-70b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.3 70B Instruct",
+      "total_score": 57.4,
+      "avg_score": 14.4
+    },
+    {
+      "rank": 8,
+      "id": "llama-3.3-70b-versatile",
+      "provider": "groq",
+      "label": "Llama 3.3 70B Versatile",
+      "total_score": 56.6,
+      "avg_score": 14.1
+    },
+    {
+      "rank": 9,
+      "id": "gemini-2.5-flash-lite",
+      "provider": "gemini",
+      "label": "Gemini 2.5 Flash Lite",
+      "total_score": 54.7,
+      "avg_score": 13.7
+    },
+    {
+      "rank": 10,
+      "id": "llama-3.1-8b-instant",
+      "provider": "groq",
+      "label": "Llama 3.1 8B Instant",
+      "total_score": 52.8,
+      "avg_score": 13.2
+    },
+    {
+      "rank": 11,
+      "id": "meta/llama-3.1-70b-instruct",
+      "provider": "nvidia",
+      "label": "Llama 3.1 70B Instruct",
+      "total_score": 52.6,
+      "avg_score": 13.2
+    },
+    {
+      "rank": 12,
+      "id": "qwen/qwen3-32b",
+      "provider": "groq",
+      "label": "Qwen3 32B",
+      "total_score": 41.7,
+      "avg_score": 10.4
+    },
+    {
+      "rank": 13,
+      "id": "gemma-4-26b-a4b-it",
+      "provider": "gemini",
+      "label": "Gemma 4 26B",
+      "total_score": 21.2,
+      "avg_score": 5.3
+    },
+    {
+      "rank": 14,
+      "id": "gemma-4-31b-it",
+      "provider": "gemini",
+      "label": "Gemma 4 31B",
+      "total_score": 16.2,
+      "avg_score": 4.1
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "model": "meta/llama-3.1-70b-instruct",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 28.54,
+        "finish": "stop",
+        "completion_tokens": 3,
+        "content_len": 5,
+        "has_reasoning": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 2.34,
+        "finish": "stop",
+        "completion_tokens": 33,
+        "content_len": 51,
+        "has_reasoning": false,
+        "preview": "[\"제주도 맛집 BEST 10\", \"제주도 가볼만한 맛집\", \"제주도 인기 맛집 여행코스\"]"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 18.09,
+        "finish": "stop",
+        "completion_tokens": 460,
+        "content_len": 727,
+        "has_reasoning": false,
+        "preview": "제주도 맛집을 찾는 여행객들에게 추천할 만한 곳을 소개해드립니다. 제주도는 자연의 아름다움과 맛있는 음식으로 유명한 곳이기 때문에 많은 여행객들이 찾는 곳입니다.\n\n첫 번째로 추천"
+      }
+    }
+  },
+  {
+    "model": "meta/llama-3.1-8b-instruct",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 0.12,
+        "finish": "stop",
+        "completion_tokens": 4,
+        "content_len": 6,
+        "has_reasoning": false,
+        "preview": "안녕하세요."
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 0.41,
+        "finish": "stop",
+        "completion_tokens": 56,
+        "content_len": 80,
+        "has_reasoning": false,
+        "preview": "[\"제주도 맛집 10선! 도도사냥기획! \", \"제주도 여행 맛집 가보자! 도도사냥기획!\", \"제주도 맛집 순위! 제주도 여행 가기 좋은 곳!\"]"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 2.69,
+        "finish": "stop",
+        "completion_tokens": 375,
+        "content_len": 612,
+        "has_reasoning": false,
+        "preview": "제주도 맛집은 유명한 곳부터 숨겨진 곳까지 다양한 경치와 맛을 즐길 수 있는 곳입니다. \n\n제주도 여행을 계획하는 분이라면, 이곳의 맛집을 추천해드리겠습니다. \n\n제주도 맛집의 대"
+      }
+    }
+  },
+  {
+    "model": "meta/llama-3.3-70b-instruct",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 2.21,
+        "finish": "stop",
+        "completion_tokens": 3,
+        "content_len": 5,
+        "has_reasoning": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 1.92,
+        "finish": "stop",
+        "completion_tokens": 31,
+        "content_len": 53,
+        "has_reasoning": false,
+        "preview": "[\"제주도 맛집 BEST 10\", \"제주도 여행 맛집 가이드\", \"제주도 음식점 추천 리스트\"]"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 14.54,
+        "finish": "stop",
+        "completion_tokens": 272,
+        "content_len": 430,
+        "has_reasoning": false,
+        "preview": "제주도 맛집을 찾는다면 다양한 선택지가 있습니다. 먼저 제주도에서 유명한 블랙팡은 제주도 특산물인 흑돼지를 사용하여 만든 팡이로 제주도에서 가장 맛있는 음식 중 하나입니다. 또한 "
+      }
+    }
+  },
+  {
+    "model": "mistralai/mixtral-8x7b-instruct-v0.1",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 9.13,
+        "finish": "stop",
+        "completion_tokens": 83,
+        "content_len": 268,
+        "has_reasoning": false,
+        "preview": "안녕하세요.\n\nI'm here to help you practice English, but I can respond to your request and greet you in Ko"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 14.96,
+        "finish": "stop",
+        "completion_tokens": 138,
+        "content_len": 166,
+        "has_reasoning": false,
+        "preview": "[\n    \"«Jeju Island Food Journey» 제주도 Must-Visit 맛집  Top 5 리스트\",\n    \"전 국  Provocative! 제주도 시베리아 맛집,"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 86.37,
+        "finish": "stop",
+        "completion_tokens": 830,
+        "content_len": 747,
+        "has_reasoning": false,
+        "preview": "안녕하세요! 저희 블로그에서 Jeju-do 맛집 TOUR를 소개하 heute  MOIN!\n\n제주도는 아름다운 자연 환경과 섬의 맛을 느낄 수 있는 특별한 자리입니다. 제주도에서는 "
+      }
+    }
+  }
+]

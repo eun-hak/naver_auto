@@ -25,11 +25,7 @@ export const api = {
     const base = `/api/drafts/${encodeURIComponent(draftId)}/images/${encodeURIComponent(filename)}`;
     return version ? `${base}?v=${version}` : base;
   },
-  createDraft: (body: {
-    keyword: string;
-    category: string | null;
-    skip_polish: boolean;
-  }) =>
+  createDraft: (body: { keyword: string; category: string | null }) =>
     request<{ job_id: string }>("/drafts/create", {
       method: "POST",
       body: JSON.stringify(body),

@@ -1,0 +1,258 @@
+[
+  {
+    "model": "google/gemma-4-31b-it",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 0.4,
+        "finish": "stop",
+        "completion_tokens": 2,
+        "content_len": 5,
+        "reasoning_only": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 3.02,
+        "finish": "stop",
+        "completion_tokens": 69,
+        "content_len": 121,
+        "reasoning_only": false,
+        "preview": "```json\n[\"제주도 맛집 BEST 10 현지인이 추천하는 찐맛집 리스트\", \"제주도 맛집 투어 코스! 실패 없는 지역별 대표 메뉴 추천\", \"제주도 맛집 내돈내산 솔직 후기, 분위기와 맛 모두 잡은 곳\"]\n``"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 4.08,
+        "finish": "stop",
+        "completion_tokens": 173,
+        "content_len": 292,
+        "reasoning_only": false,
+        "preview": "제주도 여행의 완성은 역시 먹거리죠! 이번 여행에서 정말 만족스러웠던 제주도 맛집을 소개해 드릴게요. 현지인들이 추천하는 숨은 맛집부터 SNS 핫플레이스까지 꼼꼼하게 다녀왔는데, 신선한 제주산 식재료 본연의 맛이 살"
+      }
+    }
+  },
+  {
+    "model": "mistralai/mistral-large-3-675b-instruct-2512",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 0.45,
+        "finish": "stop",
+        "completion_tokens": 6,
+        "content_len": 6,
+        "reasoning_only": false,
+        "preview": "안녕하세요."
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 2.8,
+        "finish": "stop",
+        "completion_tokens": 100,
+        "content_len": 167,
+        "reasoning_only": false,
+        "preview": "```json\n[\n    \"제주도 맛집 BEST 10 | 현지인이 추천하는 숨은 보석 같은 식당 모음\",\n    \"제주도 여행 필수 코스! 꼭 가봐야 할 로컬 맛집 15곳 (2024 최신 업데이트)\",\n    \"제주"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 100.3,
+        "finish": "stop",
+        "completion_tokens": 543,
+        "content_len": 906,
+        "reasoning_only": false,
+        "preview": "제주도는 우리나라에서 가장 인기 있는 여행지 중 하나로, 신선한 해산물과 독특한 지역 음식으로 유명합니다. 오늘은 제주도에서 꼭 가봐야 할 맛집들을 소개해 드릴게요!\n\n먼저, 제주도 하면 빼놓을 수 없는 음식은 바로"
+      }
+    }
+  },
+  {
+    "model": "mistralai/mistral-medium-3.5-128b",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 24.81,
+        "finish": "stop",
+        "completion_tokens": 5,
+        "content_len": 5,
+        "reasoning_only": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 78.79,
+        "finish": "stop",
+        "completion_tokens": 73,
+        "content_len": 119,
+        "reasoning_only": false,
+        "preview": "```json\n[\"제주도 반짝 반짝 맛집 추천! 로컬이 직접 먹는 그 곳\", \"제주도 인기 맛집 베스트 10! 현지인이 추천하는 맛의 비결\", \"제주도 숨은 맛집 탐방 | 로컬이 알려주는 진한 맛의 세계\"]\n```"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 47.66,
+        "finish": "stop",
+        "completion_tokens": 197,
+        "content_len": 315,
+        "reasoning_only": false,
+        "preview": "제주도 여행을 계획하고 계신가요? 제주도에는 신선한 해산물과 독특한 지역 특색을 살린 맛집들이 많아요. 특히, 흑돼지 구이와 해산물 탕은 제주 여행의 필수 메뉴죠. 해변가에서 즐기는 신선한 회와 구운 생선도추천드립니"
+      }
+    }
+  },
+  {
+    "model": "qwen/qwen3.5-122b-a10b",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 0.29,
+        "finish": "stop",
+        "completion_tokens": 4,
+        "content_len": 5,
+        "reasoning_only": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 1.27,
+        "finish": "stop",
+        "completion_tokens": 61,
+        "content_len": 107,
+        "reasoning_only": false,
+        "preview": "[\"제주도 맛집 총정리! 현지인이 진짜 추천하는 숨은 보석 5선\", \"2024 제주도 맛집 가이드: 제주시·서귀포별必방문 꿀팁\", \"제주도 여행 필수! 실패 없는 가성비 맛집 BEST 10\"]"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 24.45,
+        "finish": "stop",
+        "completion_tokens": 147,
+        "content_len": 281,
+        "reasoning_only": false,
+        "preview": "제주도 여행의 하이라이트는 역시 입안에서 터지는 감칠맛 넘치는 현지 맛집 탐방입니다. 올레길을 따라 걷다 보면 숨겨진 보석 같은 식당들이 기다리고 있죠. 특히 제주의 흑돼지는 구운 후 김치와 함께 싸 먹으면 그야말로"
+      }
+    }
+  },
+  {
+    "model": "deepseek-ai/deepseek-v4-flash",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 33.2,
+        "finish": "stop",
+        "completion_tokens": 6,
+        "content_len": 5,
+        "reasoning_only": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 68.87,
+        "finish": "stop",
+        "completion_tokens": 86,
+        "content_len": 117,
+        "reasoning_only": false,
+        "preview": "[\"2024 제주도 맛집 BEST 5 현지인이 추천하는 숨은 맛집 총정리\", \"제주도 여행 필수 코스! 가봐야 할 맛집 리스트 10선\", \"제주도 맛집 추천 TOP 7 - 현지인과 관광객 모두 인정한 찐맛집\"]"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 145.04,
+        "finish": "stop",
+        "completion_tokens": 284,
+        "content_len": 343,
+        "reasoning_only": false,
+        "preview": "제주도 맛집을 찾고 계신다면 현지인이 추천하는 곳을 놓치지 마세요. 첫째, 서귀포에 위치한 ‘올래국수’는 고기 육수에 쫄깃한 면발이 일품인 고기국수 맛집으로, 아침 일찍 줄을 서야 맛볼 수 있습니다. 둘째, 함덕해수"
+      }
+    }
+  },
+  {
+    "model": "meta/llama-4-maverick-17b-128e-instruct",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 1.5,
+        "finish": "stop",
+        "completion_tokens": 3,
+        "content_len": 5,
+        "reasoning_only": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 1.05,
+        "finish": "stop",
+        "completion_tokens": 46,
+        "content_len": 86,
+        "reasoning_only": false,
+        "preview": "[\"제주도 여행 필수! 제주도 맛집 리스트 총정리\", \"제주도에서 꼭 가봐야 할 맛집 BEST 10\", \"제주도의 숨은 맛집 탐방기: 제주도 맛집 추천\"]"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 2.89,
+        "finish": "stop",
+        "completion_tokens": 146,
+        "content_len": 291,
+        "reasoning_only": false,
+        "preview": "제주도 여행을 계획하고 있다면 먹거리 정보도 빼놓을 수 없죠. 제주도는 신선한 바다 해산물부터 다양한 흑돼지 요리까지 맛있는 음식이 가득합니다. 특히 올레길을 따라 걷다 보면 곳곳에 자리한 맛집들을 발견할 수 있는데"
+      }
+    }
+  },
+  {
+    "model": "z-ai/glm-5.1",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 8.41,
+        "finish": "stop",
+        "completion_tokens": 5,
+        "content_len": 5,
+        "reasoning_only": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 519.39,
+        "finish": "stop",
+        "completion_tokens": 87,
+        "content_len": 105,
+        "reasoning_only": false,
+        "preview": "[\"제주도 맛집 로컬 찐추천! 서귀포 맛집 베스트 10\", \"제주도 맛집 여행 필수코스, 도민이 사랑하는 제주 음식 리스트\", \"제주도 맛집 투어 총정리! 가성비 최고 제주도 맛집 7선\"]"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 433.95,
+        "finish": "stop",
+        "completion_tokens": 264,
+        "content_len": 301,
+        "reasoning_only": false,
+        "preview": "제주도 여행에서 절대 놓칠 수 없는 건 바로 제주도 맛집 리스트입니다. 에메랄빛 바다와 감성 카페도 좋지만, 여행의 진짜 묘미는 역시 제주 특산물로 만든 현지 음식이죠. 동쪽 성산 일출봉 근처의 시원한 전복죽부터 서"
+      }
+    }
+  },
+  {
+    "model": "moonshotai/kimi-k2.6",
+    "tests": {
+      "basic": {
+        "ok": true,
+        "elapsed_sec": 364.98,
+        "finish": "stop",
+        "completion_tokens": 6,
+        "content_len": 5,
+        "reasoning_only": false,
+        "preview": "안녕하세요"
+      },
+      "blog_title": {
+        "ok": true,
+        "elapsed_sec": 130.71,
+        "finish": "stop",
+        "completion_tokens": 103,
+        "content_len": 123,
+        "reasoning_only": false,
+        "preview": "```json\n[\"제주도 맛집 추천 TOP 10! 현지인이 추천하는 숨은 맛집\",\"2024 제주도 맛집 가이드 | 서귀포·제주시 핫플 맛집 총정리\",\"제주도 맛집 투어 | 흑돼지·갈치·해산물 맛집 BEST 후기\"]\n"
+      },
+      "blog_body": {
+        "ok": true,
+        "elapsed_sec": 32.31,
+        "finish": "stop",
+        "completion_tokens": 537,
+        "content_len": 576,
+        "reasoning_only": false,
+        "preview": "제주도 맛집을 찾는 분들께 꼭 추천하고 싶은 곳들을 소개해드릴게요. 먼저 제주 흑돼지 맛집으로는 제주시 연동에 위치한 **\"돈사돈\"**이 유명한데, 두툼한 흑돼지 오겹살을 숯불에 직접 구워주셔서 육즙이 풍부하고 고소"
+      }
+    }
+  }
+]

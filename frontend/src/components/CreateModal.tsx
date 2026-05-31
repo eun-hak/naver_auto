@@ -2,17 +2,12 @@ import { FormEvent, useState } from "react";
 
 interface Props {
   onClose: () => void;
-  onSubmit: (payload: {
-    keyword: string;
-    category: string | null;
-    skip_polish: boolean;
-  }) => void;
+  onSubmit: (payload: { keyword: string; category: string | null }) => void;
 }
 
 export function CreateModal({ onClose, onSubmit }: Props) {
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("");
-  const [skipPolish, setSkipPolish] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -21,7 +16,6 @@ export function CreateModal({ onClose, onSubmit }: Props) {
     onSubmit({
       keyword: kw,
       category: category.trim() || null,
-      skip_polish: skipPolish,
     });
   };
 
@@ -52,14 +46,6 @@ export function CreateModal({ onClose, onSubmit }: Props) {
             onChange={(e) => setCategory(e.target.value)}
             placeholder="선택 (예: 맛집·요리)"
           />
-        </label>
-        <label className="check">
-          <input
-            type="checkbox"
-            checked={skipPolish}
-            onChange={(e) => setSkipPolish(e.target.checked)}
-          />
-          도입부 polish 생략
         </label>
         <div className="modal-actions">
           <button type="button" className="btn btn-ghost" onClick={onClose}>

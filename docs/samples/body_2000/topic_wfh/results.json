@@ -1,0 +1,27 @@
+{
+  "keyword": "재택근무 집중법",
+  "seo_title": "재택근무 집중 잘하는 방법 | WFH 생산성 7가지",
+  "target": "1500~2500",
+  "results": [
+    {
+      "model": "gemini-3.1-flash-lite",
+      "label": "Gemini 3.1 Flash Lite",
+      "provider": "gemini",
+      "elapsed_sec": 10.34,
+      "content_len": 2672,
+      "in_target": false,
+      "completion_tokens": null,
+      "path": "docs\\samples\\body_2000\\topic_wfh\\gemini-3-1-flash-lite.md"
+    },
+    {
+      "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+      "label": "Llama 4 Scout 17B",
+      "provider": "groq",
+      "elapsed_sec": 5.92,
+      "content_len": 2211,
+      "in_target": true,
+      "completion_tokens": 989,
+      "path": "docs\\samples\\body_2000\\topic_wfh\\meta-llama_llama-4-scout-17b-16e-instruct.md"
+    }
+  ]
+}

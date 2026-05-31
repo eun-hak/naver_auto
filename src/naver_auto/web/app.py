@@ -33,7 +33,6 @@ app.add_middleware(
 class CreateBody(BaseModel):
     keyword: str = Field(..., min_length=1, max_length=100)
     category: str | None = None
-    skip_polish: bool = False
 
 
 class FetchImagesBody(BaseModel):
@@ -98,7 +97,6 @@ def api_create(body: CreateBody):
             job,
             keyword=keyword,
             category=body.category,
-            skip_polish=body.skip_polish,
         )
 
     job = job_manager.submit("create", task, message=f"초안 생성: {keyword}")

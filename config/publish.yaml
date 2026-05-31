@@ -31,3 +31,33 @@ sns:
 require_disclaimer_if:
   - defamation
   - unverified_claim
+
+# 수집(sns)·AI생성(gemini) 이미지 후처리 — user/card 는 제외
+image_postprocess:
+  enabled: true
+  apply_to:
+    - sns
+    - gemini
+  strip_exif: true
+  watermark:
+    enabled: true
+    text: "© {blog_id}"   # NAVER_BLOG_ID 자동 치환
+    position: bottom_right  # bottom_right | bottom_left | top_right | top_left | center | tile
+    opacity: 0.35
+    font_size: 26
+    padding: 24
+  transforms:
+    crop_jitter: 0.025      # 슬롯별 미세 크롭 (프레임 차이)
+    brightness_jitter: 0.04
+    contrast: 1.04
+    contrast_jitter: 0.03
+    saturation: 1.06
+    saturation_jitter: 0.04
+    sharpness: 1.08
+    rotate_deg: 0.4         # ±0.4° 미세 회전
+    vignette: true
+    vignette_strength: 0.12
+  border:
+    enabled: false
+    width: 4
+    color: "#ffffff"

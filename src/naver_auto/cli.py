@@ -32,12 +32,11 @@ def _find_draft(draft_id: str) -> Path:
 def create(
     keyword: str = typer.Option(..., "--keyword", "-k", help="블로그 주제 키워드"),
     category: Optional[str] = typer.Option(None, "--category", "-c", help="네이버 카테고리"),
-    skip_polish: bool = typer.Option(False, "--skip-polish", help="도입부 polish 생략"),
 ) -> None:
     """키워드로 블로그 초안 생성."""
     ensure_dirs()
     typer.echo(f"[create] 키워드: {keyword}")
-    out_dir = create_draft_from_keyword(keyword, category=category, skip_polish=skip_polish)
+    out_dir = create_draft_from_keyword(keyword, category=category)
     resolve_draft_images(out_dir)
     meta = json.loads((out_dir / "meta.json").read_text(encoding="utf-8"))
     typer.echo(f"  → {out_dir}")

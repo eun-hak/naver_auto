@@ -16,13 +16,11 @@ from naver_auto.content.gemini_client import (
     generate_blog_body as gemini_body,
     generate_meta_tags as gemini_meta,
     generate_title_candidates as gemini_titles,
-    polish_intro as gemini_polish,
 )
 from naver_auto.content.groq_client import (
     generate_blog_body as groq_body,
     generate_meta_tags as groq_meta,
     generate_title_candidates as groq_titles,
-    polish_intro as groq_polish,
 )
 from naver_auto.content.validator import (
     extract_title,
@@ -49,7 +47,6 @@ def create_draft_from_keyword(
     keyword: str,
     *,
     category: str | None = None,
-    skip_polish: bool = False,
     progress: Callable[[str], None] | None = None,
 ) -> Path:
     def _progress(msg: str) -> None:
@@ -128,11 +125,6 @@ def create_draft_from_keyword(
             body = re.sub(r"\s*```$", "", body)
         if not body.startswith("# "):
             body = f"# {seo_title}\n\n{body}"
-        if not skip_polish:
-            _progress("도입부 다듬는 중…")
-            body = gemini_polish(seo_title, keyword, body) if use_gemini else groq_polish(
-                seo_title, keyword, body
-            )
         body = insert_image_placeholders(body, img_count)
         errors = quality_check(body, seo_cfg)
         if len(body) >= min_c * 0.85 and not any(

@@ -215,6 +215,8 @@ def download_as_jpeg(
     min_width: int = 400,
     min_height: int = 300,
     target_size: tuple[int, int] | None = (1200, 675),
+    slot: int = 1,
+    source: str = "sns",
 ) -> bool:
     try:
         with httpx.Client(
@@ -238,8 +240,9 @@ def download_as_jpeg(
             img = img.convert("RGB")
         if target_size:
             img = _fit_cover(img, target_size[0], target_size[1])
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        img.save(output_path, "JPEG", quality=88)
+        from naver_auto.image.postprocess import save_processed_jpeg
+
+        save_processed_jpeg(img, output_path, source=source, slot=slot)
         return True
     except Exception:
         return False
@@ -357,7 +360,14 @@ def fetch_one_image(
         digest = _url_hash(candidate.image_url)
         if digest in used:
             continue
-        if download_as_jpeg(candidate, output_path, min_width=min_w, min_height=min_h):
+        if download_as_jpeg(
+            candidate,
+            output_path,
+            min_width=min_w,
+            min_height=min_h,
+            slot=slot or 1,
+            source=candidate.source,
+        ):
             used.add(digest)
             attr = candidate.to_dict()
             attr["search_query"] = query
