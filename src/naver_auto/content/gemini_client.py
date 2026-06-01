@@ -11,7 +11,7 @@ import google.generativeai as genai
 from google.api_core import exceptions as google_exceptions
 
 DEFAULT_FAST_MODEL = "gemini-3.1-flash-lite"
-DEFAULT_BODY_MODEL = "gemma-4-26b-a4b-it"
+DEFAULT_BODY_MODEL = "gemini-3.1-flash-lite"
 # 하위 호환
 DEFAULT_MODEL = DEFAULT_FAST_MODEL
 
@@ -312,14 +312,21 @@ def plan_image_slots(
     slots: list[dict],
     *,
     body_excerpt: str = "",
+    user_image_prompt: str = "",
 ) -> list[dict]:
-    """슬롯별 네이버 이미지 검색어·alt·Gemini 프롬프트 (1회 호출)."""
+    """슬롯별 alt·FLUX용 영문 프롬프트 (1회 호출)."""
     slots_json = json.dumps(slots, ensure_ascii=False, indent=2)
-    prompt = f"""블로그 글의 이미지 슬롯별 검색 계획을 JSON으로 작성해.
+    style_block = ""
+    if user_image_prompt.strip():
+        style_block = f"""
+사용자 이미지 스타일 지시 (최우선 반영):
+{user_image_prompt.strip()}
+"""
+    prompt = f"""블로그 글의 이미지 슬롯별 계획을 JSON으로 작성해.
 
 키워드: {keyword}
 제목: {title}
-
+{style_block}
 슬롯 (소제목 기준):
 {slots_json}
 
@@ -332,18 +339,23 @@ JSON 형식 (slots 배열만):
     {{
       "slot": 1,
       "section": "소제목",
-      "search_query": "네이버 이미지 검색용 2~6단어",
+      "search_query": "키워드 관련 검색어 2~6단어",
       "alt": "이미지 설명 10~30자",
-      "gemini_prompt": "English food photo prompt, no text overlay"
+      "gemini_prompt": "English FLUX image prompt for this section"
     }}
   ]
 }}
 
 규칙:
-- search_query: 구체적 음식명·지역명·메뉴명 (예: 강화도 순무탕수육, 깐풍기 중국요리)
-- 슬롯마다 search_query를 다르게
-- 아이콘·일러스트·앱 UI 검색어 금지
-- gemini_prompt: 실사 음식 사진 스타일
+- 키워드·본문 주제에 맞는 장면 (음식/여행/재테크/IT/국제정세 등 글 주제에 맞게)
+- search_query: 키워드·소제목과 관련된 구체적 검색어, 슬롯마다 다르게
+- gemini_prompt: 영문, FLUX용 실사/에디토리얼 사진 프롬프트
+  - 구체적 장면·구도·조명 (예: natural window light, shallow depth of field)
+  - no text, no logos, no watermark
+  - NVIDIA FLUX 콘텐츠 필터: 실존 정치인 이름·초상, 전쟁·폭력·무기·공격 장면 금지
+  - 지정학/분쟁 주제는 지도·유조선·항로·뉴스룸·항구 등 상징적·중립적 장면으로
+  - 사용자 스타일 지시가 있으면 gemini_prompt에 반드시 반영 (단, 위 안전 규칙 우선)
+- 슬롯마다 gemini_prompt를 다르게 (같은 장면 반복 금지)
 """
     raw = _generate(
         prompt,
@@ -372,8 +384,8 @@ JSON 형식 (slots 배열만):
                 "alt": str(item.get("alt") or base.get("alt") or base.get("section", ""))[:80],
                 "gemini_prompt": str(
                     item.get("gemini_prompt")
-                    or f"{base.get('section', keyword)} food photo, no text"
-                )[:200],
+                    or f"{base.get('section', keyword)} editorial photo, natural light, no text"
+                )[:300],
             }
         )
     merged.sort(key=lambda x: x["slot"])

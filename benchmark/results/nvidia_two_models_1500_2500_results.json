@@ -1,0 +1,64 @@
+{
+  "generated_at": "2026-06-01T02:17:26Z",
+  "keyword": "제주도 맛집",
+  "seo_title": "제주도 맛집 추천 | 현지인이 알려주는 BEST 10",
+  "target": "1500~2500",
+  "results": [
+    {
+      "model": "stepfun-ai/step-3.7-flash",
+      "label": "Step 3.7 Flash",
+      "attempts": [
+        {
+          "max_tokens": 4096,
+          "elapsed_sec": 73.51,
+          "content_len": 0,
+          "in_target": false,
+          "reasoning_only": true,
+          "completion_tokens": 4096,
+          "finish": "length"
+        },
+        {
+          "max_tokens": 8192,
+          "elapsed_sec": 131.77,
+          "content_len": 2199,
+          "in_target": true,
+          "reasoning_only": false,
+          "completion_tokens": 8192,
+          "finish": "length",
+          "note": "분량은 충족하나 FAQ/마무리 없이 중간 절단"
+        }
+      ],
+      "final": {
+        "max_tokens": 8192,
+        "elapsed_sec": 131.77,
+        "content_len": 2199,
+        "in_target": true,
+        "truncated": true,
+        "path": "benchmark/samples/body_2000/nvidia_candidates/stepfun-ai_step-3-7-flash.md"
+      }
+    },
+    {
+      "model": "mistralai/mistral-nemotron",
+      "label": "Mistral Nemotron",
+      "elapsed_sec": 34.59,
+      "content_len": 2880,
+      "in_target": false,
+      "reasoning_only": false,
+      "completion_tokens": 1832,
+      "finish": "stop",
+      "note": "2500자 초과(+380), ```markdown 코드펜스로 감싸짐",
+      "path": "benchmark/samples/body_2000/nvidia_candidates/mistralai_mistral-nemotron.md"
+    },
+    {
+      "model": "meta/llama-3.1-8b-instruct",
+      "label": "Llama 3.1 8B Instruct",
+      "elapsed_sec": 12.61,
+      "content_len": 2890,
+      "in_target": false,
+      "reasoning_only": false,
+      "completion_tokens": 1623,
+      "finish": "stop",
+      "path": "benchmark/samples/body_2000/nvidia_candidates/meta_llama-3-1-8b-instruct.md"
+    }
+  ]
+}

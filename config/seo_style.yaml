@@ -1,5 +1,5 @@
 paragraph_max_sentences: 2
-image_placeholder_count: 6
+image_placeholder_count: 3
 tone:
   speech_level: formal
   allow_greeting: true

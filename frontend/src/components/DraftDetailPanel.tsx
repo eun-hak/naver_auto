@@ -13,7 +13,10 @@ function slotNumber(img: { name: string; slot: string }): number {
 
 interface Props {
   detail: DraftDetail;
-  onFetchImages: (keepSlots: number[]) => void;
+  onFetchImages: (
+    keepSlots: number[],
+    slotPrompts: Record<number, string>,
+  ) => void;
   onPublish: (refreshImages: boolean) => void;
 }
 
@@ -25,12 +28,49 @@ export function DraftDetailPanel({
   const [tab, setTab] = useState<Tab>("body");
   const [refreshImages, setRefreshImages] = useState(false);
   const [keepSlots, setKeepSlots] = useState<Set<number>>(new Set());
+  const [slotPrompts, setSlotPrompts] = useState<Record<number, string>>({});
 
   const meta = detail.meta as {
     title?: string;
     status?: string;
     char_count?: number;
+    user_image_prompt?: string;
+    slot_image_prompts?: Record<string, string>;
+    slot_refetch_prompts?: Record<string, string>;
   };
+
+  const savedSlotPrompts = meta.slot_image_prompts ?? {};
+  const savedImagePrompt =
+    typeof meta.user_image_prompt === "string" ? meta.user_image_prompt : "";
+
+  const planBySlot = useMemo(() => {
+    const map = new Map<number, { section?: string; prompt?: string }>();
+    for (const p of detail.image_plan ?? []) {
+      map.set(Number(p.slot), {
+        section: p.section,
+        prompt: p.gemini_prompt,
+      });
+    }
+    return map;
+  }, [detail.image_plan]);
+
+  const imageErrors = useMemo(() => {
+    const map = new Map<number, string>();
+    const attrs = (detail.meta.image_attributions ?? []) as Array<{
+      slot?: number;
+      nvidia_error?: string;
+    }>;
+    for (const a of attrs) {
+      if (a.slot != null && a.nvidia_error) {
+        map.set(Number(a.slot), a.nvidia_error);
+      }
+    }
+    return map;
+  }, [detail.meta.image_attributions]);
+
+  const generationErrors = Array.isArray(detail.meta.image_generation_errors)
+    ? (detail.meta.image_generation_errors as string[])
+    : [];
 
   const plannedSlots = useMemo(() => {
     const fromPlan = (detail.image_plan ?? [])
@@ -61,13 +101,21 @@ export function DraftDetailPanel({
 
   useEffect(() => {
     if (hasImages) {
-      setKeepSlots(
-        new Set(detail.images.map(slotNumber).filter((n) => n > 0)),
-      );
+      const slots = detail.images.map(slotNumber).filter((n) => n > 0);
+      setKeepSlots(new Set(slots.length ? slots : plannedSlots));
     } else {
       setKeepSlots(new Set());
     }
-  }, [detail.draft_id, hasImages, detail.images]);
+    const saved: Record<number, string> = {};
+    const raw = meta.slot_refetch_prompts;
+    if (raw && typeof raw === "object") {
+      for (const [k, v] of Object.entries(raw)) {
+        const n = parseInt(k, 10);
+        if (!Number.isNaN(n) && v) saved[n] = String(v);
+      }
+    }
+    setSlotPrompts(saved);
+  }, [detail.draft_id, detail.images, hasImages, plannedSlots, meta.slot_refetch_prompts]);
 
   const refetchCount = hasImages
     ? plannedSlots.filter((s) => !keepSlots.has(s)).length
@@ -82,14 +130,28 @@ export function DraftDetailPanel({
     });
   };
 
+  const setSlotPrompt = (slot: number, value: string) => {
+    setSlotPrompts((prev) => ({ ...prev, [slot]: value }));
+  };
+
   const handleRefetch = () => {
+    if (!hasImages) {
+      onFetchImages([], {});
+      return;
+    }
     if (refetchCount === 0) {
       alert(
-        "재수집할 이미지가 없습니다.\n유지하지 않을 이미지의 '유지' 체크를 해제한 뒤 재수집하세요.",
+        "재수집할 이미지를 선택해 주세요.\n「유지」 이미지를 클릭하면 재수집 대상이 됩니다.",
       );
       return;
     }
-    onFetchImages(hasImages ? [...keepSlots].sort((a, b) => a - b) : []);
+    const refetchSlots = plannedSlots.filter((s) => !keepSlots.has(s));
+    const prompts: Record<number, string> = {};
+    for (const slot of refetchSlots) {
+      const text = (slotPrompts[slot] ?? "").trim();
+      if (text) prompts[slot] = text;
+    }
+    onFetchImages([...keepSlots].sort((a, b) => a - b), prompts);
   };
 
   return (
@@ -106,7 +168,7 @@ export function DraftDetailPanel({
             type="button"
             className="btn btn-secondary"
             onClick={handleRefetch}
-            disabled={!plannedSlots.length}
+            disabled={!plannedSlots.length || (hasImages && refetchCount === 0)}
           >
             {hasImages ? "이미지 재수집" : "이미지 수집"}
             {refetchCount > 0 ? ` (${refetchCount}장)` : ""}
@@ -147,26 +209,66 @@ export function DraftDetailPanel({
       {tab === "images" && (
         <>
           <p className="image-hint">
-            체크된 이미지는 <strong>유지</strong>, 체크 해제한 슬롯만 재수집됩니다.
+            기본은 전부 <strong>유지</strong>입니다. 바꿀 이미지를 클릭해{" "}
+            <strong>재수집</strong>으로 표시하고, 슬롯별 프롬프트를 입력하세요.
+            비우면 키워드·본문 기반 AI 프롬프트를 사용합니다.
+            {Object.keys(savedSlotPrompts).length > 0 ? (
+              <>
+                {" "}
+                (생성 시 지정:{" "}
+                {Object.entries(savedSlotPrompts)
+                  .sort(([a], [b]) => Number(a) - Number(b))
+                  .map(([slot, text]) => (
+                    <span key={slot}>
+                      #{slot} 「{text.slice(0, 24)}
+                      {text.length > 24 ? "…" : ""}」{" "}
+                    </span>
+                  ))}
+                )
+              </>
+            ) : savedImagePrompt ? (
+              <>
+                {" "}
+                (글 생성 시 공통: 「{savedImagePrompt.slice(0, 40)}
+                {savedImagePrompt.length > 40 ? "…" : ""}」)
+              </>
+            ) : null}
           </p>
+          {generationErrors.length > 0 && (
+            <div className="image-error-banner" role="alert">
+              <strong>이미지 생성 오류</strong>
+              <ul>
+                {generationErrors.map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="image-grid">
             {detail.images.length ? (
               detail.images.map((img) => {
                 const slot = slotNumber(img);
                 const kept = keepSlots.has(slot);
                 const v = imageVersion || img.mtime || 0;
+                const slotErr = imageErrors.get(slot);
+                const plan = planBySlot.get(slot);
                 return (
                   <figure
                     key={img.name}
-                    className={`image-card ${kept ? "kept" : "refetch"}`}
+                    className={`image-card ${kept ? "kept" : "refetch"}${slotErr ? " failed" : ""}`}
                   >
                     <button
                       type="button"
                       className="image-card-btn"
                       onClick={() => toggleKeep(slot)}
-                      title={kept ? "유지 — 클릭 시 재수집 대상" : "재수집 예정 — 클릭 시 유지"}
+                      title={
+                        kept
+                          ? "유지 — 클릭 시 재수집 선택"
+                          : "재수집 예정 — 클릭 시 유지"
+                      }
                     >
                       <img
+                        key={`${img.name}-${v}`}
                         src={api.imageUrl(detail.draft_id, img.name, v)}
                         alt={img.name}
                         loading="lazy"
@@ -175,7 +277,35 @@ export function DraftDetailPanel({
                         {kept ? "유지" : "재수집"}
                       </span>
                     </button>
-                    <figcaption>{img.name}</figcaption>
+                    <figcaption>
+                      {img.name}
+                      {slotErr && (
+                        <span className="image-slot-error" title={slotErr}>
+                          ⚠{" "}
+                          {slotErr.includes("필터") ? "필터 차단" : "생성 실패"}
+                        </span>
+                      )}
+                    </figcaption>
+                    {!kept && (
+                      <label className="slot-prompt-label">
+                        #{slot} 프롬프트
+                        <textarea
+                          className="slot-prompt-input"
+                          value={slotPrompts[slot] ?? ""}
+                          onChange={(e) => setSlotPrompt(slot, e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                          placeholder={
+                            plan?.prompt
+                              ? `비우면 기본: ${plan.prompt.slice(0, 55)}…`
+                              : "비우면 키워드 기반 AI 프롬프트"
+                          }
+                          rows={2}
+                        />
+                        <span className="field-hint">
+                          짧게 적으면 Llama 8B가 FLUX용 영문으로 확장
+                        </span>
+                      </label>
+                    )}
                   </figure>
                 );
               })
@@ -197,7 +327,7 @@ export function DraftDetailPanel({
               <div key={p.slot} className="plan-item">
                 <strong>#{p.slot}</strong> {p.section}
                 <div style={{ color: "var(--muted)", marginTop: "0.25rem" }}>
-                  검색: {p.search_query}
+                  FLUX: {p.gemini_prompt}
                 </div>
               </div>
             ))

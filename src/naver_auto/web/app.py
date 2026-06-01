@@ -33,11 +33,13 @@ app.add_middleware(
 class CreateBody(BaseModel):
     keyword: str = Field(..., min_length=1, max_length=100)
     category: str | None = None
+    slot_prompts: dict[str, str] | None = None
 
 
 class FetchImagesBody(BaseModel):
     force: bool = True
     keep_slots: list[int] | None = None
+    slot_prompts: dict[str, str] | None = None
 
 
 class PublishBody(BaseModel):
@@ -93,10 +95,18 @@ def api_create(body: CreateBody):
         raise HTTPException(400, "키워드 필요")
 
     def task(job):
+        parsed_slots = None
+        if body.slot_prompts:
+            parsed_slots = {
+                int(k): str(v)
+                for k, v in body.slot_prompts.items()
+                if str(v).strip()
+            }
         return services.run_create(
             job,
             keyword=keyword,
             category=body.category,
+            slot_prompts=parsed_slots or None,
         )
 
     job = job_manager.submit("create", task, message=f"초안 생성: {keyword}")
@@ -116,6 +126,7 @@ def api_fetch_images(draft_id: str, body: FetchImagesBody):
             draft_id,
             force=body.force,
             keep_slots=body.keep_slots,
+            slot_prompts=body.slot_prompts,
         )
 
     job = job_manager.submit("fetch-images", task, message="이미지 수집")

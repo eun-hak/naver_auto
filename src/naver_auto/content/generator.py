@@ -47,6 +47,7 @@ def create_draft_from_keyword(
     keyword: str,
     *,
     category: str | None = None,
+    slot_prompts: dict[int, str] | None = None,
     progress: Callable[[str], None] | None = None,
 ) -> Path:
     def _progress(msg: str) -> None:
@@ -92,7 +93,7 @@ def create_draft_from_keyword(
 
     min_c = seo_cfg.get("body", {}).get("min_chars", 1500)
     max_c = seo_cfg.get("body", {}).get("max_chars", 3500)
-    img_count = seo_cfg.get("image_placeholder_count", 6)
+    img_count = seo_cfg.get("image_placeholder_count", 3)
 
     body = ""
     errors: list[str] = []
@@ -170,6 +171,23 @@ def create_draft_from_keyword(
             f"{body_model_name()}+{fast_model_name()}" if use_gemini else "groq"
         ),
     }
+    if slot_prompts:
+        raw_map = {
+            str(int(k)): str(v).strip()
+            for k, v in slot_prompts.items()
+            if str(v).strip()
+        }
+        if raw_map:
+            meta["slot_image_prompts"] = raw_map
+            from naver_auto.image.prompt_expand import expand_slot_prompts
+
+            _progress("이미지 프롬프트 확장 중… (Llama 3.1 8B)")
+            expanded = expand_slot_prompts(
+                raw_map, keyword=keyword, title=seo_title
+            )
+            meta["slot_image_prompts_expanded"] = expanded
+            for slot, text in sorted(expanded.items(), key=lambda x: int(x[0])):
+                _progress(f"#{slot} 확장: {text[:80]}{'…' if len(text) > 80 else ''}")
 
     with (out_dir / "meta.json").open("w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)

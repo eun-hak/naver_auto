@@ -81,17 +81,34 @@ export default function App() {
   const handleCreate = async (payload: {
     keyword: string;
     category: string | null;
+    slot_prompts: Record<number, string>;
   }) => {
     setShowCreate(false);
-    const { job_id } = await api.createDraft(payload);
+    const mapped: Record<string, string> = {};
+    for (const [slot, prompt] of Object.entries(payload.slot_prompts)) {
+      if (prompt.trim()) mapped[slot] = prompt.trim();
+    }
+    const { job_id } = await api.createDraft({
+      keyword: payload.keyword,
+      category: payload.category,
+      slot_prompts: Object.keys(mapped).length ? mapped : undefined,
+    });
     startJob(job_id);
   };
 
-  const handleFetchImages = async (keepSlots: number[]) => {
+  const handleFetchImages = async (
+    keepSlots: number[],
+    slotPrompts: Record<number, string>,
+  ) => {
     if (!selectedId) return;
+    const mapped: Record<string, string> = {};
+    for (const [slot, prompt] of Object.entries(slotPrompts)) {
+      if (prompt.trim()) mapped[slot] = prompt.trim();
+    }
     const { job_id } = await api.fetchImages(selectedId, {
       force: true,
       keep_slots: keepSlots,
+      slot_prompts: Object.keys(mapped).length ? mapped : undefined,
     });
     startJob(job_id);
   };

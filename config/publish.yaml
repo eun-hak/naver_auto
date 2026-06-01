@@ -5,14 +5,20 @@ publish_mode: draft
 mobile_preview: true
 image_priority:
   - user
-  - sns
-  - gemini
+  - nvidia
   - card
-gemini_images_per_post: 2
+nvidia_images_per_post: 3
+nvidia_image_model: black-forest-labs/flux.1-schnell
 image_planning:
   enabled: true
-sns:
+# 짧은 사용자 이미지 프롬프트 → NVIDIA Llama 3.1 8B로 FLUX용 영문 확장
+image_prompt_expand:
   enabled: true
+  model: meta/llama-3.1-8b-instruct
+  min_length: 72
+# Imagen/SNS 비활성 — NVIDIA FLUX.1-schnell 생성
+sns:
+  enabled: false
   max_candidates: 24
   per_query: 8
   min_width: 400
@@ -32,12 +38,11 @@ require_disclaimer_if:
   - defamation
   - unverified_claim
 
-# 수집(sns)·AI생성(gemini) 이미지 후처리 — user/card 는 제외
+# AI 생성(nvidia FLUX) 이미지 후처리 — user/card 는 제외
 image_postprocess:
   enabled: true
   apply_to:
-    - sns
-    - gemini
+    - nvidia
   strip_exif: true
   watermark:
     enabled: true

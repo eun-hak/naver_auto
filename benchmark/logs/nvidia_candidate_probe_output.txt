@@ -1,0 +1,30 @@
+
+[1/5] Step 3.7 Flash (stepfun-ai/step-3.7-flash)
+  basic... OK 1.78s len=5 tok=100 | 안녕하세요
+  blog_title... OK 7.13s len=96 tok=471 | ["제주도 맛집 TOP 10 2024 최신 추천 리스트", "제주도 맛집 혼밥·가족외식 1
+  blog_body_300... OK 33.83s len=361 tok=1271 | 제주도 여행 계획하시는 분들께 꼭 필요한 제주도 맛집 정보를 정리해드릴게요. 제주도 맛집은
+
+[2/5] GLM 5.1 (z-ai/glm-5.1)
+  basic... OK 411.11s len=5 tok=5 | 안녕하세요
+  blog_title... OK 143.08s len=84 tok=71 | ["제주도 맛집 로컬 찐맛집 10곳 총정리", "제주도 맛집 도민 추천 숨은 맛집 베스트 
+  blog_body_300... OK 560.86s len=338 tok=282 | 제주도 여행의 하이라이트는 역시 맛집 탐방이죠! 제주도 맛집 하면 흑돼지와 해산물이 빠질 
+
+[3/5] MiniMax M2.7 (minimaxai/minimax-m2.7)
+  basic... OK 1.99s len=5 tok=73 | 안녕하세요
+  blog_title... OK 8.62s len=110 tok=507 | ["제주도 맛집 추천 2024: 현지인도 극찬한 맛집 TOP 10","제주도 맛집의 비밀:
+  blog_body_300... R-only 54.12s len=0 tok=2048 | 
+
+[4/5] Mistral Nemotron (mistralai/mistral-nemotron)
+  basic... OK 0.19s len=5 tok=5 | 안녕하세요
+  blog_title... OK 1.51s len=125 tok=80 | ```json
+[
+  "제주도 맛집 추천! 현지인이 알려주는 인기 음식점 TOP 10",
+
+  blog_body_300... OK 7.73s len=636 tok=399 | 제주도 여행 시 꼭 방문해야 할 맛집을 소개합니다! 제주는 신선한 해산물과 독특한 섬 특산
+
+[5/5] Seed OSS 36B (bytedance/seed-oss-36b-instruct)
+  basic... OK 27.62s len=5 tok=111 | 안녕하세요
+  blog_title... R-only 58.28s len=0 tok=512 | 
+  blog_body_300... OK 195.27s len=764 tok=2037 | 제주도를 방문하면 “맛집 탐방” 자체가 여행의 핵심樂趣인 것 같아요. 현지인들이 자주 손내
+
+저장: /Users/simsimi/개인프로젝트/naver_auto/scripts/nvidia_candidate_probe_results.json

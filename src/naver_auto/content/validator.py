@@ -91,7 +91,7 @@ def quality_check(body: str, seo_cfg: dict) -> list[str]:
     if length > max_c * 1.3:
         errors.append(f"분량 과다 ({length}자)")
 
-    img_min = max(3, seo_cfg.get("image_placeholder_count", 6) - 2)
+    img_min = max(1, seo_cfg.get("image_placeholder_count", 3) - 1)
     imgs = len(re.findall(r"!\[이미지", body))
     if imgs < img_min:
         errors.append(f"이미지 placeholder 부족 ({imgs}개)")

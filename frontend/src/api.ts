@@ -25,14 +25,22 @@ export const api = {
     const base = `/api/drafts/${encodeURIComponent(draftId)}/images/${encodeURIComponent(filename)}`;
     return version ? `${base}?v=${version}` : base;
   },
-  createDraft: (body: { keyword: string; category: string | null }) =>
+  createDraft: (body: {
+    keyword: string;
+    category: string | null;
+    slot_prompts?: Record<string, string>;
+  }) =>
     request<{ job_id: string }>("/drafts/create", {
       method: "POST",
       body: JSON.stringify(body),
     }),
   fetchImages: (
     draftId: string,
-    opts: { force?: boolean; keep_slots?: number[] } = {},
+    opts: {
+      force?: boolean;
+      keep_slots?: number[];
+      slot_prompts?: Record<string, string>;
+    } = {},
   ) =>
     request<{ job_id: string }>(
       `/drafts/${encodeURIComponent(draftId)}/fetch-images`,
@@ -41,6 +49,7 @@ export const api = {
         body: JSON.stringify({
           force: opts.force ?? true,
           keep_slots: opts.keep_slots ?? null,
+          slot_prompts: opts.slot_prompts ?? null,
         }),
       },
     ),

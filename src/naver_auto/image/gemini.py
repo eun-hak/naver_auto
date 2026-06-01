@@ -2,35 +2,44 @@
 
 from __future__ import annotations
 
-import base64
 import json
 import os
 from datetime import date
 from io import BytesIO
 from pathlib import Path
 
-import httpx
+from google import genai
+from google.genai import types
 from PIL import Image
 
 from naver_auto.image.cards import create_card_image
 from naver_auto.paths import DATA_DIR
 
+# Google AI Studio 표시명 ↔ Gemini API model code
 IMAGEN_MODELS = [
-    "imagen-4.0-generate-001",
-    "imagen-4.0-ultra-generate-001",
-    "imagen-4.0-fast-generate-001",
+    "imagen-4.0-generate-001",       # Imagen 4 Generate
+    "imagen-4.0-ultra-generate-001",  # Imagen 4 Ultra Generate
+    "imagen-4.0-fast-generate-001",  # Imagen 4 Fast Generate
 ]
+IMAGEN_DISPLAY_NAMES = {
+    "imagen-4.0-generate-001": "Imagen 4 Generate",
+    "imagen-4.0-ultra-generate-001": "Imagen 4 Ultra Generate",
+    "imagen-4.0-fast-generate-001": "Imagen 4 Fast Generate",
+}
 IMAGEN_LIMIT_PER_MODEL = int(os.getenv("IMAGEN_DAILY_LIMIT_PER_MODEL", "25"))
 USAGE_FILE = DATA_DIR / "imagen_usage.json"
-API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
 
 
 class ImagenQuotaError(Exception):
-    """Imagen 모델 한도 초과."""
+    """Imagen 모델 일일 한도 초과."""
 
 
 def gemini_configured() -> bool:
     return bool(os.getenv("GEMINI_API_KEY"))
+
+
+def _client() -> genai.Client:
+    return genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def _load_usage() -> dict:
@@ -53,13 +62,11 @@ def _save_usage(data: dict) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def _is_quota_response(status_code: int, body: str) -> bool:
-    if status_code == 429:
-        return True
-    lower = body.lower()
+def _is_quota_error(exc: BaseException) -> bool:
+    msg = str(exc).lower()
     return any(
-        token in lower
-        for token in ("quota", "resource_exhausted", "rate limit", "rate_limit")
+        token in msg
+        for token in ("429", "quota", "resource_exhausted", "rate limit", "rate_limit")
     )
 
 
@@ -87,33 +94,24 @@ def _save_jpeg(raw_bytes: bytes, output_path: Path, *, slot: int = 1) -> None:
     save_processed_jpeg(img, output_path, source="gemini", slot=slot)
 
 
-def _call_imagen(model: str, prompt: str, api_key: str) -> bytes:
-    url = f"{API_BASE}/{model}:predict"
-    payload = {
-        "instances": [{"prompt": prompt}],
-        "parameters": {
-            "sampleCount": 1,
-            "aspectRatio": "16:9",
-        },
-    }
-    response = httpx.post(
-        url,
-        params={"key": api_key},
-        json=payload,
-        timeout=120.0,
+def _call_imagen(model: str, prompt: str) -> tuple[bytes, str]:
+    """Imagen 4 generate_images 호출. (bytes, 사용 모델 ID) 반환."""
+    client = _client()
+    response = client.models.generate_images(
+        model=model,
+        prompt=prompt,
+        config=types.GenerateImagesConfig(
+            number_of_images=1,
+            aspect_ratio="16:9",
+        ),
     )
-    body = response.text
-    if _is_quota_response(response.status_code, body):
-        raise ImagenQuotaError(body[:300])
-    response.raise_for_status()
-    data = response.json()
-    predictions = data.get("predictions") or []
-    if not predictions:
-        raise RuntimeError("Imagen 응답에 이미지 없음")
-    b64 = predictions[0].get("bytesBase64Encoded")
-    if not b64:
-        raise RuntimeError("Imagen 응답에 bytesBase64Encoded 없음")
-    return base64.b64decode(b64)
+    images = response.generated_images or []
+    if not images:
+        raise RuntimeError(f"{IMAGEN_DISPLAY_NAMES.get(model, model)}: 응답에 이미지 없음")
+    raw = images[0].image.image_bytes
+    if not raw:
+        raise RuntimeError(f"{IMAGEN_DISPLAY_NAMES.get(model, model)}: image_bytes 없음")
+    return raw, model
 
 
 def generate_gemini_image(
@@ -122,32 +120,36 @@ def generate_gemini_image(
     prompt: str,
     keyword: str,
     index: int,
-) -> Path | None:
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        return None
+) -> tuple[Path | None, str | None, str | None]:
+    """Imagen 4로 이미지 생성. (경로, 에러, 사용 모델 ID) 반환."""
+    if not gemini_configured():
+        return None, "GEMINI_API_KEY 없음", None
 
     full_prompt = (
         f"Blog photo, 16:9, topic: {keyword}. {prompt}. "
         "Photorealistic, no text overlay, no watermark."
     )
     usage = _load_usage()
+    last_err: str | None = None
 
     while True:
         model = _pick_model(usage)
         if not model:
-            return None
+            return None, last_err or "Imagen 4 일일 한도(75장) 소진", None
+
+        label = IMAGEN_DISPLAY_NAMES.get(model, model)
         try:
-            raw = _call_imagen(model, full_prompt, api_key)
+            raw, used_model = _call_imagen(model, full_prompt)
             _save_jpeg(raw, output_path, slot=index + 1)
-            _increment_usage(usage, model)
-            return output_path
-        except ImagenQuotaError:
-            _mark_model_exhausted(usage, model)
-            usage = _load_usage()
-            continue
-        except Exception:
-            return None
+            _increment_usage(usage, used_model)
+            return output_path, None, used_model
+        except Exception as exc:
+            last_err = f"{label} ({model}): {exc}"
+            if _is_quota_error(exc):
+                _mark_model_exhausted(usage, model)
+                usage = _load_usage()
+                continue
+            return None, last_err, None
 
 
 def generate_or_fallback(
@@ -158,7 +160,7 @@ def generate_or_fallback(
     index: int,
 ) -> Path:
     prompt = f"{section_hint} related atmospheric photo"
-    result = generate_gemini_image(
+    result, _err, _model = generate_gemini_image(
         output_path,
         prompt=prompt,
         keyword=keyword,

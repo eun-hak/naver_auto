@@ -1,16 +1,17 @@
-"""초안 이미지 해석 및 생성 — 슬롯별 AI 계획 + 검색."""
+"""초안 이미지 해석 및 생성 — 슬롯별 AI 계획 + NVIDIA FLUX 생성."""
 
 from __future__ import annotations
 
 import hashlib
 import json
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 from naver_auto.image.cards import create_card_image
-from naver_auto.image.gemini import gemini_configured, generate_gemini_image
+from naver_auto.image.nvidia_nim import generate_nvidia_image, nvidia_configured
 from naver_auto.image.planner import ensure_image_plan, plan_by_slot
-from naver_auto.image.sns_fetcher import fetch_one_image
+# from naver_auto.image.sns_fetcher import fetch_one_image  # SNS 검색 비활성 — FLUX 생성 사용
 from naver_auto.paths import INBOX_DIR, load_yaml
 
 
@@ -24,6 +25,42 @@ def _extract_image_slots(body: str) -> list[int]:
     return nums
 
 
+def _compose_flux_prompt(
+    *,
+    slot_plan: dict | None,
+    keyword: str,
+    title: str,
+    section: str,
+    slot_user_prompt: str,
+    slot_refetch_prompt: str,
+    is_refetch: bool,
+) -> str:
+    from naver_auto.image.prompt_expand import default_slot_prompt, expand_image_prompt
+
+    if is_refetch:
+        raw = slot_refetch_prompt.strip()
+        if raw:
+            return expand_image_prompt(
+                raw, keyword=keyword, title=title, section=section
+            )
+        return default_slot_prompt(
+            keyword=keyword,
+            title=title,
+            section=section,
+            slot_plan=slot_plan,
+        )
+
+    if slot_user_prompt.strip():
+        return slot_user_prompt.strip()
+
+    return default_slot_prompt(
+        keyword=keyword,
+        title=title,
+        section=section,
+        slot_plan=slot_plan,
+    )
+
+
 def _resolve_slot_image(
     slot: int,
     *,
@@ -35,69 +72,77 @@ def _resolve_slot_image(
     refs: list,
     user_files: list[Path],
     used_hashes: set[str],
-    gemini_used: int,
-    gemini_limit: int,
+    nvidia_used: int,
+    nvidia_limit: int,
+    slot_user_prompt: str = "",
+    slot_refetch_prompt: str = "",
+    title: str = "",
     refetch: bool = False,
 ) -> tuple[bool, dict, int]:
-    priority = publish_cfg.get("image_priority", ["user", "sns", "gemini", "card"])
+    priority = publish_cfg.get("image_priority", ["user", "nvidia", "card"])
     section = (slot_plan or {}).get("section") or f"섹션 {slot}"
     search_query = (slot_plan or {}).get("search_query") or section or keyword
-    gemini_prompt = (slot_plan or {}).get("gemini_prompt") or f"{section} food photo, no text"
+    image_prompt = _compose_flux_prompt(
+        slot_plan=slot_plan,
+        keyword=keyword,
+        title=title,
+        section=section,
+        slot_user_prompt=slot_user_prompt,
+        slot_refetch_prompt=slot_refetch_prompt,
+        is_refetch=refetch,
+    )
     subtitle = section[:40]
+    nvidia_err: str | None = None
 
     for source in priority:
         if source == "user" and user_files:
             src = user_files[(slot - 1) % len(user_files)]
             out_path.write_bytes(src.read_bytes())
-            return True, {"source": "user", "page_url": str(src), "search_query": search_query}, gemini_used
-
-        if source == "sns" and sns_cfg.get("enabled", True):
-            ok, attr = fetch_one_image(
-                search_query,
-                out_path,
-                cfg=sns_cfg,
-                used_url_hashes=used_hashes,
-                references=refs if slot == 1 and not refetch else None,
-                refetch=refetch,
-                slot=slot,
+            return (
+                True,
+                {"source": "user", "page_url": str(src), "search_query": search_query},
+                nvidia_used,
             )
-            if ok and attr:
-                attr["source"] = attr.get("source") or "sns"
-                attr["slot"] = slot
-                return True, attr, gemini_used
 
-        if source == "gemini" and gemini_configured() and gemini_used < gemini_limit:
-            result = generate_gemini_image(
+        if source == "nvidia" and nvidia_configured() and nvidia_used < nvidia_limit:
+            result, err, model_id = generate_nvidia_image(
                 out_path,
-                prompt=gemini_prompt,
+                prompt=image_prompt,
                 keyword=keyword,
-                index=slot - 1,
+                slot=slot,
             )
             if result:
                 return (
                     True,
                     {
-                        "source": "gemini",
+                        "source": "nvidia",
+                        "nvidia_model": model_id,
                         "page_url": "",
                         "search_query": search_query,
                         "slot": slot,
                     },
-                    gemini_used + 1,
+                    nvidia_used + 1,
                 )
+            nvidia_err = err
+            continue
 
         if source == "card":
             create_card_image(out_path, title=keyword, subtitle=subtitle, index=slot - 1)
-            return (
-                True,
-                {"source": "card", "page_url": "", "search_query": search_query, "slot": slot},
-                gemini_used,
-            )
+            attr: dict = {
+                "source": "card",
+                "page_url": "",
+                "search_query": search_query,
+                "slot": slot,
+            }
+            if nvidia_err:
+                attr["nvidia_error"] = nvidia_err
+            return True, attr, nvidia_used
 
     create_card_image(out_path, title=keyword, subtitle=subtitle, index=slot - 1)
     return (
         True,
         {"source": "card", "page_url": "", "search_query": search_query, "slot": slot},
-        gemini_used,
+        nvidia_used,
     )
 
 
@@ -107,7 +152,7 @@ def _slot_count(body: str, images_dir: Path) -> int:
     if images_dir.exists():
         stems = [int(p.stem) for p in images_dir.glob("*.jpg") if p.stem.isdigit()]
         from_disk = max(stems) if stems else 0
-    return max(len(slot_nums), max(slot_nums) if slot_nums else 0, from_disk, 6)
+    return max(len(slot_nums), max(slot_nums) if slot_nums else 0, from_disk, 3)
 
 
 def _url_hash(url: str) -> str:
@@ -149,14 +194,26 @@ def _bump_plan_for_refetch(
     keyword: str,
     attempt: int,
 ) -> None:
-    suffixes = (" 레시피", " 만드는법", " 음식 사진", " 집에서", " 요리")
+    query_suffixes = (" 클로즈업", " 와이드", " 자연광", " 실내", " 야외")
+    prompt_suffixes = (
+        ", alternate angle",
+        ", different lighting",
+        ", wide shot",
+        ", close-up detail",
+        ", fresh composition",
+    )
     for slot in sorted(refetch_slots):
         item = plan.get(slot)
         if not item:
             continue
         base = str(item.get("search_query") or item.get("section") or keyword).strip()
-        suffix = suffixes[(slot + attempt) % len(suffixes)]
+        suffix = query_suffixes[(slot + attempt) % len(query_suffixes)]
         item["search_query"] = f"{base}{suffix}"[:55]
+        prompt_base = str(
+            item.get("gemini_prompt") or f"{item.get('section') or keyword}, editorial photo"
+        ).strip()
+        prompt_suffix = prompt_suffixes[(slot + attempt) % len(prompt_suffixes)]
+        item["gemini_prompt"] = f"{prompt_base}{prompt_suffix}"
 
 
 def _merge_attributions(
@@ -180,6 +237,8 @@ def resolve_draft_images(
     *,
     force: bool = False,
     keep_slots: set[int] | None = None,
+    slot_prompts: dict[int, str] | None = None,
+    progress: Callable[[str], None] | None = None,
 ) -> list[Path]:
     meta_path = draft_dir / "meta.json"
     body_path = draft_dir / "body.md"
@@ -190,10 +249,30 @@ def resolve_draft_images(
     body = body_path.read_text(encoding="utf-8")
     publish_cfg = load_yaml("publish.yaml")
     sns_cfg = publish_cfg.get("sns", {})
-    gemini_limit = int(publish_cfg.get("gemini_images_per_post", 2))
+    nvidia_limit = int(publish_cfg.get("nvidia_images_per_post", 3))
     planning_cfg = publish_cfg.get("image_planning", {})
 
     keyword = meta.get("keyword", "블로그")
+    title = str(meta.get("title") or meta.get("seo_title") or keyword)
+    from naver_auto.image.prompt_expand import slot_prompts_from_meta
+
+    slot_create_prompts = slot_prompts_from_meta(
+        meta, keyword=keyword, title=title
+    )
+
+    slot_prompt_map: dict[int, str] = {}
+    if slot_prompts:
+        for key, val in slot_prompts.items():
+            text = str(val).strip()
+            if text:
+                slot_prompt_map[int(key)] = text
+        if slot_prompt_map:
+            meta["slot_refetch_prompts"] = {
+                str(k): v for k, v in slot_prompt_map.items()
+            }
+            with meta_path.open("w", encoding="utf-8") as f:
+                json.dump(meta, f, ensure_ascii=False, indent=2)
+
     images_dir = draft_dir / "images"
     images_dir.mkdir(exist_ok=True)
 
@@ -254,7 +333,7 @@ def resolve_draft_images(
             json.dump(meta, f, ensure_ascii=False, indent=2)
 
     new_attributions: list[dict] = []
-    gemini_used = 0
+    nvidia_used = 0
 
     created: list[Path] = []
     for i in range(1, slot_count + 1):
@@ -265,7 +344,9 @@ def resolve_draft_images(
 
         slot_plan = plan.get(i)
         is_refetch = i in refetch_slots
-        ok, attr, gemini_used = _resolve_slot_image(
+        if is_refetch and progress:
+            progress(f"#{i} FLUX 생성 중… (슬롯당 최대 약 3분)")
+        ok, attr, nvidia_used = _resolve_slot_image(
             i,
             out_path=out_path,
             keyword=keyword,
@@ -275,15 +356,23 @@ def resolve_draft_images(
             refs=refs,
             user_files=user_files,
             used_hashes=used_hashes,
-            gemini_used=gemini_used,
-            gemini_limit=gemini_limit,
+            nvidia_used=nvidia_used,
+            nvidia_limit=nvidia_limit,
+            slot_user_prompt=slot_create_prompts.get(i, ""),
+            slot_refetch_prompt=slot_prompt_map.get(i, ""),
+            title=title,
             refetch=is_refetch,
         )
         if ok:
             created.append(out_path)
             if attr:
                 attr["slot"] = i
+                if is_refetch and slot_prompt_map.get(i):
+                    attr["refetch_prompt"] = slot_prompt_map[i]
                 new_attributions.append(attr)
+            if is_refetch and progress:
+                src = str((attr or {}).get("source", ""))
+                progress(f"#{i} 완료 ({src or 'ok'})")
 
     created = sorted(images_dir.glob("*.jpg"))[:slot_count]
     meta = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -297,6 +386,15 @@ def resolve_draft_images(
     ]
     meta["image_attributions"] = merged[:20]
     meta["image_refetch_slots"] = sorted(refetch_slots)
+    errors = [
+        str(a.get("nvidia_error"))
+        for a in merged
+        if isinstance(a, dict) and a.get("nvidia_error")
+    ]
+    if errors:
+        meta["image_generation_errors"] = errors
+    elif "image_generation_errors" in meta:
+        del meta["image_generation_errors"]
     all_hashes = _draft_used_hashes(meta)
     for attr in merged:
         if isinstance(attr, dict):

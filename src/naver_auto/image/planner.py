@@ -45,18 +45,27 @@ def extract_slot_contexts(body: str) -> list[dict[str, Any]]:
     return slots
 
 
-def _fallback_plan(keyword: str, slots: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _fallback_plan(
+    keyword: str,
+    slots: list[dict[str, Any]],
+    *,
+    user_image_prompt: str = "",
+) -> list[dict[str, Any]]:
     plan: list[dict[str, Any]] = []
+    style = user_image_prompt.strip()
     for item in slots:
         section = item.get("section") or keyword
-        query = section if section != keyword else f"{keyword} 맛집"
+        query = section if section != keyword else keyword
+        base_prompt = f"{section}, editorial photo, natural light, no text"
+        if style:
+            base_prompt = f"{style}. {base_prompt}"
         plan.append(
             {
                 "slot": item["slot"],
                 "section": section,
                 "search_query": query[:40],
                 "alt": item.get("alt") or section,
-                "gemini_prompt": f"{section}, food photography, no text",
+                "gemini_prompt": base_prompt[:300],
             }
         )
     return plan
@@ -68,6 +77,7 @@ def build_image_plan(
     title: str,
     body: str,
     slots: list[dict[str, Any]] | None = None,
+    user_image_prompt: str = "",
 ) -> list[dict[str, Any]]:
     if not slots:
         slots = extract_slot_contexts(body)
@@ -82,10 +92,11 @@ def build_image_plan(
                 title=title,
                 slots=slots,
                 body_excerpt=body[:2500],
+                user_image_prompt=user_image_prompt,
             )
         except Exception:
             pass
-    return _fallback_plan(keyword, slots)
+    return _fallback_plan(keyword, slots, user_image_prompt=user_image_prompt)
 
 
 def ensure_image_plan(
@@ -102,12 +113,34 @@ def ensure_image_plan(
         return meta["image_plan"]
 
     slots = extract_slot_contexts(body)
+    keyword = meta.get("keyword", "블로그")
+    title = meta.get("title") or meta.get("seo_title", "")
+    from naver_auto.image.prompt_expand import slot_prompts_from_meta
+
+    # 구버전: 전역 user_image_prompt (하위 호환)
+    user_raw = str(meta.get("user_image_prompt") or "").strip()
+    user_image_prompt = str(meta.get("user_image_prompt_expanded") or "").strip()
+    if user_raw and not user_image_prompt:
+        from naver_auto.image.prompt_expand import expand_image_prompt
+
+        user_image_prompt = expand_image_prompt(user_raw, keyword=keyword, title=title)
+        if user_image_prompt != user_raw:
+            meta["user_image_prompt_expanded"] = user_image_prompt
+    if not user_image_prompt:
+        user_image_prompt = user_raw
+
     plan = build_image_plan(
-        keyword=meta.get("keyword", "블로그"),
-        title=meta.get("title") or meta.get("seo_title", ""),
+        keyword=keyword,
+        title=title,
         body=body,
         slots=slots,
+        user_image_prompt=user_image_prompt if not meta.get("slot_image_prompts") else "",
     )
+    slot_expanded = slot_prompts_from_meta(meta, keyword=keyword, title=title)
+    for item in plan:
+        slot = int(item.get("slot", 0))
+        if slot in slot_expanded:
+            item["gemini_prompt"] = slot_expanded[slot]
     meta["image_plan"] = plan
     with meta_path.open("w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)

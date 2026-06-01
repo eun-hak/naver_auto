@@ -19,6 +19,7 @@ dependencies = [
   "pyperclip>=1.8",
   "tenacity>=8.2",
   "google-generativeai>=0.8",
+  "google-genai>=1.0",
   "fastapi>=0.115",
   "uvicorn[standard]>=0.32",
 ]

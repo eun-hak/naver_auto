@@ -345,7 +345,7 @@ select {
 .image-grid figure.image-card {
   background: var(--surface2);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   border: 2px solid var(--border);
   transition: border-color 0.15s, box-shadow 0.15s;
 }
@@ -359,6 +359,61 @@ select {
   box-shadow: 0 0 0 1px rgba(77, 159, 255, 0.35);
 }
 
+.image-grid figure.image-card.failed {
+  border-color: #e05555;
+}
+
+.image-error-banner {
+  margin: 0.5rem 0 1rem;
+  padding: 0.65rem 0.85rem;
+  background: rgba(224, 85, 85, 0.12);
+  border: 1px solid rgba(224, 85, 85, 0.45);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #ffb4b4;
+}
+
+.image-error-banner ul {
+  margin: 0.35rem 0 0 1.1rem;
+  padding: 0;
+}
+
+.image-slot-error {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  color: #ffb4b4;
+}
+
+.slot-prompt-label {
+  display: block;
+  padding: 0.45rem 0.5rem 0.55rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.slot-prompt-input {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.4rem 0.5rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.78rem;
+  resize: vertical;
+  min-height: 2.5rem;
+}
+
+.image-grid figure.image-card .field-hint {
+  margin-top: 0.25rem;
+  font-size: 0.68rem;
+}
+
 .image-card-btn {
   display: block;
   width: 100%;
@@ -367,6 +422,8 @@ select {
   background: none;
   cursor: pointer;
   position: relative;
+  overflow: hidden;
+  border-radius: 6px 6px 0 0;
 }
 
 .image-badge {
@@ -445,6 +502,33 @@ select {
   max-width: 560px;
 }
 
+.slot-prompts-fieldset {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.slot-prompts-fieldset legend {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0 0.25rem;
+}
+
+.slot-prompts-intro {
+  margin: 0 0 0.65rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.slot-prompt-row {
+  margin-bottom: 0.55rem !important;
+}
+
+.slot-prompt-row textarea {
+  min-height: 3rem;
+}
+
 .modal h3 {
   margin-bottom: 1rem;
 }
@@ -456,7 +540,8 @@ select {
   color: var(--muted);
 }
 
-.modal input[type="text"] {
+.modal input[type="text"],
+.prompt-textarea {
   width: 100%;
   margin-top: 0.35rem;
   padding: 0.55rem 0.75rem;
@@ -464,6 +549,12 @@ select {
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.prompt-textarea {
+  resize: vertical;
 }
 
 .modal-actions {

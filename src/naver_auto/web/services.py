@@ -112,9 +112,19 @@ def draft_detail(draft_id: str) -> dict[str, Any]:
     }
 
 
-def run_create(job: Job, *, keyword: str, category: str | None) -> dict[str, Any]:
+def run_create(
+    job: Job,
+    *,
+    keyword: str,
+    category: str | None,
+    slot_prompts: dict[int, str] | None = None,
+) -> dict[str, Any]:
     job.message = f"초안 생성 중: {keyword}"
     job.logs.append(f"[create] 키워드: {keyword}")
+    if slot_prompts:
+        for slot, prompt in sorted(slot_prompts.items()):
+            if str(prompt).strip():
+                job.logs.append(f"#{slot} 이미지: {str(prompt).strip()[:60]}")
 
     def on_progress(msg: str) -> None:
         job.message = msg
@@ -123,6 +133,7 @@ def run_create(job: Job, *, keyword: str, category: str | None) -> dict[str, Any
     out_dir = create_draft_from_keyword(
         keyword,
         category=category,
+        slot_prompts=slot_prompts,
         progress=on_progress,
     )
     meta = load_meta(out_dir)
@@ -134,11 +145,13 @@ def run_create(job: Job, *, keyword: str, category: str | None) -> dict[str, Any
         "no",
     )
     if fetch_on_create:
-        on_progress("이미지 수집 중… (SNS·검색, 1~3분)")
-        job.logs.append("이미지 수집 시작")
-        paths = resolve_draft_images(out_dir)
+        on_progress("이미지 생성 중… (FLUX.1-schnell)")
+        job.logs.append("NVIDIA FLUX.1-schnell 이미지 생성 시작")
+        paths = resolve_draft_images(out_dir, progress=on_progress)
         meta = load_meta(out_dir)
         job.logs.append(f"이미지 {len(paths)}장 — {', '.join(meta.get('image_sources', [])[:6])}")
+        for err in meta.get("image_generation_errors") or []:
+            job.logs.append(f"FLUX 오류: {err}")
 
     job.message = "초안 생성 완료"
     return {"draft_id": meta.get("draft_id", out_dir.name), "status": meta.get("status")}
@@ -150,14 +163,30 @@ def run_fetch_images(
     *,
     force: bool,
     keep_slots: list[int] | None = None,
+    slot_prompts: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     draft_dir = find_draft_dir(draft_id)
     keep = {int(s) for s in keep_slots} if keep_slots is not None else None
-    job.message = "이미지 재수집 중"
-    job.logs.append(f"[fetch-images] {draft_dir.name}")
+    job.message = "FLUX 이미지 생성 중"
+    job.logs.append(f"[fetch-images] {draft_dir.name} (FLUX.1-schnell)")
     if keep is not None:
         job.logs.append(f"유지 슬롯: {sorted(keep)}")
-    paths = resolve_draft_images(draft_dir, force=force, keep_slots=keep)
+    if slot_prompts:
+        for slot, prompt in sorted(slot_prompts.items(), key=lambda x: int(x[0])):
+            if str(prompt).strip():
+                job.logs.append(f"#{slot} 프롬프트: {str(prompt).strip()[:80]}")
+    parsed_slot_prompts = (
+        {int(k): str(v) for k, v in slot_prompts.items() if str(v).strip()}
+        if slot_prompts
+        else None
+    )
+    paths = resolve_draft_images(
+        draft_dir,
+        force=force,
+        keep_slots=keep,
+        slot_prompts=parsed_slot_prompts,
+        progress=lambda msg: (job.logs.append(msg), setattr(job, "message", msg)),
+    )
     meta = load_meta(draft_dir)
     refetched = meta.get("image_refetch_slots", [])
     sources = meta.get("image_sources", [])
