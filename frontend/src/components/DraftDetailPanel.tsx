@@ -34,14 +34,11 @@ export function DraftDetailPanel({
     title?: string;
     status?: string;
     char_count?: number;
-    user_image_prompt?: string;
     slot_image_prompts?: Record<string, string>;
     slot_refetch_prompts?: Record<string, string>;
   };
 
   const savedSlotPrompts = meta.slot_image_prompts ?? {};
-  const savedImagePrompt =
-    typeof meta.user_image_prompt === "string" ? meta.user_image_prompt : "";
 
   const planBySlot = useMemo(() => {
     const map = new Map<number, { section?: string; prompt?: string }>();
@@ -157,10 +154,11 @@ export function DraftDetailPanel({
   return (
     <section className="detail">
       <div className="detail-header">
-        <div>
-          <h2>{meta.title || detail.draft_id}</h2>
+        <div className="detail-title-block">
+          <h2 className="detail-title">{meta.title || detail.draft_id}</h2>
           <p className="meta-line">
-            {detail.draft_id} · {meta.status} · {meta.char_count ?? 0}자
+            {meta.status} · {meta.char_count ?? 0}자 · img{" "}
+            {detail.images.length || plannedSlots.length}
           </p>
         </div>
         <div className="detail-actions">
@@ -208,31 +206,14 @@ export function DraftDetailPanel({
 
       {tab === "images" && (
         <>
-          <p className="image-hint">
-            기본은 전부 <strong>유지</strong>입니다. 바꿀 이미지를 클릭해{" "}
-            <strong>재수집</strong>으로 표시하고, 슬롯별 프롬프트를 입력하세요.
-            비우면 키워드·본문 기반 AI 프롬프트를 사용합니다.
-            {Object.keys(savedSlotPrompts).length > 0 ? (
-              <>
+          <p className="image-hint image-hint-compact">
+            클릭: <strong>유지</strong> ↔ <strong>재수집</strong> · 비우면 AI 프롬프트
+            {Object.keys(savedSlotPrompts).length > 0 && (
+              <span className="image-hint-saved">
                 {" "}
-                (생성 시 지정:{" "}
-                {Object.entries(savedSlotPrompts)
-                  .sort(([a], [b]) => Number(a) - Number(b))
-                  .map(([slot, text]) => (
-                    <span key={slot}>
-                      #{slot} 「{text.slice(0, 24)}
-                      {text.length > 24 ? "…" : ""}」{" "}
-                    </span>
-                  ))}
-                )
-              </>
-            ) : savedImagePrompt ? (
-              <>
-                {" "}
-                (글 생성 시 공통: 「{savedImagePrompt.slice(0, 40)}
-                {savedImagePrompt.length > 40 ? "…" : ""}」)
-              </>
-            ) : null}
+                · 생성 시 #{Object.keys(savedSlotPrompts).sort((a, b) => Number(a) - Number(b)).join(", #")} 지정
+              </span>
+            )}
           </p>
           {generationErrors.length > 0 && (
             <div className="image-error-banner" role="alert">

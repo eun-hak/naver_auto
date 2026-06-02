@@ -2,10 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { api, pollJob } from "./api";
 import type { DraftDetail, DraftSummary, Job, PipelineStatus } from "./types";
 import { CreateModal } from "./components/CreateModal";
+import { AppHeader } from "./components/AppHeader";
+import { DraftDetailEmpty } from "./components/DraftDetailEmpty";
 import { DraftDetailPanel } from "./components/DraftDetailPanel";
 import { DraftList } from "./components/DraftList";
 import { JobModal } from "./components/JobModal";
-import { Sidebar } from "./components/Sidebar";
 
 export default function App() {
   const [status, setStatus] = useState<PipelineStatus | null>(null);
@@ -34,6 +35,12 @@ export default function App() {
   useEffect(() => {
     refresh().catch(console.error);
   }, [refresh]);
+
+  useEffect(() => {
+    if (!selectedId && drafts.length > 0) {
+      setSelectedId(drafts[0].draft_id);
+    }
+  }, [drafts, selectedId]);
 
   useEffect(() => {
     if (selectedId) loadDetail(selectedId).catch(console.error);
@@ -123,43 +130,37 @@ export default function App() {
   };
 
   return (
-    <div className="layout">
-      <Sidebar
+    <div className="app-shell">
+      <AppHeader
         status={status}
+        draftCount={drafts.length}
+        filter={filter}
+        onFilterChange={setFilter}
         onNew={() => setShowCreate(true)}
         onRefresh={() => refresh()}
       />
-      <main className="main">
-        <header className="topbar">
-          <h1>초안 목록</h1>
-          <select
-            className="select"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          >
-            <option value="">전체 상태</option>
-            <option value="review">review</option>
-            <option value="draft_ready">draft_ready</option>
-            <option value="ready_to_publish">ready_to_publish</option>
-            <option value="naver_draft">naver_draft</option>
-            <option value="published">published</option>
-          </select>
-        </header>
 
-        <DraftList
-          drafts={drafts}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-        />
-
-        {detail && selectedId && (
-          <DraftDetailPanel
-            detail={detail}
-            onFetchImages={handleFetchImages}
-            onPublish={handlePublish}
+      <div className="workspace">
+        <aside className="list-pane">
+          <DraftList
+            drafts={drafts}
+            selectedId={selectedId}
+            onSelect={setSelectedId}
           />
-        )}
-      </main>
+        </aside>
+
+        <section className="detail-pane">
+          {detail && selectedId ? (
+            <DraftDetailPanel
+              detail={detail}
+              onFetchImages={handleFetchImages}
+              onPublish={handlePublish}
+            />
+          ) : (
+            <DraftDetailEmpty />
+          )}
+        </section>
+      </div>
 
       {showCreate && (
         <CreateModal onClose={() => setShowCreate(false)} onSubmit={handleCreate} />
