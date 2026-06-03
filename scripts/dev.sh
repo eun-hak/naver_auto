@@ -1,55 +1,49 @@
 #!/usr/bin/env bash
-#
-# 개발 서버 일괄 실행 (Frontend Vite 5173 + Backend FastAPI 8787)
-#
-# 실행 방법 (프로젝트 루트에서):
-#   ./scripts/dev.sh
-#
-# 실행 권한이 없으면:
-#   chmod +x scripts/dev.sh
-#   ./scripts/dev.sh
-#
-# 또는 bash로 직접 실행:
-#   bash scripts/dev.sh
-#
-# 사전 준비:
-#   - Python venv (.venv) + pip install -e .
-#   - frontend: npm install (없으면 스크립트가 자동 설치)
-#   - .env (GEMINI_API_KEY, NVIDIA_API_KEY 등)
-#
-# 접속: http://127.0.0.1:5173
-# 종료: Ctrl+C
-#
+# Frontend (5173) + Backend (8787)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-if [ -f ".venv/bin/activate" ]; then
-  source ".venv/bin/activate"
-elif [ -f ".venv/Scripts/activate" ]; then
-  source ".venv/Scripts/activate"
+# WSL on Windows drive: use Windows Python/npm (avoid rollup/linux mismatch)
+if grep -qiE 'microsoft|wsl' /proc/version 2>/dev/null && [[ "$ROOT" == /mnt/* ]]; then
+  echo "WSL detected — launching via PowerShell (Windows venv + npm)..."
+  exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$ROOT/scripts/dev.ps1"
 fi
 
-if [ ! -d "frontend/node_modules" ]; then
+if [ -f "$ROOT/.venv/Scripts/naver-auto.exe" ]; then
+  NAVER_AUTO="$ROOT/.venv/Scripts/naver-auto.exe"
+  NPM="npm.cmd"
+  export PATH="$ROOT/.venv/Scripts:$PATH"
+elif [ -f "$ROOT/.venv/bin/naver-auto" ]; then
+  NAVER_AUTO="$ROOT/.venv/bin/naver-auto"
+  NPM="npm"
+  # shellcheck disable=SC1091
+  source "$ROOT/.venv/bin/activate"
+else
+  echo "naver-auto not found. Run: pip install -e ." >&2
+  exit 1
+fi
+
+if [ ! -d "$ROOT/frontend/node_modules" ]; then
   echo "frontend npm install..."
-  npm install --prefix frontend
+  (cd "$ROOT/frontend" && $NPM install)
 fi
 
 cleanup() {
   echo ""
   echo "Shutting down..."
-  jobs -p | xargs -r kill 2>/dev/null || true
+  for pid in $(jobs -p); do kill "$pid" 2>/dev/null || true; done
   wait 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM
 
 echo "Backend:  http://127.0.0.1:8787"
-naver-auto ui --dev &
+"$NAVER_AUTO" ui --dev &
 BACKEND_PID=$!
 
 echo "Frontend: http://127.0.0.1:5173"
-(cd frontend && npm run dev) &
+(cd "$ROOT/frontend" && $NPM run dev) &
 FRONTEND_PID=$!
 
 echo ""
