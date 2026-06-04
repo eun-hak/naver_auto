@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # 실행: ./scripts/dev.sh
+# 윈도우 : .\scripts\dev.ps1
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
