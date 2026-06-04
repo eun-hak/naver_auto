@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Frontend (5173) + Backend (8787)
+# 실행: ./scripts/dev.sh
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

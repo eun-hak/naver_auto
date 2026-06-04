@@ -518,10 +518,11 @@ def insert_numbered_section(
 
 
 def insert_qa_line(page: Page, root: EditorRoot, segments: list[TextSegment]) -> None:
-    """FAQ Q/A 한 줄 전체 입력."""
+    """FAQ Q/A — Q/A 라벨만 굵게, 본문은 일반."""
     plain = segments_to_plain(segments)
     if not plain.strip():
         return
+    log(f"FAQ ({plain[:50]}{'…' if len(plain) > 50 else ''})…")
     _new_body_line(page, root)
     _reset_typing_style(page, root)
     _type_segments(page, root, segments)
@@ -554,6 +555,9 @@ def insert_formatted_block(page: Page, block: dict, *, root: EditorRoot) -> None
         )
     elif btype in ("qa_question", "qa_answer"):
         insert_qa_line(page, root, block.get("segments", []))
+    elif btype == "spacer":
+        _new_body_line(page, root)
+        time.sleep(0.15)
     elif btype == "paragraph_group":
         for line in block.get("lines", []):
             insert_paragraph_segments(page, root, line.segments)

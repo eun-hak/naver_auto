@@ -26,7 +26,7 @@ from naver_auto.publish.editor_actions import (
     upload_image,
     wait_editor_ready,
 )
-from naver_auto.publish.markdown_format import parse_text_to_blocks
+from naver_auto.publish.markdown_format import HR_LINE_RE, parse_text_to_blocks
 from naver_auto.publish.daily_limit import can_publish, record_publish
 from naver_auto.publish.playwright_client import (
     browser_context,
@@ -72,7 +72,7 @@ def _parse_text_segment(text: str) -> list[dict[str, Any]]:
             blocks.append({"type": "heading3", "content": stripped[4:].strip()})
         elif stripped.startswith("#"):
             continue
-        elif not stripped:
+        elif not stripped or HR_LINE_RE.match(stripped):
             flush_chunk()
         else:
             chunk_lines.append(line)
@@ -135,13 +135,18 @@ def upload_draft_on_page(
     time.sleep(0.5)
 
     editor_log(f"블록 {len(blocks)}개 업로드…")
+    formatted_types = {
+        "bullet_list",
+        "numbered_list",
+        "numbered_section",
+        "bold_heading",
+        "paragraph_group",
+        "qa_question",
+        "qa_answer",
+        "spacer",
+    }
     for i, block in enumerate(blocks, 1):
-        if block["type"] in (
-            "bullet_list",
-            "numbered_list",
-            "bold_heading",
-            "paragraph_group",
-        ):
+        if block["type"] in formatted_types:
             insert_formatted_block(page, block, root=root)
         elif block["type"] in ("heading2", "heading3"):
             level = 2 if block["type"] == "heading2" else 3

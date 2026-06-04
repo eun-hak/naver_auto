@@ -289,6 +289,80 @@ select {
   border: 1px solid var(--border);
 }
 
+.draft-list-wrap {
+  padding-bottom: 0.5rem;
+}
+
+.draft-date-group + .draft-date-group {
+  margin-top: 0.15rem;
+}
+
+.draft-date-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  transition: background 0.12s;
+}
+
+.draft-date-toggle:hover {
+  background: var(--surface);
+}
+
+.draft-date-chevron {
+  display: inline-block;
+  width: 0.75rem;
+  font-size: 0.65rem;
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+
+.draft-date-group.open .draft-date-chevron {
+  transform: rotate(90deg);
+}
+
+.draft-date-label-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.draft-date-count {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 0.08rem 0.4rem;
+  border-radius: 999px;
+}
+
+.draft-date-label {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin: 0;
+  padding: 0.45rem 0.75rem 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+
 .draft-list {
   list-style: none;
   margin: 0;

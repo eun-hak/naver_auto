@@ -83,6 +83,10 @@ def list_drafts(*, status: str | None = None) -> list[dict[str, Any]]:
                 "naver_url": meta.get("naver_url"),
             }
         )
+    rows.sort(
+        key=lambda r: str(r.get("generated_at") or ""),
+        reverse=True,
+    )
     return rows
 
 

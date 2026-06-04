@@ -8,9 +8,10 @@ from typing import Optional
 
 import typer
 
+from naver_auto.batch.keywords import ensure_queue_template, read_queue, run_keyword_batch
 from naver_auto.content.generator import create_draft_from_keyword
 from naver_auto.image.resolver import resolve_draft_images
-from naver_auto.paths import DRAFTS_DIR, ensure_dirs
+from naver_auto.paths import DRAFTS_DIR, KEYWORDS_QUEUE_FILE, ensure_dirs, load_yaml
 from naver_auto.publish.daily_limit import can_publish, count_today, daily_limit
 from naver_auto.publish.playwright_client import session_exists
 from naver_auto.publish.uploader import publish_draft
@@ -191,6 +192,94 @@ def publish_cmd(
     typer.echo(f"  → status={meta['status']}")
     if meta.get("naver_url"):
         typer.echo(f"  url={meta['naver_url']}")
+
+
+@app.command("batch")
+def batch_cmd(
+    file: Optional[Path] = typer.Option(
+        None,
+        "--file",
+        "-f",
+        help="키워드 txt (기본: data/keywords/queue.txt)",
+    ),
+    category: Optional[str] = typer.Option(
+        None, "--category", "-c", help="기본 카테고리 (줄별 | 카테고리 우선)"
+    ),
+    limit: Optional[int] = typer.Option(None, "--limit", "-n", help="처리 건수 제한"),
+    skip_images: bool = typer.Option(
+        False, "--skip-images", help="FLUX 이미지 생성 생략"
+    ),
+    force: bool = typer.Option(
+        False, "--force", help="같은 키워드 초안이 있어도 새로 생성"
+    ),
+    keep: bool = typer.Option(
+        False, "--keep", help="성공해도 queue.txt에서 줄 제거하지 않음"
+    ),
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="실행 없이 대상 키워드만 출력"
+    ),
+    list_only: bool = typer.Option(
+        False, "--list", help="queue.txt 키워드 목록만 출력"
+    ),
+    publish: bool = typer.Option(
+        False,
+        "--publish",
+        "-p",
+        help="초안 생성 후 네이버 임시저장 (Chrome)",
+    ),
+    live: bool = typer.Option(
+        False, "--live", help="--publish 시 즉시 발행 (기본: 임시저장)"
+    ),
+) -> None:
+    """data/keywords/queue.txt 키워드 → 초안 일괄 생성 (--publish: 네이버까지)."""
+    ensure_dirs()
+    queue_path = file or ensure_queue_template()
+
+    if list_only:
+        items = read_queue(queue_path)
+        if not items:
+            typer.echo(f"대기 키워드 없음: {queue_path}")
+            raise typer.Exit(0)
+        typer.echo(f"queue: {queue_path} ({len(items)}건)")
+        for i, item in enumerate(items, start=1):
+            cat = f" | {item.category}" if item.category else ""
+            typer.echo(f"  {i}. {item.keyword}{cat}")
+        raise typer.Exit(0)
+
+    cfg = load_yaml("publish.yaml")
+    default_cat = category or cfg.get("default_category")
+
+    typer.echo(f"[batch] {queue_path}")
+    if publish:
+        typer.echo("네이버 임시저장 포함 (--live 시 즉시 발행)")
+    if dry_run:
+        typer.echo("(dry-run — 생성하지 않음)")
+    results = run_keyword_batch(
+        queue_file=queue_path,
+        default_category=default_cat,
+        limit=limit,
+        skip_images=skip_images,
+        force=force,
+        remove_on_success=not keep,
+        dry_run=dry_run,
+        publish=publish,
+        live=live,
+        on_progress=typer.echo,
+    )
+
+    if not results:
+        typer.echo("처리할 키워드 없음. queue.txt에 한 줄씩 추가하세요.")
+        typer.echo(f"  → {KEYWORDS_QUEUE_FILE}")
+        raise typer.Exit(0)
+
+    ok_n = sum(1 for r in results if r.ok)
+    fail_n = len(results) - ok_n
+    pub_n = sum(1 for r in results if r.published)
+    typer.echo(f"\n완료: {ok_n}건 성공" + (f", {fail_n}건 실패" if fail_n else ""))
+    if publish and pub_n:
+        typer.echo(f"  네이버 저장: {pub_n}건")
+    if fail_n:
+        raise typer.Exit(1)
 
 
 @app.command("ui")

@@ -16,6 +16,8 @@ FORMAL_RE = re.compile(
 
 
 def normalize_draft_body(body: str) -> str:
+    from naver_auto.publish.markdown_format import normalize_markdown_for_publish
+
     lines: list[str] = []
     for line in body.splitlines():
         cleaned = re.sub(
@@ -25,7 +27,8 @@ def normalize_draft_body(body: str) -> str:
         cleaned = re.sub(r"</a>", "", cleaned)
         lines.append(cleaned)
     text = "\n".join(lines)
-    return re.sub(r"\n{3,}", "\n\n", text).strip()
+    text = re.sub(r"\n{3,}", "\n\n", text).strip()
+    return normalize_markdown_for_publish(text)
 
 
 def extract_title(body: str) -> str:

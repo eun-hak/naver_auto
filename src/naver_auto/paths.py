@@ -23,6 +23,9 @@ CONFIG_DIR = PROJECT_ROOT / "config"
 DATA_DIR = PROJECT_ROOT / "data"
 DRAFTS_DIR = DATA_DIR / "publish" / "drafts"
 INBOX_DIR = DATA_DIR / "publish" / "inbox"
+KEYWORDS_DIR = DATA_DIR / "keywords"
+KEYWORDS_QUEUE_FILE = KEYWORDS_DIR / "queue.txt"
+KEYWORDS_DONE_LOG = KEYWORDS_DIR / "done.log"
 AUTH_DIR = PROJECT_ROOT / ".auth"
 TEMPLATES_DIR = PROJECT_ROOT / "templates"
 DEBUG_DIR = PROJECT_ROOT / "debug"
@@ -34,7 +37,7 @@ USER_AGENT = (
 
 
 def ensure_dirs() -> None:
-    for path in (DRAFTS_DIR, INBOX_DIR, AUTH_DIR, DEBUG_DIR):
+    for path in (DRAFTS_DIR, INBOX_DIR, KEYWORDS_DIR, AUTH_DIR, DEBUG_DIR):
         path.mkdir(parents=True, exist_ok=True)
 
 
