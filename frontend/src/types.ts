@@ -11,6 +11,7 @@ export interface PipelineStatus {
   can_publish: boolean;
   limit_message: string;
   session_ok: boolean;
+  browser_headless: boolean;
   gemini_ok: boolean;
   naver_api_ok: boolean;
   drafts_dir: string;

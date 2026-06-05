@@ -12,7 +12,7 @@ from naver_auto.content.generator import create_draft_from_keyword
 from naver_auto.image.resolver import resolve_draft_images
 from naver_auto.paths import DRAFTS_DIR, ensure_dirs, naver_api_configured
 from naver_auto.publish.daily_limit import can_publish, count_today, daily_limit
-from naver_auto.publish.playwright_client import session_exists
+from naver_auto.publish.playwright_client import browser_headless, session_exists
 from naver_auto.publish.uploader import publish_draft
 from naver_auto.web.jobs import Job
 
@@ -52,6 +52,7 @@ def pipeline_status() -> dict[str, Any]:
         "can_publish": ok,
         "limit_message": limit_msg if not ok else "",
         "session_ok": session_exists(),
+        "browser_headless": browser_headless(),
         "gemini_ok": gemini_configured(),
         "naver_api_ok": naver_api_configured(),
         "drafts_dir": str(DRAFTS_DIR),
@@ -213,9 +214,13 @@ def run_publish(job: Job, draft_id: str, *, live: bool, refresh_images: bool) ->
     if refresh_images:
         job.logs.append("이미지 재수집…")
         resolve_draft_images(draft_dir, force=True)
-    job.message = "네이버 업로드 중 (브라우저가 열립니다)"
+    mode = "headless" if browser_headless() else "Chrome"
+    job.message = f"네이버 업로드 중 ({mode})"
     job.logs.append(f"[publish] {draft_id} ({'live' if live else 'draft'})")
-    job.logs.append("Playwright 실행 — Chrome 창을 닫지 마세요")
+    if mode == "headless":
+        job.logs.append("Playwright headless — 브라우저 창 없이 실행")
+    else:
+        job.logs.append("Playwright Chrome — 창을 닫지 마세요")
 
     def _log(step: str) -> None:
         job.logs.append(step)

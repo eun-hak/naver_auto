@@ -10,7 +10,7 @@ from typing import Callable, Iterator
 
 from playwright.sync_api import Browser, BrowserContext, Frame, Page, sync_playwright
 
-from naver_auto.paths import AUTH_DIR, DEBUG_DIR, storage_state_path
+from naver_auto.paths import AUTH_DIR, DEBUG_DIR, load_yaml, storage_state_path
 from naver_auto.publish.editor_context import editor_detected, find_editor_root, resolve_editor_root
 
 BROWSER_PROFILE_DIR = AUTH_DIR / "browser_profile"
@@ -261,15 +261,36 @@ def session_exists() -> bool:
     return path.exists() and path.stat().st_size > 0
 
 
+def _env_truthy(name: str) -> bool | None:
+    raw = os.getenv(name, "").strip().lower()
+    if raw in ("1", "true", "yes", "on"):
+        return True
+    if raw in ("0", "false", "no", "off"):
+        return False
+    return None
+
+
+def browser_headless(*, override: bool | None = None) -> bool:
+    """Playwright headless 여부 — CLI/env/publish.yaml 순."""
+    if override is not None:
+        return override
+    env = _env_truthy("NAVER_HEADLESS")
+    if env is not None:
+        return env
+    cfg = load_yaml("publish.yaml")
+    return bool(cfg.get("headless", False))
+
+
 @contextmanager
-def browser_context(*, headless: bool = False) -> Iterator[tuple[Browser | None, BrowserContext]]:
+def browser_context(*, headless: bool | None = None) -> Iterator[tuple[Browser | None, BrowserContext]]:
     """영구 브라우저 프로필 사용 — 네이버 세션·캡차 빈도 완화."""
+    use_headless = browser_headless(override=headless)
     BROWSER_PROFILE_DIR.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         try:
             context = p.chromium.launch_persistent_context(
                 user_data_dir=str(BROWSER_PROFILE_DIR),
-                headless=headless,
+                headless=use_headless,
                 viewport={"width": 1400, "height": 900},
                 locale="ko-KR",
                 args=["--disable-blink-features=AutomationControlled"],

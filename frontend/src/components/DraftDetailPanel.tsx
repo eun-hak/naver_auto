@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "../api";
-import type { DraftDetail } from "../types";
+import type { DraftDetail, PipelineStatus } from "../types";
 
 type Tab = "body" | "images" | "plan";
 
@@ -13,6 +13,7 @@ function slotNumber(img: { name: string; slot: string }): number {
 
 interface Props {
   detail: DraftDetail;
+  status: PipelineStatus | null;
   onFetchImages: (
     keepSlots: number[],
     slotPrompts: Record<number, string>,
@@ -22,6 +23,7 @@ interface Props {
 
 export function DraftDetailPanel({
   detail,
+  status,
   onFetchImages,
   onPublish,
 }: Props) {
@@ -175,6 +177,14 @@ export function DraftDetailPanel({
             type="button"
             className="btn btn-accent"
             onClick={() => onPublish(refreshImages)}
+            disabled={status != null && !status.can_publish}
+            title={
+              status && !status.can_publish
+                ? status.limit_message
+                : status
+                  ? `오늘 ${status.published_today}/${status.daily_limit}회 사용 (일 ${status.daily_limit}회 한도)`
+                  : undefined
+            }
           >
             네이버 임시저장
           </button>

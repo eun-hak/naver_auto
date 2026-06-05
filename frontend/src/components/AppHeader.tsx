@@ -26,14 +26,25 @@ export function AppHeader({
         </div>
         <div className="header-stats">
           <span title="초안 수">초안 {status?.drafts.total ?? draftCount}</span>
-          <span title="오늘 업로드">
-            업로드 {status ? `${status.published_today}/${status.daily_limit}` : "-"}
+          <span
+            title={
+              status
+                ? `오늘 네이버 업로드 ${status.published_today}/${status.daily_limit}회 (일 ${status.daily_limit}회 한도)`
+                : "오늘 네이버 업로드"
+            }
+          >
+            업로드 {status ? `${status.published_today}/${status.daily_limit}` : "-/30"}
           </span>
           <span
             className={`badge ${status?.session_ok ? "ok" : "no"}`}
-            title="네이버 세션"
+            title={
+              status
+                ? `네이버 세션 · 업로드 ${status.browser_headless ? "headless" : "Chrome"}`
+                : "네이버 세션"
+            }
           >
             N {status ? (status.session_ok ? "OK" : "×") : "-"}
+            {status?.browser_headless ? "·H" : ""}
           </span>
           <span
             className={`badge ${status?.gemini_ok ? "ok" : "no"}`}

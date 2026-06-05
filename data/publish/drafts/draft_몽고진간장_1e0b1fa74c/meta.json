@@ -101,44 +101,106 @@
     {
       "slot": 1,
       "section": "섹션 1",
-      "search_query": "몽고진간장 1.8L 제품 사진",
+      "search_query": "몽고진간장 1.8L 제품 사진 자연광",
       "alt": "주방 조리대에 놓인 몽고진간장 1.8L 제품과 신선한 식재료들",
-      "gemini_prompt": "High quality professional food photography, a bottle of soy sauce on a clean modern kitchen countertop, soft natural lighting, depth of field, minimalist style, 8k resolution."
+      "gemini_prompt": "High quality professional food photography, a bottle of soy sauce on a clean modern kitchen countertop, soft natural lighting, depth of field, minimalist style, 8k resolution., wide shot"
     },
     {
       "slot": 2,
       "section": "몽고진간장 용량별 가성비 비교 및 선택 가이드",
-      "search_query": "간장 용량별 비교 진열",
+      "search_query": "간장 용량별 비교 진열 실내",
       "alt": "다양한 크기의 간장 용기들이 나란히 배치된 모습",
-      "gemini_prompt": "Various sizes of soy sauce bottles lined up on a wooden table, bright kitchen background, commercial product photography, sharp focus, clean composition."
+      "gemini_prompt": "Various sizes of soy sauce bottles lined up on a wooden table, bright kitchen background, commercial product photography, sharp focus, clean composition., close-up detail"
     },
     {
       "slot": 3,
       "section": "몽고진간장 제품 라인업별 특징 및 용도 차이",
-      "search_query": "진간장 활용 한식 요리",
+      "search_query": "진간장 활용 한식 요리 야외",
       "alt": "몽고진간장을 활용한 정갈한 한식 상차림",
-      "gemini_prompt": "A beautiful spread of traditional Korean dishes, soy sauce based braised side dishes, authentic home-cooked meal, warm lighting, top-down view, professional food styling."
+      "gemini_prompt": "A beautiful spread of traditional Korean dishes, soy sauce based braised side dishes, authentic home-cooked meal, warm lighting, top-down view, professional food styling., fresh composition"
     },
     {
       "slot": 4,
       "section": "몽고진간장을 활용한 실패 없는 갈비찜 및 만능 조림 레시피",
-      "search_query": "갈비찜 요리 완성 사진",
+      "search_query": "갈비찜 요리 완성 사진 클로즈업",
       "alt": "몽고진간장으로 조리한 먹음직스러운 갈비찜",
-      "gemini_prompt": "Close-up shot of delicious Korean beef short rib stew, Galbi-jjim, garnished with sesame seeds and green onions, steaming hot, rich dark soy sauce glaze, professional food photography."
+      "gemini_prompt": "Close-up shot of delicious Korean beef short rib stew, Galbi-jjim, garnished with sesame seeds and green onions, steaming hot, rich dark soy sauce glaze, professional food photography., alternate angle"
     },
     {
       "slot": 5,
       "section": "대용량 구매 시 보관법 및 소분 꿀팁",
-      "search_query": "간장 소분 유리병 보관",
+      "search_query": "간장 소분 유리병 보관 와이드",
       "alt": "대용량 간장을 작은 유리병에 소분하는 모습",
-      "gemini_prompt": "Pouring soy sauce from a large container into a small glass bottle, kitchen setting, focus on the liquid pouring, clean and organized, high quality macro photography."
+      "gemini_prompt": "Pouring soy sauce from a large container into a small glass bottle, kitchen setting, focus on the liquid pouring, clean and organized, high quality macro photography., different lighting"
     },
     {
       "slot": 6,
       "section": "대용량 구매 시 보관법 및 소분 꿀팁",
-      "search_query": "주방 팬트리 간장 정리",
+      "search_query": "주방 팬트리 간장 정리 자연광",
       "alt": "깔끔하게 정리된 주방 팬트리 내 간장 보관",
-      "gemini_prompt": "Organized kitchen pantry shelves with various condiments and soy sauce bottles, neat and tidy, bright and airy, interior design photography, high resolution."
+      "gemini_prompt": "Organized kitchen pantry shelves with various condiments and soy sauce bottles, neat and tidy, bright and airy, interior design photography, high resolution., wide shot"
     }
-  ]
+  ],
+  "image_refetch_count": 1,
+  "images_resolved": true,
+  "image_count": 6,
+  "images_version": 1780641795,
+  "image_sources": [
+    "nvidia",
+    "nvidia",
+    "nvidia",
+    "card",
+    "card",
+    "card"
+  ],
+  "image_attributions": [
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "몽고진간장 1.8L 제품 사진 자연광",
+      "slot": 1
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "간장 용량별 비교 진열 실내",
+      "slot": 2
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "진간장 활용 한식 요리 야외",
+      "slot": 3
+    },
+    {
+      "source": "card",
+      "page_url": "",
+      "search_query": "갈비찜 요리 완성 사진 클로즈업",
+      "slot": 4
+    },
+    {
+      "source": "card",
+      "page_url": "",
+      "search_query": "간장 소분 유리병 보관 와이드",
+      "slot": 5
+    },
+    {
+      "source": "card",
+      "page_url": "",
+      "search_query": "주방 팬트리 간장 정리 자연광",
+      "slot": 6
+    }
+  ],
+  "image_refetch_slots": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "used_image_hashes": []
 }

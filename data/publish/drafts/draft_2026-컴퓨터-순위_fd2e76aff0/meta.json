@@ -82,14 +82,14 @@
   ],
   "meta_description": "2026년 최신 컴퓨터 CPU 성능 순위를 한눈에 확인하세요. 게이밍, 영상 편집, 사무용 등 용도별로 가장 효율적인 조립 PC 견적 가이드를 상세히 정리해 드립니다. 나에게 딱 맞는 CPU를 선택해 최상의 가성비 PC를 구성해 보세요.",
   "tags": "2026 컴퓨터 순위, CPU 성능 순위, 조립 PC 견적, 컴퓨터 부품 추천, 게이밍 CPU",
-  "status": "review",
+  "status": "naver_draft",
   "quality_errors": [
     "독자 질문(존댓말) 없음"
   ],
   "char_count": 2655,
   "generated_at": "2026-06-01T05:18:21.410804+00:00",
-  "published_at": null,
-  "naver_url": null,
+  "published_at": "2026-06-05T06:37:22.686120+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
   "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
   "image_plan": [
     {

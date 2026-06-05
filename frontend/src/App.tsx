@@ -153,6 +153,7 @@ export default function App() {
           {detail && selectedId ? (
             <DraftDetailPanel
               detail={detail}
+              status={status}
               onFetchImages={handleFetchImages}
               onPublish={handlePublish}
             />

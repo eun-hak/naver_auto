@@ -30,6 +30,7 @@ from naver_auto.publish.markdown_format import HR_LINE_RE, parse_text_to_blocks
 from naver_auto.publish.daily_limit import can_publish, record_publish
 from naver_auto.publish.playwright_client import (
     browser_context,
+    browser_headless,
     open_editor_page,
     save_debug_screenshot,
     session_exists,
@@ -181,9 +182,10 @@ def _upload_to_naver(
     *,
     live: bool = False,
     allow_manual_login: bool = True,
+    headless: bool | None = None,
     log=None,
 ) -> str | None:
-    with browser_context(headless=False) as (_, context):
+    with browser_context(headless=headless) as (_, context):
         page = context.new_page()
         _ensure_editor_page(page, allow_manual=allow_manual_login, log=log)
         return upload_draft_on_page(page, draft_dir, live=live)
@@ -195,8 +197,15 @@ def publish_draft(
     live: bool = False,
     skip_limit: bool = False,
     allow_manual_login: bool | None = None,
+    headless: bool | None = None,
     log=None,
 ) -> Path:
+    use_headless = browser_headless(override=headless)
+    if use_headless and not session_exists():
+        raise RuntimeError(
+            "headless 모드에는 저장된 네이버 세션이 필요합니다. "
+            "먼저 `python scripts/login_once.py`로 로그인한 뒤 다시 시도하세요."
+        )
     if not session_exists() and not (os.getenv("NAVER_ID") and os.getenv("NAVER_PASSWORD")):
         raise RuntimeError(
             "네이버 세션이 없습니다. `.env`에 NAVER_ID/PASSWORD 설정 후 "
@@ -218,13 +227,19 @@ def publish_draft(
     print("[publish] 이미지 확인…", flush=True)
     resolve_draft_images(draft_dir)
     reload_project_env()
-    print("[publish] 네이버 업로드…", flush=True)
-    if allow_manual_login is None:
+    mode = "headless" if use_headless else "Chrome"
+    print(f"[publish] 네이버 업로드 ({mode})…", flush=True)
+    if use_headless:
+        allow_manual_login = False
+    elif allow_manual_login is None:
         allow_manual_login = os.isatty(0)
+    if log:
+        log(f"Playwright {mode} 모드")
     url = _upload_to_naver(
         draft_dir,
         live=live,
         allow_manual_login=allow_manual_login,
+        headless=use_headless,
         log=log,
     )
 

@@ -12,6 +12,7 @@ from naver_auto.content.generator import create_draft_from_keyword
 from naver_auto.image.resolver import resolve_draft_images
 from naver_auto.paths import DRAFTS_DIR, KEYWORDS_DONE_LOG, KEYWORDS_QUEUE_FILE, ensure_dirs
 from naver_auto.publish.daily_limit import can_publish
+from naver_auto.publish.playwright_client import browser_headless
 from naver_auto.publish.uploader import publish_draft
 
 
@@ -117,6 +118,7 @@ def _try_publish(
     prefix: str,
     draft_id: str,
     live: bool,
+    headless: bool | None = None,
     log: Callable[[str], None],
 ) -> tuple[bool, str]:
     ok, msg = can_publish()
@@ -124,8 +126,9 @@ def _try_publish(
         log(f"{prefix} — 네이버 업로드 생략: {msg}")
         return False, msg
     action = "발행" if live else "임시저장"
-    log(f"{prefix} — 네이버 {action} 중… (Chrome)")
-    publish_draft(draft_id, live=live, log=log)
+    mode = "headless" if browser_headless(override=headless) else "Chrome"
+    log(f"{prefix} — 네이버 {action} 중… ({mode})")
+    publish_draft(draft_id, live=live, headless=headless, log=log)
     log(f"{prefix} — 네이버 {action} 완료")
     return True, f"naver {action}"
 
@@ -141,6 +144,7 @@ def run_keyword_batch(
     dry_run: bool = False,
     publish: bool = False,
     live: bool = False,
+    headless: bool | None = None,
     on_progress: Callable[[str], None] | None = None,
 ) -> list[BatchResult]:
     ensure_dirs()
@@ -174,7 +178,11 @@ def run_keyword_batch(
             if publish and not dry_run:
                 try:
                     published, pub_msg = _try_publish(
-                        prefix=prefix, draft_id=draft_id, live=live, log=log
+                        prefix=prefix,
+                        draft_id=draft_id,
+                        live=live,
+                        headless=headless,
+                        log=log,
                     )
                     if published:
                         message += f" · {pub_msg}"
@@ -223,7 +231,11 @@ def run_keyword_batch(
             if publish:
                 try:
                     published, pub_msg = _try_publish(
-                        prefix=prefix, draft_id=draft_id, live=live, log=log
+                        prefix=prefix,
+                        draft_id=draft_id,
+                        live=live,
+                        headless=headless,
+                        log=log,
                     )
                     if published:
                         message += f" · {pub_msg}"

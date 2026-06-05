@@ -13,7 +13,7 @@ from naver_auto.content.generator import create_draft_from_keyword
 from naver_auto.image.resolver import resolve_draft_images
 from naver_auto.paths import DRAFTS_DIR, KEYWORDS_QUEUE_FILE, ensure_dirs, load_yaml
 from naver_auto.publish.daily_limit import can_publish, count_today, daily_limit
-from naver_auto.publish.playwright_client import session_exists
+from naver_auto.publish.playwright_client import browser_headless, session_exists
 from naver_auto.publish.uploader import publish_draft
 
 app = typer.Typer(help="키워드 기반 네이버 블로그 자동 생성·임시저장")
@@ -120,6 +120,9 @@ def status_cmd() -> None:
     typer.echo(f"    naver_draft:       {naver_draft}건")
     typer.echo(f"  오늘 발행/임시저장:  {count_today()}/{daily_limit()}건")
     typer.echo(f"  네이버 세션:         {'OK' if session_exists() else '없음 (login_once.py)'}")
+    typer.echo(
+        f"  업로드 브라우저:     {'headless (창 없음)' if browser_headless() else 'Chrome (창 표시)'}"
+    )
     typer.echo(f"  drafts 경로:         {DRAFTS_DIR}")
 
 
@@ -146,6 +149,11 @@ def publish_cmd(
     all_: bool = typer.Option(False, "--all", help="draft_ready/review 초안 일괄 임시저장"),
     limit: Optional[int] = typer.Option(None, "--limit", help="일괄 처리 건수"),
     live: bool = typer.Option(False, "--live", help="즉시 발행 (기본: 임시저장)"),
+    headless: bool = typer.Option(
+        False,
+        "--headless",
+        help="Chrome 창 없이 업로드 (저장된 세션 필요, publish.yaml/NAVER_HEADLESS와 병용)",
+    ),
 ) -> None:
     """네이버 블로그 임시저장 또는 발행."""
     ensure_dirs()
@@ -174,7 +182,7 @@ def publish_cmd(
                 break
             typer.echo(f"[publish] {did} …")
             try:
-                publish_draft(did, live=live)
+                publish_draft(did, live=live, headless=headless or None)
                 ok_count += 1
             except Exception as exc:
                 typer.echo(f"  실패: {exc}", err=True)
@@ -186,8 +194,9 @@ def publish_cmd(
         raise typer.Exit(1)
 
     _find_draft(draft_id)
-    typer.echo(f"[publish] {draft_id} ({'live' if live else 'draft'}) …")
-    out = publish_draft(draft_id, live=live)
+    mode = "headless" if browser_headless(override=headless or None) else "Chrome"
+    typer.echo(f"[publish] {draft_id} ({'live' if live else 'draft'}, {mode}) …")
+    out = publish_draft(draft_id, live=live, headless=headless or None)
     meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
     typer.echo(f"  → status={meta['status']}")
     if meta.get("naver_url"):
@@ -230,6 +239,11 @@ def batch_cmd(
     live: bool = typer.Option(
         False, "--live", help="--publish 시 즉시 발행 (기본: 임시저장)"
     ),
+    headless: bool = typer.Option(
+        False,
+        "--headless",
+        help="--publish 시 Chrome 창 없이 업로드 (저장된 세션 필요)",
+    ),
 ) -> None:
     """data/keywords/queue.txt 키워드 → 초안 일괄 생성 (--publish: 네이버까지)."""
     ensure_dirs()
@@ -251,7 +265,9 @@ def batch_cmd(
 
     typer.echo(f"[batch] {queue_path}")
     if publish:
-        typer.echo("네이버 임시저장 포함 (--live 시 즉시 발행)")
+        mode = "headless" if browser_headless(override=headless or None) else "Chrome"
+        typer.echo(f"네이버 임시저장 포함 ({mode}, --live 시 즉시 발행)")
+        typer.echo(f"  오늘 업로드: {count_today()}/{daily_limit()}건 (일 {daily_limit()}회 한도)")
     if dry_run:
         typer.echo("(dry-run — 생성하지 않음)")
     results = run_keyword_batch(
@@ -264,6 +280,7 @@ def batch_cmd(
         dry_run=dry_run,
         publish=publish,
         live=live,
+        headless=headless or None,
         on_progress=typer.echo,
     )
 

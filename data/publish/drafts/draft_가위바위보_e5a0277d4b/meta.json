@@ -89,14 +89,14 @@
   ],
   "meta_description": "가위바위보 필승 전략부터 SNS에서 화제인 뉴진면 조합까지! 일상 속 소소한 재미를 더해주는 심리 활용 꿀팁 3가지를 소개합니다. 친구들과 내기할 때 바로 써먹을 수 있는 심리 게임의 기술을 지금 바로 확인해보세요.",
   "tags": "가위바위보, 가위바위보이기는법, 심리게임, 뉴진면조합, 일상꿀팁",
-  "status": "review",
+  "status": "naver_draft",
   "quality_errors": [
     "독자 질문(존댓말) 없음"
   ],
   "char_count": 4171,
   "generated_at": "2026-05-31T04:19:59.188893+00:00",
-  "published_at": null,
-  "naver_url": null,
+  "published_at": "2026-06-05T06:43:09.279789+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
   "content_model": "gemini-2.5-flash-lite+gemini-3.1-flash-lite",
   "image_plan": [
     {

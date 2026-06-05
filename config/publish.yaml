@@ -1,6 +1,9 @@
 default_category: "연예·이슈"
-daily_limit: 8
+# 네이버 임시저장·발행 일일 한도 (건)
+daily_limit: 30
 publish_mode: draft
+# Playwright headless — true면 Chrome 창 없이 업로드 (.env NAVER_HEADLESS=1 로도 설정 가능)
+headless: true
 # 글 작성 전 Smart Editor 모바일 미리보기 모드로 전환
 mobile_preview: true
 image_priority:
@@ -46,20 +49,20 @@ image_postprocess:
   strip_exif: true
   watermark:
     enabled: true
-    text: "© {blog_id}"   # NAVER_BLOG_ID 자동 치환
-    position: bottom_right  # bottom_right | bottom_left | top_right | top_left | center | tile
+    text: "© {blog_id}" # NAVER_BLOG_ID 자동 치환
+    position: bottom_right # bottom_right | bottom_left | top_right | top_left | center | tile
     opacity: 0.35
     font_size: 26
     padding: 24
   transforms:
-    crop_jitter: 0.025      # 슬롯별 미세 크롭 (프레임 차이)
+    crop_jitter: 0.025 # 슬롯별 미세 크롭 (프레임 차이)
     brightness_jitter: 0.04
     contrast: 1.04
     contrast_jitter: 0.03
     saturation: 1.06
     saturation_jitter: 0.04
     sharpness: 1.08
-    rotate_deg: 0.4         # ±0.4° 미세 회전
+    rotate_deg: 0.4 # ±0.4° 미세 회전
     vignette: true
     vignette_strength: 0.12
   border:

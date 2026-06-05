@@ -86,14 +86,14 @@
   ],
   "meta_description": "송탄 깨봉이국물떡볶이 솔직 후기! 텁텁함 없이 깔끔하고 감칠맛 넘치는 국물과 속이 꽉 찬 꼬마김밥의 환상적인 조합을 직접 경험해 보세요. 실패 없는 분식 맛집을 찾으신다면 추천합니다.",
   "tags": "깨봉이국물떡볶이, 송탄맛집, 송탄떡볶이, 국물떡볶이맛집, 분식추천",
-  "status": "review",
+  "status": "naver_draft",
   "quality_errors": [
     "독자 질문(존댓말) 없음"
   ],
   "char_count": 2223,
   "generated_at": "2026-06-04T06:50:28.593620+00:00",
-  "published_at": null,
-  "naver_url": null,
+  "published_at": "2026-06-05T06:30:05.739392+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
   "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
   "image_plan": [
     {

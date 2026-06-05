@@ -38,7 +38,7 @@ def count_today() -> int:
 
 def daily_limit() -> int:
     cfg = load_yaml("publish.yaml")
-    return int(cfg.get("daily_limit", 8))
+    return int(cfg.get("daily_limit", 30))
 
 
 def can_publish(*, extra: int = 1) -> tuple[bool, str]:
