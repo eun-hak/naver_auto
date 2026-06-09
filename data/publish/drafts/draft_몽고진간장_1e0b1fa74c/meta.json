@@ -87,15 +87,15 @@
   ],
   "meta_description": "몽고진간장 1.8L 제품부터 대용량까지, 우리 집 요리 빈도와 주방 환경에 최적화된 용량 선택 가이드를 확인하세요. 알뜰하고 똑똑한 간장 구매를 위한 필수 비교 정보를 지금 바로 확인해 보시기 바랍니다.",
   "tags": "몽고진간장, 간장추천, 주방용품, 요리꿀팁, 간장용량비교",
-  "status": "review",
+  "status": "naver_draft",
   "quality_errors": [
     "분량 과다 (5652자)",
     "독자 질문(존댓말) 없음"
   ],
   "char_count": 5652,
   "generated_at": "2026-05-28T13:14:07.808454+00:00",
-  "published_at": null,
-  "naver_url": null,
+  "published_at": "2026-06-09T08:09:54.663466+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
   "content_model": "gemini-2.5-flash-lite+gemini-3.1-flash-lite",
   "image_plan": [
     {

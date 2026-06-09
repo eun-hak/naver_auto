@@ -92,14 +92,14 @@
   ],
   "meta_description": "삼성전자 레버리지 ETF 투자 전 필수 교육 이수 방법부터 계좌 개설, 매수 과정까지 한 번에 정리해 드립니다. 초보자도 쉽게 따라 할 수 있는 삼성전자 ETF 투자 가이드를 통해 안전하게 수익을 추구하는 전략을 확인해 보세요.",
   "tags": "삼성전자 etf, 레버리지 etf, etf 교육이수, 주식투자, 삼성전자 투자",
-  "status": "review",
+  "status": "naver_draft",
   "quality_errors": [
     "독자 질문(존댓말) 없음"
   ],
   "char_count": 2688,
   "generated_at": "2026-06-01T06:48:56.676489+00:00",
-  "published_at": null,
-  "naver_url": null,
+  "published_at": "2026-06-09T08:18:16.487130+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
   "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
   "image_plan": [
     {

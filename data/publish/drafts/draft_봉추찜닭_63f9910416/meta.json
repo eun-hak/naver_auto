@@ -94,15 +94,15 @@
   ],
   "meta_description": "봉추찜닭 OO점 솔직 후기! 인생 찜닭 메뉴 추천과 함께 맛집 탐방 경험을 공유합니다. 매콤달콤한 찜닭의 매력에 빠져보세요!",
   "tags": "봉추찜닭, 찜닭맛집, 인생찜닭, 맛집추천, 솔직후기",
-  "status": "review",
+  "status": "naver_draft",
   "quality_errors": [
     "분량 과다 (4784자)",
     "독자 질문(존댓말) 없음"
   ],
   "char_count": 4784,
   "generated_at": "2026-05-28T08:05:35.056964+00:00",
-  "published_at": null,
-  "naver_url": null,
+  "published_at": "2026-06-09T08:16:03.675625+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
   "content_model": "gemini-2.5-flash-lite",
   "image_plan": [
     {

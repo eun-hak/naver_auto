@@ -89,14 +89,14 @@
   ],
   "meta_description": "호르무즈 해협 봉쇄가 한국 경제와 주식 시장에 미치는 파급력을 상세히 분석합니다. 원유 수급 불안정에 따른 유가 급등과 국내 증시 변동성, 투자자가 반드시 알아야 할 핵심 리스크를 총정리했습니다.",
   "tags": "호르무즈해협, 국제유가, 한국경제, 주식시장, 지정학적리스크",
-  "status": "review",
+  "status": "naver_draft",
   "quality_errors": [
     "독자 질문(존댓말) 없음"
   ],
   "char_count": 2822,
   "generated_at": "2026-06-01T07:29:49.820174+00:00",
-  "published_at": null,
-  "naver_url": null,
+  "published_at": "2026-06-09T08:36:10.810816+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
   "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
   "user_image_prompt": "트럼프 / 호르무즈해협",
   "image_plan": [

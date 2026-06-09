@@ -89,14 +89,14 @@
   ],
   "meta_description": "엔비디아 CEO 젠슨 황의 방한 일정과 그에 따른 국내 반도체 및 AI 관련 수혜주를 총정리합니다. 시장의 뜨거운 관심을 받는 진짜 핵심 기업은 어디인지, 투자자가 반드시 주목해야 할 핵심 포인트와 전망을 지금 바로 확인해 보세요.",
   "tags": "젠슨황방한, 엔비디아, AI반도체, 젠슨황수혜주, 주식전망",
-  "status": "review",
+  "status": "naver_draft",
   "quality_errors": [
     "독자 질문(존댓말) 없음"
   ],
   "char_count": 2889,
   "generated_at": "2026-06-02T00:22:22.547855+00:00",
-  "published_at": null,
-  "naver_url": null,
+  "published_at": "2026-06-09T08:30:00.811197+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
   "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
   "image_plan": [
     {
