@@ -6,6 +6,7 @@ import json
 import os
 import re
 import time
+import zlib
 
 import google.generativeai as genai
 from google.api_core import exceptions as google_exceptions
@@ -246,6 +247,25 @@ JSON: {{"titles": ["...", "..."]}}
     return [f"{keyword} | 맛있게 만드는 방법과 꿀팁 총정리"]
 
 
+# 글마다 다른 흐름을 쓰도록 — 키워드별로 안정적으로 하나를 골라 쓴다.
+BODY_ARCHETYPES = [
+    "경험·사례로 자연스럽게 시작 → 핵심 포인트 2~3개를 ## 섹션으로 → 실전 팁 한 묶음 → 짧은 마무리 (체크리스트·FAQ 없이)",
+    "독자의 고민이나 질문을 던지며 시작 → 단계별 설명을 ## 섹션으로 → 자주 묻는 질문 2개(FAQ) → 한 줄 정리",
+    "결론·핵심을 먼저 제시(두괄식) → 이유와 근거를 ## 섹션으로 → 비교나 실제 사례 → 자연스러운 권유 (FAQ 생략)",
+    "상황에 공감하는 도입 → 장단점·선택지를 ## 섹션으로 풀어쓰기 → 추천/선택 가이드 → 마무리 질문 하나",
+    "간단한 배경 설명으로 시작 → 주제별 ## 섹션 3개 → 체크리스트 한 번 → 부드러운 마무리 (FAQ 없이)",
+    "친근한 한두 문장 도입 → ## 섹션으로 정보 정리 → 주의할 점이나 팁 → FAQ 1개와 짧은 마무리",
+]
+
+
+def pick_body_archetype(keyword: str) -> str:
+    """키워드마다 다른(그러나 재현 가능한) 글 구조 원형을 고른다."""
+    if not keyword:
+        return BODY_ARCHETYPES[0]
+    idx = zlib.crc32(keyword.strip().encode("utf-8")) % len(BODY_ARCHETYPES)
+    return BODY_ARCHETYPES[idx]
+
+
 def generate_blog_body(
     seo_title: str,
     focus_keyword: str,
@@ -259,17 +279,31 @@ def generate_blog_body(
     brief = (research or {}).get("writing_brief", "")
     angles_text = "\n".join(f"- {a}" for a in angles) if angles else "- (자유)"
 
+    archetype = pick_body_archetype(focus_keyword)
+
     prompt = f"""다음 SEO 블로그 글을 마크다운으로 작성해.
 
 - 제목(H1): {seo_title}
 - 핵심 키워드: {focus_keyword}
 - 분량: {min_chars}~{max_chars}자
 - 톤: **전체 존댓말** (~습니다, ~입니다)
-- 구조: H1 → 도입 2~3문단 → ## 섹션 2~3개 → 체크리스트 → FAQ → 마무리 질문 + #해시태그 3개+
-- FAQ 형식 (한 줄씩, 줄바꿈으로 문장을 끊지 말 것):
+
+[이번 글의 흐름 제안 — 그대로 베끼지 말고 주제에 맞게 변형]
+{archetype}
+
+[양산형 금지 — 가장 중요]
+- 매번 똑같은 틀(도입 → 섹션 → 체크리스트 → FAQ → 마무리 질문)을 기계적으로 반복하지 말 것.
+- 체크리스트·FAQ·마무리 질문은 주제에 자연스러울 때만 쓰고, 글마다 넣는 요소와 순서를 다르게 할 것. 셋 다 들어갈 필요 없음.
+- 도입부를 매번 같은 인사("안녕하세요")나 같은 패턴으로 시작하지 말 것. 사례·질문·결론·상황 묘사 등으로 다양하게 열 것.
+- 문단 길이와 리듬도 단조롭지 않게 (짧은 문단·긴 문단 섞기).
+
+[지켜야 할 것]
+- ## 섹션은 최소 2개 이상 (이미지가 들어갈 자리). 섹션 제목은 **공백 포함 16자 이내로 짧게**, 끝에 한 단어만 떨어지지 않게.
+- FAQ를 쓸 경우 형식 (한 줄씩, 중간 줄바꿈 금지):
   **Q1. 질문 전체를 한 줄에**
   A1. 답변 전체를 한 줄에 (Q2, A2 동일)
-- 금지: "---" 구분선, "## 도입" 같은 메타 섹션 제목, 반말, 추측·과장
+- 글 끝에 #해시태그 3개 이상.
+- 금지: "---" 구분선, "## 도입"·"## 핵심 한 줄" 같은 메타/양식 섹션 제목, 반말, 추측·과장.
 
 [조사 브리프]
 {brief}
@@ -284,8 +318,8 @@ def generate_blog_body(
 """
     return _generate(
         prompt,
-        system="한국어 SEO 블로그 작가. 자연스러운 존댓말. 최종 글만.",
-        temperature=0.6,
+        system="한국어 SEO 블로그 작가. 자연스러운 존댓말. 글마다 구조와 도입을 다르게 쓰는 게 핵심. 최종 글만.",
+        temperature=0.85,
         tier="body",
     )
 

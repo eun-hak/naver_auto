@@ -563,12 +563,22 @@ def insert_formatted_block(page: Page, block: dict, *, root: EditorRoot) -> None
             insert_paragraph_segments(page, root, line.segments)
 
 
+def _prevent_heading_orphan(text: str) -> str:
+    """소제목 마지막 단어가 모바일에서 한 줄에 외톨이로 떨어지지 않도록
+    마지막 공백을 비분리 공백(NBSP)으로 바꿔 끝 두 단어를 한 덩어리로 유지."""
+    stripped = text.rstrip()
+    m = re.search(r"\s+(?=\S+$)", stripped)
+    if not m:
+        return text
+    return stripped[: m.start()] + " " + stripped[m.end() :]
+
+
 def insert_subheading(page: Page, text: str, *, root: EditorRoot, level: int = 2) -> None:
     """## / ### → 글자 24(또는 19) + 굵게."""
     if not text.strip():
         return
     label = "소제목" if level <= 2 else "소소제목"
-    plain = text.strip()
+    plain = _prevent_heading_orphan(text.strip())
     log(f"{label} ({len(plain)}자)…")
     _new_body_line(page, root)
     _reset_typing_style(page, root)

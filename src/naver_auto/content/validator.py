@@ -109,8 +109,7 @@ def quality_check(body: str, seo_cfg: dict) -> list[str]:
     if informal_hits >= 3:
         errors.append(f"반말/해체 의심 ({informal_hits}문장)")
 
-    if not re.search(r"[?？].*(?:보시|생각|궁금|어떻)", body):
-        errors.append("독자 질문(존댓말) 없음")
+    # 마무리 질문은 글마다 다른 구조를 허용하기 위해 강제하지 않음 (양산형 방지).
 
     if len(re.findall(r"#\w", body)) < 3:
         errors.append("해시태그 부족")

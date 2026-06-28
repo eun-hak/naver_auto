@@ -1,0 +1,120 @@
+{
+  "draft_id": "draft_제주드렌토드_bb44d5d1bb",
+  "keyword": "제주드렌토드",
+  "title": "제주드렌토드 제주도 감성 숙소 추천, 직접 다녀온 솔직 후기와 예약 꿀팁",
+  "seo_title": "제주드렌토드 제주도 감성 숙소 추천, 직접 다녀온 솔직 후기와 예약 꿀팁",
+  "title_candidates": [
+    "제주드렌토드 제주도 감성 숙소 추천, 직접 다녀온 솔직 후기와 예약 꿀팁",
+    "제주도 이색 숙소 제주드렌토드 방문기, 제주도 여행 코스로 추천하는 이유",
+    "제주도 가볼만한곳 제주드렌토드, 감성 가득한 제주도 여행 숙소로 완벽해"
+  ],
+  "category": "연예·이슈",
+  "related_keywords": [
+    "제주도 숙소 추천",
+    "제주 이색 숙소",
+    "제주도 감성 숙소",
+    "제주도 여행 코스",
+    "제주도 가볼만한곳",
+    "제주도 핫플레이스"
+  ],
+  "search_volume": 0,
+  "competition": "unknown",
+  "blog_document_count": 0,
+  "research_model": "gemini-3.1-flash-lite",
+  "gemini_research": {
+    "search_intent": "info",
+    "target_reader": "제주도 여행 중 독특한 숙소나 이색적인 공간을 찾는 여행객",
+    "content_angles": [
+      "제주드렌토드의 정확한 위치와 시설 안내",
+      "이곳을 방문해야 하는 이유와 독특한 매력 포인트",
+      "주변 관광지 및 함께 가기 좋은 맛집 추천",
+      "예약 방법 및 이용 시 주의사항"
+    ],
+    "related_keywords": [
+      "제주도 숙소 추천",
+      "제주 이색 숙소",
+      "제주도 감성 숙소",
+      "제주도 여행 코스",
+      "제주도 가볼만한곳",
+      "제주도 핫플레이스"
+    ],
+    "recommended_title_patterns": [
+      "제주드렌토드 방문 후기, 직접 다녀온 솔직한 매력 포인트",
+      "제주도 여행 필수 코스, 제주드렌토드 위치와 예약 꿀팁",
+      "감성 가득 제주드렌토드, 제주도 여행 숙소 고민이라면?"
+    ],
+    "writing_brief": "현재 검색량이 거의 없는 신규 키워드이므로, '제주도 숙소'나 '제주도 여행' 등 상위 키워드를 함께 사용하여 유입을 유도해야 합니다. 해당 장소가 무엇인지(숙소, 카페, 공방 등) 명확하게 정의하고 방문 경험을 구체적으로 서술하세요. 고화질 사진을 적극 활용하여 독자의 체류 시간을 늘리는 것이 중요합니다. 정보성 내용을 충실히 담아 검색 엔진이 해당 키워드의 대표 문서로 인식하게 만드세요.",
+    "competition_note": "현재 검색 결과가 없는 블루오션 키워드이므로, 양질의 콘텐츠를 작성하면 즉시 상위 노출이 가능합니다."
+  },
+  "references": [],
+  "meta_description": "제주도 감성 숙소 '제주드렌토드' 직접 다녀온 솔직 후기! 독보적인 인테리어와 분위기, 힐링 가득한 숙박 경험을 공유합니다. 예약 꿀팁과 이용 시 주의사항까지 알차게 정리했으니 제주 여행 준비 중이라면 꼭 확인해 보세요.",
+  "tags": "제주드렌토드, 제주도감성숙소, 제주도숙소추천, 제주여행, 제주도숙박",
+  "status": "naver_draft",
+  "quality_errors": [],
+  "char_count": 2033,
+  "generated_at": "2026-06-28T12:22:17.801899+00:00",
+  "published_at": "2026-06-28T12:24:45.953521+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
+  "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
+  "image_plan": [
+    {
+      "slot": 1,
+      "section": "제주드렌토드 제주도 감성 숙소 추천",
+      "search_query": "제주도 감성 숙소 추천 제주드렌토드 자연광",
+      "alt": "제주도 돌담과 현대적 건축물이 어우러진 제주드렌토드의 감성적인 외관 전경",
+      "gemini_prompt": "A high-quality architectural photography of a modern minimalist house in Jeju Island, featuring traditional black volcanic stone walls, large glass windows reflecting the blue sky, lush green garden, warm natural sunlight, cinematic composition, photorealistic, 8k, architectural digest style., wide shot"
+    },
+    {
+      "slot": 2,
+      "section": "제주드렌토드만의 매력",
+      "search_query": "제주도 숙소 인테리어 감성 실내",
+      "alt": "통창 너머로 제주의 자연 풍경이 보이는 따뜻한 우드톤의 숙소 내부 인테리어",
+      "gemini_prompt": "Interior view of a cozy bedroom in a Jeju villa, floor-to-ceiling window showcasing a peaceful rural landscape with stone walls and green trees, minimalist wooden furniture, soft linen bedding, warm morning sunlight streaming in, aesthetic interior design, shallow depth of field, high resolution., close-up detail"
+    },
+    {
+      "slot": 3,
+      "section": "상세 시설 및 위치 정보",
+      "search_query": "제주 서쪽 숙소 추천 시설 야외",
+      "alt": "고급스러운 어메니티와 깔끔하게 정돈된 숙소 주방 및 거실 공간",
+      "gemini_prompt": "A clean and stylish modern kitchen and living area in a luxury Jeju guesthouse, high-end kitchen appliances, minimalist decor, fresh flowers on a wooden table, soft ambient lighting, serene atmosphere, interior photography, sharp focus, bright and airy., fresh composition"
+    }
+  ],
+  "image_refetch_count": 1,
+  "images_resolved": true,
+  "image_count": 3,
+  "images_version": 1782649353,
+  "image_sources": [
+    "nvidia",
+    "nvidia",
+    "nvidia"
+  ],
+  "image_attributions": [
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "제주도 감성 숙소 추천 제주드렌토드 자연광",
+      "slot": 1
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "제주도 숙소 인테리어 감성 실내",
+      "slot": 2
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "제주 서쪽 숙소 추천 시설 야외",
+      "slot": 3
+    }
+  ],
+  "image_refetch_slots": [
+    1,
+    2,
+    3
+  ],
+  "used_image_hashes": []
+}

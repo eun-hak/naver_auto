@@ -1,0 +1,159 @@
+{
+  "draft_id": "draft_엑셀브이루업_e87bb50c68",
+  "keyword": "엑셀브이루업",
+  "title": "엑셀 브이룩업(VLOOKUP) 완벽 정리: 오류 해결부터 범위 고정 꿀팁까지",
+  "seo_title": "엑셀 브이룩업(VLOOKUP) 완벽 정리: 오류 해결부터 범위 고정 꿀팁까지",
+  "title_candidates": [
+    "엑셀 브이룩업(VLOOKUP) 완벽 정리: 오류 해결부터 범위 고정 꿀팁까지",
+    "엑셀 브이룩업 함수 5분 마스터, 다른 시트 데이터 오류 없이 찾는 법",
+    "초보를 위한 엑셀 브이룩업 사용법: 4가지 인수와 정확히 일치(0) 필수 이유"
+  ],
+  "category": "연예·이슈",
+  "related_keywords": [
+    "엑셀 브이룩업",
+    "엑셀 브이룩업 예시",
+    "엑셀 브이룩업 하는방법",
+    "엑셀 브이룩업 함수",
+    "엑셀 브이룩업 오류",
+    "엑셀 브이룩업 다른 시트",
+    "엑셀 브이룩업 고정",
+    "엑셀 브이룩업 안됨",
+    "엑셀 브이룩업 수식",
+    "엑셀 브이룩업 0",
+    "VLOOKUP 함수 사용법"
+  ],
+  "search_volume": 0,
+  "competition": "unknown",
+  "blog_document_count": 335,
+  "research_model": "gemini-3.1-flash-lite",
+  "gemini_research": {
+    "search_intent": "howto",
+    "target_reader": "엑셀 VLOOKUP 함수의 개념이 헷갈리거나 실무에서 데이터 추출에 어려움을 겪는 직장인 및 대학생",
+    "content_angles": [
+      "VLOOKUP 함수의 기본 구조와 4가지 필수 인수 완벽 이해",
+      "실무에서 가장 많이 발생하는 오류(N/A) 해결법 및 0과 1의 차이",
+      "다른 시트의 데이터를 불러오는 실전 예시",
+      "VLOOKUP 사용 시 데이터 고정($)이 필요한 이유와 범위 설정 팁"
+    ],
+    "related_keywords": [
+      "엑셀 브이룩업",
+      "VLOOKUP 함수 사용법",
+      "엑셀 브이룩업 오류",
+      "엑셀 브이룩업 다른 시트",
+      "엑셀 브이룩업 고정",
+      "엑셀 브이룩업 안됨",
+      "엑셀 브이룩업 0"
+    ],
+    "recommended_title_patterns": [
+      "엑셀 브이룩업(VLOOKUP) 함수 완벽 정리: 오류 없이 사용하는 법",
+      "헷갈리는 엑셀 브이룩업, 5분 만에 실무 마스터하기",
+      "엑셀 VLOOKUP 함수 사용법: 다른 시트 데이터 불러오기부터 오류 해결까지"
+    ],
+    "writing_brief": "VLOOKUP의 4가지 인수를 초보자도 이해하기 쉽게 비유를 들어 설명하세요. 특히 실무에서 가장 흔한 '오류 발생 시 대처법'과 '범위 고정($)의 중요성'을 강조해야 합니다. 마지막에는 0(정확히 일치)을 써야 하는 이유를 명확히 언급하여 독자의 신뢰도를 높이세요. 가독성을 위해 캡처 화면과 함께 단계별 예시를 포함하는 것이 좋습니다.",
+    "competition_note": "문서 수가 335개로 비교적 적어 상위 노출 가능성이 높으나, 정보성 글이 많으므로 실무 팁을 추가하여 차별화가 필요합니다."
+  },
+  "references": [
+    {
+      "title": "엑셀 VLOOKUP 함수 엑셀 브이룩업 사용법",
+      "description": "준비한 내용은 지금까지인데요. 업무에 도움이 되는 하루 보내시길 바랍니다. 감사합니다. #VLOOKUP함수 #VLOOKUP사용법 #엑셀VLOOKUP함수 #브이룩업 #VLOOKUP함수사용법 #브이룩업사용법 #엑셀브이룩업함수",
+      "link": "https://blog.naver.com/simply_mee/224258715438",
+      "blogger": "아이티펀치"
+    },
+    {
+      "title": "엑셀 브이룩업 함수 왜 맨날 헷갈리지?",
+      "description": "싶은게 바로 오늘 살펴볼 엑셀 브이룩업 함수가 아닌가 싶습니다. 엑셀 실무 10년 정도를 해온 저에겐... 그래서 브이룩업 함수 3번째 인수를 위 문제에서 숫자 4로 적어 풀어준 거예요. 만약 '취급점'을... ",
+      "link": "https://blog.naver.com/mbcoms/224017986819",
+      "blogger": "엑티"
+    },
+    {
+      "title": "엑셀브이룩업 뜻과 원리｜처음 배워도 이해되는 설명",
+      "description": "엑셀브이룩업을 다시 보게 된 이유 엑셀을 어느 정도 다룬다고 생각했는데, 데이터가 조금만... 구조가 브이룩업의 핵심입니다. 엑셀브이룩업 작동원리 이해하기 엑셀브이룩업이 어렵게 느껴지는... ",
+      "link": "https://blog.naver.com/s_uhun/224171394126",
+      "blogger": "nurung"
+    },
+    {
+      "title": "엑셀 브이룩업 vlookup 함수 데이터 찾는 방법 알려드림",
+      "description": "엑셀 브이룩업 vlookup 함수는 데이터가 커지면 커질수록 찾기 어렵다는 단점이 있으니 간단한 작업을 할 때 이용해 보시기를 바랍니다. [ 함께 보면 좋은 글 추천 ] #엑셀함수 #브이룩업 #VLOOKUP",
+      "link": "https://blog.naver.com/twojobnam/223486832921",
+      "blogger": "투잡남의 경제/IT 리뷰"
+    },
+    {
+      "title": "초간단 엑셀 브이룩업 함수 vlookup 사용법",
+      "description": "마지막 옵션은 0(FALSE) 정확히 일치와 1(TRUE) 유사 일치 중 하나를 고르면 됨 엑셀 브이룩업... #엑셀함수정리 #VLOOKUP사용법 #브이룩업함수 #엑셀VLOOKUP #엑셀초보 #엑셀실무 #XLOOKUP",
+      "link": "https://blog.naver.com/akdnsxlds/224309097211",
+      "blogger": "돈되는 재테크 노트"
+    }
+  ],
+  "meta_description": "엑셀 브이룩업(VLOOKUP) 함수가 어렵게 느껴지시나요? 함수 기본 문법부터 자주 발생하는 #N/A 오류 해결법, 절대 참조를 활용한 범위 고정 꿀팁까지 실무에서 바로 써먹는 VLOOKUP 완벽 가이드를 지금 바로 확인하세요.",
+  "tags": "엑셀브이루업, VLOOKUP, 엑셀함수, 엑셀기초, 업무자동화",
+  "status": "naver_draft",
+  "quality_errors": [
+    "독자 질문(존댓말) 없음"
+  ],
+  "char_count": 2408,
+  "generated_at": "2026-06-28T11:33:52.144386+00:00",
+  "published_at": "2026-06-28T11:37:03.148899+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
+  "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
+  "image_plan": [
+    {
+      "slot": 1,
+      "section": "섹션 1",
+      "search_query": "엑셀 업무 효율성 향상 자연광",
+      "alt": "깔끔한 사무실 책상 위에서 엑셀 작업을 하는 직장인의 모습",
+      "gemini_prompt": "A professional office desk with a modern laptop displaying a complex Excel spreadsheet, soft natural window light, shallow depth of field, clean and minimalist workspace, high resolution, professional photography style., wide shot"
+    },
+    {
+      "slot": 2,
+      "section": "VLOOKUP 함수의 기본 구조와 4가지 필수 인수 이해하기",
+      "search_query": "VLOOKUP 함수의 기본 구조와 4가지 필수 인수 이해하기 실내",
+      "alt": "엑셀 VLOOKUP 함수 수식 구조를 시각화한 그래픽",
+      "gemini_prompt": "VLOOKUP 함수의 기본 구조와 4가지 필수 인수 이해하기 editorial photo, natural light, no text, close-up detail"
+    },
+    {
+      "slot": 3,
+      "section": "실무에서 발생하는 오류 해결과 범위 고정($)의 마법",
+      "search_query": "실무에서 발생하는 오류 해결과 범위 고정($)의 마법 야외",
+      "alt": "엑셀에서 F4 키를 눌러 절대 참조를 설정하는 모습",
+      "gemini_prompt": "Close-up of hands typing on a mechanical keyboard, focus on the F4 key, blurred background of a computer screen showing Excel cells with dollar signs, professional office atmosphere, sharp focus, high quality, macro photography., fresh composition"
+    }
+  ],
+  "image_refetch_count": 1,
+  "images_resolved": true,
+  "image_count": 3,
+  "images_version": 1782646444,
+  "image_sources": [
+    "nvidia",
+    "nvidia",
+    "nvidia"
+  ],
+  "image_attributions": [
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "엑셀 업무 효율성 향상 자연광",
+      "slot": 1
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "VLOOKUP 함수의 기본 구조와 4가지 필수 인수 이해하기 실내",
+      "slot": 2
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-schnell",
+      "page_url": "",
+      "search_query": "실무에서 발생하는 오류 해결과 범위 고정($)의 마법 야외",
+      "slot": 3
+    }
+  ],
+  "image_refetch_slots": [
+    1,
+    2,
+    3
+  ],
+  "used_image_hashes": []
+}
