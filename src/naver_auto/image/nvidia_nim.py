@@ -25,6 +25,9 @@ _SENSITIVE_PATTERNS: list[tuple[str, str]] = [
     (r"war\s*situation|전쟁\s*상황|전쟁|war\b|conflict\s*zone", "geopolitical tension"),
     (r"burning|화재|폭발|explosion|blood|violence", "dramatic sky"),
     (r"blockade|봉쇄|invasion|침공", "shipping delay"),
+    # 미성년자·인물 묘사도 자주 차단됨 — 사람 없는 공간으로 치환
+    (r"\bstudents?\b|\bchild(?:ren)?\b|\bkids?\b|\bteenagers?\b|학생|아이들", "empty study desks"),
+    (r"\bperson\b|\bpeople\b|\bwoman\b|\bman\b|\bgirl\b|\bboy\b", "quiet interior"),
 ]
 
 
@@ -71,6 +74,11 @@ def sanitize_flux_prompt(prompt: str, *, keyword: str) -> str:
     )
 
 
+def _model_steps(model_path: str) -> int:
+    # flux.1-dev는 steps ≥ 5 필수 (422), schnell은 4-step 증류 모델
+    return 4 if "schnell" in model_path else 30
+
+
 def _call_flux(
     *,
     model_path: str,
@@ -85,7 +93,7 @@ def _call_flux(
             "prompt": full_prompt,
             "width": 1344,
             "height": 768,
-            "steps": 4,
+            "steps": _model_steps(model_path),
             "seed": seed,
         },
         timeout=FLUX_TIMEOUT,
@@ -140,30 +148,44 @@ def generate_nvidia_image(
             sanitize_flux_prompt(prompt, keyword=keyword),
             random.randint(0, 2_147_483_647),
         ),
+        # 최후 폴백 — 인물 묘사 잔재로도 차단되면 plan 프롬프트를 버리고 안전 장면만
+        (
+            f"Editorial blog photo about {keyword}. Clean object-focused or empty "
+            "interior scene related to the topic, natural light, shallow depth of "
+            "field, photorealistic, no people, no text, no logos, no watermark.",
+            random.randint(0, 2_147_483_647),
+        ),
     ]
 
     last_err: str | None = None
-    for idx, (full_prompt, attempt_seed) in enumerate(attempts):
-        try:
-            raw, err = _call_flux(
-                model_path=model_path,
-                full_prompt=full_prompt,
-                seed=attempt_seed,
-            )
+    calls = 0
+    max_calls = 4  # 일시적 5xx·타임아웃 포함 총 호출 상한
+    for full_prompt, attempt_seed in attempts:
+        while calls < max_calls:
+            calls += 1
+            try:
+                raw, err = _call_flux(
+                    model_path=model_path,
+                    full_prompt=full_prompt,
+                    seed=attempt_seed,
+                )
+            except httpx.TimeoutException as exc:
+                raw = None
+                err = f"API 응답 시간 초과 ({exc.__class__.__name__})"
+            except Exception as exc:
+                return None, f"{label} ({model_path}): {exc}", model_path
+
             if raw:
                 _save_jpeg(raw, output_path, slot=slot)
                 return output_path, None, model_path
 
             last_err = err
-            if err != "CONTENT_FILTERED":
-                break
-        except httpx.TimeoutException as exc:
-            last_err = f"API 응답 시간 초과 ({exc.__class__.__name__})"
-            if idx == 0:
+            transient = bool(err) and (err.startswith("HTTP 5") or "시간 초과" in err)
+            if transient:
+                attempt_seed = random.randint(0, 2_147_483_647)
                 continue
             break
-        except Exception as exc:
-            last_err = str(exc)
+        if last_err != "CONTENT_FILTERED" or calls >= max_calls:
             break
 
     if last_err == "CONTENT_FILTERED":

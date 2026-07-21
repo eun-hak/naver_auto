@@ -299,6 +299,41 @@ def batch_cmd(
         raise typer.Exit(1)
 
 
+@app.command("scout")
+def scout_cmd(
+    limit: int = typer.Option(10, "--limit", "-n", help="queue.txt에 추가할 최대 키워드 수"),
+    doc_limit: int = typer.Option(30_000, "--doc-limit", help="블로그 문서 수 상한 (초과 시 경쟁 과열로 제외)"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="queue.txt에 저장하지 않고 결과만 출력"),
+    skip_judge: bool = typer.Option(False, "--skip-judge", help="Gemini 적합성 심사 생략"),
+) -> None:
+    """실시간 트렌드에서 저경쟁 키워드 발굴 → queue.txt에 자동 추가."""
+    from naver_auto.keyword.scout import run_keyword_scout
+
+    ensure_dirs()
+    report = run_keyword_scout(
+        limit=limit,
+        doc_limit=doc_limit,
+        dry_run=dry_run,
+        skip_judge=skip_judge,
+        on_progress=typer.echo,
+    )
+
+    if report.rejected:
+        typer.echo("\n심사 탈락:")
+        for r in report.rejected:
+            typer.echo(f"  ✗ {r['keyword']} — {r['reason']}")
+
+    if not report.survivors:
+        typer.echo("\n추가할 키워드 없음.")
+        raise typer.Exit(0)
+
+    header = "queue.txt 추가 예정 (dry-run)" if dry_run else "queue.txt 추가됨"
+    typer.echo(f"\n{header}:")
+    for r in report.survivors:
+        typer.echo(f"  {r['keyword']}  (문서 {r['docs']:,}건)")
+    typer.echo(f"\n→ {KEYWORDS_QUEUE_FILE}")
+
+
 @app.command("ui")
 def ui_cmd(
     port: int = typer.Option(8787, "--port", "-p", help="웹 UI 포트"),

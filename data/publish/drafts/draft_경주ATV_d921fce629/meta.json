@@ -1,0 +1,160 @@
+{
+  "draft_id": "draft_경주ATV_d921fce629",
+  "keyword": "경주ATV",
+  "title": "경주 아이랑 가볼만한곳 보문단지 ATV 체험, 아이 동반 탑승부터 준비물 꿀팁까지",
+  "seo_title": "경주 아이랑 가볼만한곳 보문단지 ATV 체험, 아이 동반 탑승부터 준비물 꿀팁까지",
+  "title_candidates": [
+    "경주 아이랑 가볼만한곳 보문단지 ATV 체험, 아이 동반 탑승부터 준비물 꿀팁까지",
+    "경주 액티비티 추천 보불ATV 솔직 후기, 아이와 오프로드 즐기는 법과 이용 가격",
+    "경주 놀거리 ATV 대여 코스 상세 안내, 보문단지 근처 아이랑 즐기는 이색 액티비티"
+  ],
+  "category": "연예·이슈",
+  "related_keywords": [
+    "경주 atv",
+    "경주 atv 가격",
+    "경주 atv 면허",
+    "경주 atv 펜션",
+    "경주 atv 아기",
+    "경주 atv 대여",
+    "경주 아이랑 가볼만한곳",
+    "경주 액티비티 추천",
+    "보문단지 놀거리",
+    "경주 보불ATV",
+    "경주 레저 체험",
+    "경주 여행 코스 추천",
+    "경주 산악바이크"
+  ],
+  "search_volume": 0,
+  "competition": "unknown",
+  "blog_document_count": 6407,
+  "research_model": "gemini-3.1-flash-lite",
+  "gemini_research": {
+    "search_intent": "review",
+    "target_reader": "경주 여행 중 아이와 함께 즐길 이색 액티비티를 찾는 가족 단위 여행객",
+    "content_angles": [
+      "아이 동반 탑승 가능 여부 및 안전 수칙",
+      "보문단지 근처 ATV 체험장 위치 및 주차 편의성",
+      "실제 체험 시간 및 코스 난이도 후기",
+      "복장 팁(슬리퍼 금지, 편한 옷차림) 및 준비물",
+      "경주월드 등 주변 관광지와 연계한 추천 코스"
+    ],
+    "related_keywords": [
+      "경주 아이랑 가볼만한곳",
+      "경주 액티비티 추천",
+      "보문단지 놀거리",
+      "경주 보불ATV",
+      "경주 레저 체험",
+      "경주 여행 코스 추천",
+      "경주 산악바이크"
+    ],
+    "recommended_title_patterns": [
+      "경주 아이랑 가볼만한곳, 보문단지 ATV 액티비티 솔직 후기",
+      "경주 놀거리 추천: 보불ATV 오프로드 체험 및 이용 꿀팁",
+      "경주 액티비티 ATV, 아이와 함께 즐긴 생생한 체험기"
+    ],
+    "writing_brief": "아이 동반 탑승이 가능한지 여부를 가장 먼저 명시하여 부모 독자의 궁금증을 해소해야 합니다. 실제 체험 시간(약 45분 등)과 코스 안내 과정을 구체적으로 서술하여 신뢰도를 높이세요. 슬리퍼나 크록스보다는 운동화 착용을 권장하는 등 실질적인 준비물 팁을 포함하세요. 보문단지 및 경주월드와 가까운 위치적 장점을 언급하여 여행 동선 짜기에 도움을 주는 정보성 글을 작성하세요.",
+    "competition_note": "문서 수가 6천여 개로 적당하며, 아이 동반 체험을 강조하는 블로그가 상위를 점유하고 있어 '가족 여행' 키워드와 결합하는 전략이 유효합니다."
+  },
+  "references": [
+    {
+      "title": "경주 레저 아이랑 즐긴 액티비티 보문단지 ATV",
+      "description": "이렇게 경주 액티비티 ATV는 18세 운전 가능한 자만 운행할 수 있는데 다행히 아이랑 함께 할 수 있는 게... 시간 경주 액티비티는 총 45분 체험으로 20분은 코스 안내, 25분은 자유 시간이랍니다. 먼저 경주 ATV... ",
+      "link": "https://blog.naver.com/xmsla/223512930340",
+      "blogger": "미미네가족"
+    },
+    {
+      "title": "경주 놀거리 가볼만한 곳 액티비티 체험 보불 ATV",
+      "description": "경주 보불 ATV ▫️경북 경주시 천군동 60-7 ▫️매일 09:00-19:00 운영 ▫️전용 주차장 있음 아이들이 조금씩 크기 시작하면서 함께 할 수 있는 액티비티 체험들이 많아졌어요. 사실 경주라는 도시 자체가 가볼만한... ",
+      "link": "https://blog.naver.com/woojin181205/224257198180",
+      "blogger": "1+2 트래블로그"
+    },
+    {
+      "title": "경주 아이랑 가볼만한곳 추천, 경주레저 ATV 오프로드",
+      "description": "하게 무척이나 좋았던 지난 주말, 경주에서 ATV 오프로드 체험에 도전해봤어요. 결론부터 말하면 가족 모두 만족했던 코스였어요. 경주레져는 카트레이싱, 서바이벌, ATV 등 다양한 액티비티를 즐길 수 있는... ",
+      "link": "https://blog.naver.com/quming/224287235718",
+      "blogger": "+ 어느 보통날 +"
+    },
+    {
+      "title": "경주 레저 ATV 카트 서바이벌 아이와 가볼만한곳 위치 이용금액",
+      "description": "경주ATV 그리고 또 경주산악바이크 ATV도 한쪽에 좌르르 준비되어 있었어서 구경해보았어요 ! 아이들이 조금 더 크면 산악바이크를 타고 탐험해보는 것도 너무 재미있을 것 같았어요 ! 재미있겠다며 구경하고... ",
+      "link": "https://blog.naver.com/jysim8585/223715669020",
+      "blogger": "심심엄빠의 블로그"
+    },
+    {
+      "title": "경주놀거리 보문단지 ATV 아이랑 동반탑승 액티비티체험",
+      "description": "보불ATV에 다녀왔어요 경주월드 근처라 코스로 놀기 딱 좋은거 같아요 대로변에 풍선간판으로 쉽게... ㅎㅎㅎ 뭐 크록스나 슬리퍼면 시원하게 적시는것도 좋은방법! 시원하게 흥미롭게 경주ATV 즐겨보세요",
+      "link": "https://blog.naver.com/mssjse/224309122893",
+      "blogger": "시시남매네 힐링 플레이스"
+    }
+  ],
+  "meta_description": "경주 보문단지에서 아이와 함께 즐기는 ATV 체험 가이드를 확인하세요! 아이 동반 탑승 가능 여부부터 안전 수칙, 필수 준비물, 이용 꿀팁까지 알차게 정리했습니다. 가족 여행객을 위한 경주 ATV 체험 정보를 지금 바로 확인하고 즐거운 추억을 만들어보세요.",
+  "tags": "경주ATV, 경주아이랑가볼만한곳, 경주보문단지체험, 경주가족여행, 경주액티비티",
+  "status": "naver_draft",
+  "quality_errors": [],
+  "char_count": 1954,
+  "generated_at": "2026-07-14T08:11:12.484773+00:00",
+  "published_at": "2026-07-14T08:13:13.852430+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
+  "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
+  "image_plan": [
+    {
+      "slot": 1,
+      "section": "경주 아이랑 가볼만한곳 보문단지 ATV 체험",
+      "search_query": "경주 보문단지 가족 여행 액티비티 자연광",
+      "alt": "경주 보문단지에서 아이와 함께 ATV를 즐기며 활짝 웃고 있는 가족의 모습",
+      "gemini_prompt": "A happy family of three riding a rugged ATV together on a sunny dirt path in Gyeongju, South Korea. The father is driving, the child is sitting in the back wearing a safety helmet, natural bright daylight, lush green forest background, cinematic photography, shallow depth of field, high resolution,, wide shot"
+    },
+    {
+      "slot": 2,
+      "section": "아이와 동반 탑승 및 안전",
+      "search_query": "아이와 동반 탑승 및 안전 실내",
+      "alt": "ATV 탑승 전 전문가에게 안전 교육을 받고 헬멧을 착용하는 아이의 모습",
+      "gemini_prompt": "A close-up shot of a friendly instructor helping a young child put on a safety helmet before an ATV ride. The child is smiling, safety gear and goggles visible, blurred outdoor background of an adventure park, soft natural lighting, professional photography, focus on the interaction and safety equip, close-up detail"
+    },
+    {
+      "slot": 3,
+      "section": "보문단지 위치 및 편의성",
+      "search_query": "보문단지 위치 및 편의성 야외",
+      "alt": "경주 보문단지의 넓고 쾌적한 ATV 체험장 전용 주차장과 주변 경관",
+      "gemini_prompt": "A wide-angle shot of a spacious and clean parking area at an outdoor adventure center near a scenic lake, clear blue sky, Gyeongju Bomun Lake resort area vibes, modern car parked in the foreground, peaceful atmosphere, high quality editorial travel photography, vibrant colors., fresh composition"
+    }
+  ],
+  "image_refetch_count": 1,
+  "images_resolved": true,
+  "image_count": 3,
+  "images_version": 1784016694,
+  "image_sources": [
+    "nvidia",
+    "nvidia",
+    "nvidia"
+  ],
+  "image_attributions": [
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-dev",
+      "page_url": "",
+      "search_query": "경주 보문단지 가족 여행 액티비티 자연광",
+      "slot": 1
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-dev",
+      "page_url": "",
+      "search_query": "아이와 동반 탑승 및 안전 실내",
+      "slot": 2
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-dev",
+      "page_url": "",
+      "search_query": "보문단지 위치 및 편의성 야외",
+      "slot": 3
+    }
+  ],
+  "image_refetch_slots": [
+    1,
+    2,
+    3
+  ],
+  "used_image_hashes": []
+}

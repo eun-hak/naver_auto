@@ -1,0 +1,122 @@
+{
+  "draft_id": "draft_삼계플_5c30e5f353",
+  "keyword": "삼계플",
+  "title": "삼계플이란 무엇일까? 삼계탕 효능부터 맛집까지 보양식 정보 총정리",
+  "seo_title": "삼계플이란 무엇일까? 삼계탕 효능부터 맛집까지 보양식 정보 총정리",
+  "title_candidates": [
+    "삼계플이란 무엇일까? 삼계탕 효능부터 맛집까지 보양식 정보 총정리",
+    "삼계플 찾는다면 꼭 알아야 할 여름철 보양식 삼계탕 정보와 밀키트 추천",
+    "삼계플 정보가 궁금하신가요? 삼계탕 맛집과 건강을 챙기는 상세 가이드"
+  ],
+  "category": "연예·이슈",
+  "related_keywords": [
+    "삼계탕",
+    "삼계탕 맛집",
+    "보양식 추천",
+    "여름철 보양식",
+    "삼계탕 밀키트",
+    "삼계탕 효능",
+    "지역명 + 삼계탕"
+  ],
+  "search_volume": 0,
+  "competition": "unknown",
+  "blog_document_count": 0,
+  "research_model": "gemini-3.1-flash-lite",
+  "gemini_research": {
+    "search_intent": "info",
+    "target_reader": "삼계플(삼계탕 플러스 또는 특정 지역/브랜드의 줄임말)의 정확한 의미나 정보를 찾으려는 사용자",
+    "content_angles": [
+      "삼계플의 정확한 정의 및 유래",
+      "삼계플을 찾는 이유와 주요 특징",
+      "삼계플 이용 방법 및 주의사항",
+      "삼계플과 관련된 주변 정보 또는 대체 키워드"
+    ],
+    "related_keywords": [
+      "삼계탕",
+      "삼계탕 맛집",
+      "보양식 추천",
+      "여름철 보양식",
+      "삼계탕 밀키트",
+      "삼계탕 효능",
+      "지역명 + 삼계탕"
+    ],
+    "recommended_title_patterns": [
+      "삼계플이란 무엇인가? 정확한 의미와 정보 총정리",
+      "삼계플 찾는다면 꼭 알아야 할 필수 정보 3가지",
+      "삼계플 정보가 궁금하신가요? 상세 가이드 확인하기"
+    ],
+    "writing_brief": "현재 '삼계플'은 검색 데이터가 전무한 신규 키워드이므로, 사용자가 오타를 입력했거나 특정 커뮤니티의 은어일 가능성을 고려해야 합니다. 글의 도입부에서 삼계탕 관련 정보임을 명확히 밝혀 이탈을 방지하십시오. 실제 검색 의도를 파악하기 위해 삼계탕 관련 일반 정보를 충실히 담되, 독자가 찾는 정보가 아닐 경우를 대비해 관련 키워드로 자연스럽게 유도하는 전략이 필요합니다.",
+    "competition_note": "검색 문서 수가 0인 블루오션 키워드이나, 검색량이 거의 없으므로 메인 키워드보다는 서브 키워드로 활용하는 것을 권장합니다."
+  },
+  "references": [],
+  "meta_description": "삼계플이란 무엇일까요? 여름철 대표 보양식 삼계탕의 효능부터 건강하게 즐기는 방법, 그리고 실패 없는 맛집 선택 가이드까지 삼계플에 관한 모든 정보를 한눈에 정리해 드립니다. 기력 회복을 위한 보양식 정보를 지금 바로 확인하세요.",
+  "tags": "삼계플, 삼계탕효능, 여름보양식, 삼계탕맛집, 기력회복음식",
+  "status": "naver_draft",
+  "quality_errors": [],
+  "char_count": 2024,
+  "generated_at": "2026-07-14T04:55:02.226840+00:00",
+  "published_at": "2026-07-14T04:57:02.195215+00:00",
+  "naver_url": "https://blog.naver.com/ifsae42?Redirect=Write&",
+  "content_model": "gemini-3.1-flash-lite+gemini-3.1-flash-lite",
+  "image_plan": [
+    {
+      "slot": 1,
+      "section": "삼계플이란 무엇일까?",
+      "search_query": "여름 보양식 삼계탕 추천 자연광",
+      "alt": "정갈하게 차려진 삼계탕 한 상과 보양식의 분위기",
+      "gemini_prompt": "A high-angle, professional food photography shot of a steaming hot Samgyetang in a traditional stone bowl, garnished with green scallions and jujubes, soft natural morning light, wooden table background, shallow depth of field, cinematic food blog style., wide shot"
+    },
+    {
+      "slot": 2,
+      "section": "삼계플의 정확한 의미",
+      "search_query": "삼계탕 맛집 리스트 만드는 법 실내",
+      "alt": "삼계탕을 먹기 전 계획을 세우는 미식가의 모습",
+      "gemini_prompt": "A close-up of a person's hands holding a notebook and a pen, writing a food bucket list, with a blurred background of a cozy restaurant interior, warm ambient lighting, aesthetic lifestyle photography, high quality, sharp focus on the notebook., close-up detail"
+    },
+    {
+      "slot": 3,
+      "section": "삼계탕이 보양식인 이유",
+      "search_query": "삼계탕 효능과 영양 성분 야외",
+      "alt": "삼계탕의 주재료인 인삼과 닭고기의 신선한 모습",
+      "gemini_prompt": "Fresh raw ingredients for Samgyetang arranged neatly on a rustic wooden board, including a whole chicken, ginseng roots, dried jujubes, and garlic cloves, bright and airy kitchen setting, top-down view, professional culinary photography, vibrant colors., fresh composition"
+    }
+  ],
+  "image_refetch_count": 1,
+  "images_resolved": true,
+  "image_count": 3,
+  "images_version": 1784004923,
+  "image_sources": [
+    "nvidia",
+    "nvidia",
+    "nvidia"
+  ],
+  "image_attributions": [
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-dev",
+      "page_url": "",
+      "search_query": "여름 보양식 삼계탕 추천 자연광",
+      "slot": 1
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-dev",
+      "page_url": "",
+      "search_query": "삼계탕 맛집 리스트 만드는 법 실내",
+      "slot": 2
+    },
+    {
+      "source": "nvidia",
+      "nvidia_model": "black-forest-labs/flux.1-dev",
+      "page_url": "",
+      "search_query": "삼계탕 효능과 영양 성분 야외",
+      "slot": 3
+    }
+  ],
+  "image_refetch_slots": [
+    1,
+    2,
+    3
+  ],
+  "used_image_hashes": []
+}

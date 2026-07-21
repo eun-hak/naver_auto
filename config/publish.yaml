@@ -11,7 +11,7 @@ image_priority:
   - nvidia
   - card
 nvidia_images_per_post: 3
-nvidia_image_model: black-forest-labs/flux.1-schnell
+nvidia_image_model: black-forest-labs/flux.1-dev
 image_planning:
   enabled: true
 # 짧은 사용자 이미지 프롬프트 → NVIDIA Llama 3.1 8B로 FLUX용 영문 확장
